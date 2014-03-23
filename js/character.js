@@ -15,9 +15,9 @@ var canvasPlayer = document.getElementById('player'),
     	playerHeight,
 		player = {
 			x : canvasWidth / 2,
-			y : canvasHeight - 5,
-			playerWidth : 15,
-			playerHeight : 75,
+			y : canvasHeight - 130, // the same value of playerHeight
+			playerWidth : 64,
+			playerHeight : 130,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -47,20 +47,21 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Create new image object to use as pattern for the background game.
 	var backgroundImage = new Image(),
-		pattern;
+		backgroundPattern,
 
-	// if (canvasBackground.width >= 800 || canvasBackground.height >= 700) {
-	// 	return backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-small.jpg';
-	// 	console.log('mayor que 800');
-	// } else {
-	// 	return backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-big.jpg';
-	// }
+		playerImage = new Image(),
+		playerPattern;
 
 	backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-big.jpg';
-
-	backgroundImage.onload = function (){
+	backgroundImage.onload = function () {
 		// Create a pattern with this image, and set it to "repeat".
-		pattern = contextBackground.createPattern(backgroundImage, 'repeat');
+		backgroundPattern = contextBackground.createPattern(backgroundImage, 'repeat');
+	}
+
+	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
+	playerImage.onload = function () {
+		// Create a pattern with this image, and set it to "repeat".
+		playerPattern = contextPlayer.createPattern(playerImage, 'no-repeat');
 	}
 
 
@@ -74,47 +75,50 @@ var canvasPlayer = document.getElementById('player'),
 	function update(){
 		// up arrow or space
 		if (keys[38] || keys[32]) {
-			if (!player.jumping) {
-				player.jumping = true;
-				player.velY =- player.speed * 2;
+			console.log(background.velY - background.speed * 2);
+			if (!background.jumping) {
+				background.jumping = true;
+				background.velY =- background.speed * 2;
 			}
 		}
 
 		// right arrow
 		if (keys[39]) {
-			if (player.velX < player.speed) {
-				player.velX++;
+			if (background.velX < background.speed) {
+				background.velX++;
 			}
 		}
 
 		//left arrow
 		if (keys[37]) {
-			if (player.velX >- player.speed) {
-				player.velX--;
+			if (background.velX >- background.speed) {
+				background.velX--;
 			}
 		}
 
 		// apply friction to the horizontal movement
-		player.velX *= friction;
+		background.velX *= friction;
+		background.velX *= friction;
 
 		// apply friction to the up movement
-		player.velY += gravity;
+		background.velY += gravity;
 
 		// Move the character
-		player.x += player.velX;
-		player.y += player.velY;
+		background.x += background.velX;
+		background.y += background.velY;
 
-		// The player stop and not go outside of the canvas
-		if (player.x >= canvasWidth - player.playerWidth) {
-			player.x = canvasWidth - player.playerWidth;
-		} else if (player.x <= 0) {
-			player.x = 0;
-		}
 
-		// reset the jump property when the player hits the ground
-		if (player.y >= canvasHeight - player.playerHeight) {
-			player.y = canvasHeight - player.playerHeight;
-			player.jumping = false;
+		//The player stop and not go outside of the canvas
+		// if (background.x >= canvasWidth - background.backgroundWidth) {
+		// 	background.x = canvasWidth - background.backgroundWidth;
+		// } else if (background.x <= 0) {
+		// 	background.x = 0;
+		// }
+
+		// reset the jump property when the background hits the ground
+		if (background.y >= canvasHeight - background.backgroundHeight) {
+			background.y = canvasHeight - background.backgroundHeight;
+			background.jumping = false;
 		}
 
 		// render all the game
@@ -128,18 +132,16 @@ var canvasPlayer = document.getElementById('player'),
 	function renderPlayer () {
 		//clearRect(x, y, width, height);
 		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
-
 		// Used for specifying fill color for any closed path/figure/text
-		contextPlayer.fillStyle = "red";
-
+		contextPlayer.fillStyle = 'red';
 		// contextPlayer.fillRect(x, y, width, height);
 		contextPlayer.fillRect(player.x, player.y, player.playerWidth, player.playerHeight);
 	}
 
 	function renderBackground () {
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		contextBackground.fillStyle = pattern;
-		contextBackground.fillRect(0, 0, canvasWidth, canvasHeight);
+		contextBackground.fillStyle = backgroundPattern;
+		contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
 	}
 
 	function renders () {
