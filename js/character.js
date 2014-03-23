@@ -9,35 +9,54 @@ var canvasPlayer = document.getElementById('player'),
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
-	var width = win.innerWidth,
-    	height = win.innerHeight,
+	var canvasWidth = win.innerWidth,
+    	canvasHeight = win.innerHeight,
+    	playerWidth,
+    	playerHeight,
 		player = {
-			x : width / 2,
-			y : height - 5,
-			width : 15,
-			height : 75,
+			x : canvasWidth / 2,
+			y : canvasHeight - 5,
+			playerWidth : 15,
+			playerHeight : 75,
 			speed: 4,
 			velX: 0,
 			velY: 0,
 			jumping : false
 		},
+		background = {
+			x : 0,
+			y : 0,
+			backgroundWidth : canvasWidth,
+			backgroundHeight : canvasHeight,
+			speed: 4,
+			velX: 0,
+			velY: 0,
+			jumping : false
+		}
 		keys = [],
 		friction = 0.8,
 		gravity = 0.25;
 
 	// Set the canvas dimentions equal to the window dimentions
-	canvasPlayer.width = width;
-	canvasPlayer.height = height;
+	canvasPlayer.width = canvasWidth;
+	canvasPlayer.height = canvasHeight;
 
-	canvasBackground.width = width;
-	canvasBackground.height = height;
+	canvasBackground.width = canvasWidth;
+	canvasBackground.height = canvasHeight;
 
 
 	// Create new image object to use as pattern for the background game.
 	var backgroundImage = new Image(),
 		pattern;
 
-	backgroundImage.src = 'http://localhost/game/img/background-scene-1.png';
+	// if (canvasBackground.width >= 800 || canvasBackground.height >= 700) {
+	// 	return backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-small.jpg';
+	// 	console.log('mayor que 800');
+	// } else {
+	// 	return backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-big.jpg';
+	// }
+
+	backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-big.jpg';
 
 	backgroundImage.onload = function (){
 		// Create a pattern with this image, and set it to "repeat".
@@ -70,7 +89,6 @@ var canvasPlayer = document.getElementById('player'),
 
 		//left arrow
 		if (keys[37]) {
-
 			if (player.velX >- player.speed) {
 				player.velX--;
 			}
@@ -87,15 +105,15 @@ var canvasPlayer = document.getElementById('player'),
 		player.y += player.velY;
 
 		// The player stop and not go outside of the canvas
-		if (player.x >= width - player.width) {
-			player.x = width - player.width;
+		if (player.x >= canvasWidth - player.playerWidth) {
+			player.x = canvasWidth - player.playerWidth;
 		} else if (player.x <= 0) {
 			player.x = 0;
 		}
 
 		// reset the jump property when the player hits the ground
-		if (player.y >= height - player.height) {
-			player.y = height - player.height;
+		if (player.y >= canvasHeight - player.playerHeight) {
+			player.y = canvasHeight - player.playerHeight;
 			player.jumping = false;
 		}
 
@@ -109,19 +127,19 @@ var canvasPlayer = document.getElementById('player'),
 
 	function renderPlayer () {
 		//clearRect(x, y, width, height);
-		contextPlayer.clearRect(0, 0, width, height);
+		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		// Used for specifying fill color for any closed path/figure/text
 		contextPlayer.fillStyle = "red";
 
 		// contextPlayer.fillRect(x, y, width, height);
-		contextPlayer.fillRect(player.x, player.y, player.width, player.height);
+		contextPlayer.fillRect(player.x, player.y, player.playerWidth, player.playerHeight);
 	}
 
 	function renderBackground () {
-		contextBackground.clearRect(50, 50, 500, 500);
+		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 		contextBackground.fillStyle = pattern;
-		contextBackground.fillRect(0, 0, canvasBackground.width, canvasBackground.height);
+		contextBackground.fillRect(0, 0, canvasWidth, canvasHeight);
 	}
 
 	function renders () {
