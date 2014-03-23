@@ -1,6 +1,7 @@
-var htmlCanvas = document.getElementById('canvas'),
-	// Obtain a graphics context on the canvas element for drawing.
-	context = htmlCanvas.getContext('2d');
+var canvasPlayer = document.getElementById('player'),
+	canvasBackground = document.getElementById('background'),
+	contextPlayer = canvasPlayer.getContext('2d'),
+	contextBackground = canvasBackground.getContext('2d');
 
 (function (win) {
 
@@ -25,20 +26,22 @@ var htmlCanvas = document.getElementById('canvas'),
 		gravity = 0.25;
 
 	// Set the canvas dimentions equal to the window dimentions
-	htmlCanvas.width = width;
-	htmlCanvas.height = height;
+	canvasPlayer.width = width;
+	canvasPlayer.height = height;
+
+	canvasBackground.width = width;
+	canvasBackground.height = height;
 
 
 	// Create new image object to use as pattern for the background game.
-	var img = new Image();
+	var backgroundImage = new Image(),
+		pattern;
 
-	img.src = 'http://www.samskirrow.com/client-kyra/images/main-bg.jpg';
+	backgroundImage.src = 'http://localhost/game/img/background-scene-1.png';
 
-	img.onload = function(){
-		// create pattern
-		var pattern = context.createPattern(img, 'repeat'); // Create a pattern with this image, and set it to "repeat".
-		context.fillStyle = pattern;
-		context.fillRect(0, 0, canvas.width, canvas.height); // context.fillRect(x, y, width, height);
+	backgroundImage.onload = function (){
+		// Create a pattern with this image, and set it to "repeat".
+		pattern = contextBackground.createPattern(backgroundImage, 'repeat');
 	}
 
 
@@ -97,20 +100,39 @@ var htmlCanvas = document.getElementById('canvas'),
 		}
 
 		// render all the game
-		render();
+		renders();
 
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
 	}
 
 
-	function render() {
-		// render our player
-		context.clearRect(0, 0, width, height);
-		context.fillStyle = "red";
-		context.fillRect(player.x, player.y, player.width, player.height);
+	function renderPlayer () {
+		//clearRect(x, y, width, height);
+		contextPlayer.clearRect(0, 0, width, height);
 
+		// Used for specifying fill color for any closed path/figure/text
+		contextPlayer.fillStyle = "red";
+
+		// contextPlayer.fillRect(x, y, width, height);
+		contextPlayer.fillRect(player.x, player.y, player.width, player.height);
 	}
+
+	function renderBackground () {
+		contextBackground.clearRect(50, 50, 500, 500);
+		contextBackground.fillStyle = pattern;
+		contextBackground.fillRect(0, 0, canvasBackground.width, canvasBackground.height);
+	}
+
+	function renders () {
+		// Call the function tha render the player
+		renderPlayer();
+
+		// Call the function tha render the background image
+		renderBackground();
+	}
+
+
 
 	// Listen when a key is pressed
 	document.body.addEventListener("keydown", function(e) {

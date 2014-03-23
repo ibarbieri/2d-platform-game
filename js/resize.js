@@ -84,9 +84,9 @@
 	 * redraw();
 	 */
 	function redraw() {
-		context.strokeStyle = 'blue';
-		context.lineWidth = '1';
-		context.strokeRect(0, 0, win.innerWidth, win.innerHeight);
+		contextPlayer.strokeStyle = 'blue';
+		contextPlayer.lineWidth = '5';
+		contextPlayer.strokeRect(0, 0, win.innerWidth, win.innerHeight);
 	}
 
 	/**
@@ -98,8 +98,8 @@
 	 * resizeCanvas();
 	 */
 	function resizeCanvas() {
-		canvas.width = win.innerWidth;
-		canvas.height = win.innerHeight;
+		canvasPlayer.width = win.innerWidth;
+		canvasPlayer.height = win.innerHeight;
 		redraw();
 	}
 
