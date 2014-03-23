@@ -34,7 +34,7 @@ var canvasPlayer = document.getElementById('player'),
 			jumping : false
 		}
 		keys = [],
-		friction = 0.8,
+		friction = 0.9,
 		gravity = 0.25;
 
 	// Set the canvas dimentions equal to the window dimentions
@@ -52,7 +52,7 @@ var canvasPlayer = document.getElementById('player'),
 		playerImage = new Image(),
 		playerPattern;
 
-	backgroundImage.src = 'http://localhost/2d-platform-game/img/background-scene-big.jpg';
+	backgroundImage.src = 'http://localhost/2d-platform-game/img/background.png';
 	backgroundImage.onload = function () {
 		// Create a pattern with this image, and set it to "repeat".
 		backgroundPattern = contextBackground.createPattern(backgroundImage, 'repeat');
@@ -75,10 +75,9 @@ var canvasPlayer = document.getElementById('player'),
 	function update(){
 		// up arrow or space
 		if (keys[38] || keys[32]) {
-			console.log(background.velY - background.speed * 2);
 			if (!background.jumping) {
 				background.jumping = true;
-				background.velY =- background.speed * 2;
+				background.velY =+ background.speed * 2;
 			}
 		}
 
@@ -101,7 +100,7 @@ var canvasPlayer = document.getElementById('player'),
 		background.velX *= friction;
 
 		// apply friction to the up movement
-		background.velY += gravity;
+		background.velY -= gravity;
 
 		// Move the character
 		background.x += background.velX;
@@ -116,10 +115,11 @@ var canvasPlayer = document.getElementById('player'),
 		// }
 
 		// reset the jump property when the background hits the ground
-		if (background.y >= canvasHeight - background.backgroundHeight) {
+		if (background.y <= canvasHeight - background.backgroundHeight) {
 			background.y = canvasHeight - background.backgroundHeight;
 			background.jumping = false;
 		}
+
 
 		// render all the game
 		renders();
@@ -140,8 +140,12 @@ var canvasPlayer = document.getElementById('player'),
 
 	function renderBackground () {
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		contextBackground.fillStyle = backgroundPattern;
-		contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
+		contextBackground.fillStyle = 'red';
+		contextBackground.drawImage(backgroundImage, background.x, background.y, background.backgroundWidth, background.backgroundHeight);
+
+
+		//contextBackground.fillStyle = backgroundPattern;
+		//contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
 	}
 
 	function renders () {
