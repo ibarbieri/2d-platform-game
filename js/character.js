@@ -15,7 +15,7 @@ var canvasPlayer = document.getElementById('player'),
     	playerHeight,
 		player = {
 			x : canvasWidth / 2,
-			y : canvasHeight - 140, // the same value of playerHeight
+			y : canvasHeight - 140, // y position of the player
 			playerWidth : 86,
 			playerHeight : 102,
 			speed: 4,
@@ -47,31 +47,39 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Create new image object to use as pattern for the background game.
 	var backgroundImage1 = new Image(),
-		backgroundPattern1,
 		backgroundImage2 = new Image(),
-		backgroundPattern2,
-
-		playerImage = new Image(),
-		playerPattern;
+		enemiesImage = new Image(),
+		playerImage = new Image();
 
 
 	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
-	backgroundImage1.onload = function () {
-		// Create a pattern with this image, and set it to "repeat".
-		backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
-	}
+	// backgroundImage1.onload = function () {
+	// 	// Create a pattern with this image, and set it to "repeat".
+	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
+	// }
 
 	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
-	backgroundImage2.onload = function () {
-		// Create a pattern with this image, and set it to "repeat".
-		backgroundPattern2 = contextBackground.createPattern(backgroundImage2, 'repeat');
-	}
+
+	enemiesImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
 
 	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
-	playerImage.onload = function () {
-		// Create a pattern with this image, and set it to "repeat".
-		playerPattern = contextPlayer.createPattern(playerImage, 'no-repeat');
+
+
+
+	// Array to add and remove enemies in the game
+	var enemiesArray = [];
+
+	function Enemies (image, x, y, width, height) {
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 	}
+
+	// Push enemies into the array
+	enemiesArray.push(new Enemies(enemiesImage, canvasWidth - 100, canvasHeight - 130, 100, 100), new Enemies(enemiesImage, canvasWidth - 500, canvasHeight - 130, 100, 100));
+
 
 
     /**
@@ -143,10 +151,10 @@ var canvasPlayer = document.getElementById('player'),
 
 	function renderPlayer () {
 		//clearRect(x, y, width, height);
-		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
-		// contextPlayer.fillRect(x, y, width, height);
+		//contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		//contextPlayer.drawImage(imageSrc, x, y, width, height);
 		contextPlayer.drawImage(playerImage, player.x, player.y, player.playerWidth, player.playerHeight);
-		//contextPlayer.fillRect(player.x, player.y, player.playerWidth, player.playerHeight);
 	}
 
 
@@ -155,8 +163,6 @@ var canvasPlayer = document.getElementById('player'),
 		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		contextBackground.fillStyle = backgroundPattern1;
-		// contextPlayer.drawImage(imageSrc, x, y, width, height);
 		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
 
 		// I have to draw this image when the player arrive to determinada position of x.
@@ -165,15 +171,28 @@ var canvasPlayer = document.getElementById('player'),
 		// contextBackground.drawImage(backgroundImage2, backgroundImage1.width, background.y, backgroundImage2.width, backgroundImage2.height);
 	}
 
+
+	function renderEnemies () {
+		// Loop though the enemiesArray and draw all the enemies
+
+		for (var i = 0; enemiesArray.length > i; i++) {
+			//console.log(enemiesArray.length);
+			contextBackground.drawImage(enemiesArray[i].image, enemiesArray[i].x, enemiesArray[i].y, enemiesArray[i].width, enemiesArray[i].height);
+		};
+
+	}
+
+
 	function renders () {
 		// Call the function tha render the player
 		renderPlayer();
 
 		// Call the function tha render the background image
 		renderBackground();
+
+		// Call the function tha render the enemies. I have yo call this function random or when y want to a enemie apear.
+		renderEnemies();
 	}
-
-
 
 	// Listen when a key is pressed
 	document.body.addEventListener("keydown", function(e) {
