@@ -46,16 +46,25 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	// Create new image object to use as pattern for the background game.
-	var backgroundImage = new Image(),
-		backgroundPattern,
+	var backgroundImage1 = new Image(),
+		backgroundPattern1,
+		backgroundImage2 = new Image(),
+		backgroundPattern2,
 
 		playerImage = new Image(),
 		playerPattern;
 
-	backgroundImage.src = 'http://localhost/2d-platform-game/img/background.png';
-	backgroundImage.onload = function () {
+
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.png';
+	backgroundImage1.onload = function () {
 		// Create a pattern with this image, and set it to "repeat".
-		backgroundPattern = contextBackground.createPattern(backgroundImage, 'repeat');
+		backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
+	}
+
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.png';
+	backgroundImage2.onload = function () {
+		// Create a pattern with this image, and set it to "repeat".
+		backgroundPattern2 = contextBackground.createPattern(backgroundImage2, 'repeat');
 	}
 
 	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
@@ -81,16 +90,18 @@ var canvasPlayer = document.getElementById('player'),
 			}
 		}
 
-		// right arrow
-		if (keys[39]) {
+		// left arrow.
+		if (keys[37]) {
 			if (background.velX < background.speed) {
+				// Here i plus the velX becouse the gravity is rotated.
 				background.velX++;
 			}
 		}
 
-		//left arrow
-		if (keys[37]) {
+		// right arrow
+		if (keys[39]) {
 			if (background.velX >- background.speed) {
+				// Here i less the velX becouse the gravity is rotated.
 				background.velX--;
 			}
 		}
@@ -108,6 +119,7 @@ var canvasPlayer = document.getElementById('player'),
 
 
 		//The player stop and not go outside of the canvas
+		//console.log(background.x);
 		// if (background.x >= canvasWidth - background.backgroundWidth) {
 		// 	background.x = canvasWidth - background.backgroundWidth;
 		// } else if (background.x <= 0) {
@@ -139,13 +151,19 @@ var canvasPlayer = document.getElementById('player'),
 	}
 
 	function renderBackground () {
+		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
+		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
+
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		contextBackground.fillStyle = 'red';
-		contextBackground.drawImage(backgroundImage, background.x, background.y, background.backgroundWidth, background.backgroundHeight);
+		contextBackground.fillStyle = backgroundPattern1;
 
+		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+		// contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		// contextBackground.fillStyle = backgroundPattern2;
+		// contextBackground.drawImage(backgroundImage2, background.x, background.y, backgroundImage2.width, backgroundImage2.height);
 
-		//contextBackground.fillStyle = backgroundPattern;
-		//contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
+		// contextBackground.fillStyle = backgroundPattern;
+		// contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
 	}
 
 	function renders () {
