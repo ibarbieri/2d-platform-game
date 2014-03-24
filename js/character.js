@@ -15,9 +15,9 @@ var canvasPlayer = document.getElementById('player'),
     	playerHeight,
 		player = {
 			x : canvasWidth / 2,
-			y : canvasHeight - 130, // the same value of playerHeight
-			playerWidth : 64,
-			playerHeight : 130,
+			y : canvasHeight - 140, // the same value of playerHeight
+			playerWidth : 86,
+			playerHeight : 102,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -55,13 +55,13 @@ var canvasPlayer = document.getElementById('player'),
 		playerPattern;
 
 
-	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.png';
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	backgroundImage1.onload = function () {
 		// Create a pattern with this image, and set it to "repeat".
 		backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	}
 
-	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.png';
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
 	backgroundImage2.onload = function () {
 		// Create a pattern with this image, and set it to "repeat".
 		backgroundPattern2 = contextBackground.createPattern(backgroundImage2, 'repeat');
@@ -144,11 +144,11 @@ var canvasPlayer = document.getElementById('player'),
 	function renderPlayer () {
 		//clearRect(x, y, width, height);
 		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
-		// Used for specifying fill color for any closed path/figure/text
-		contextPlayer.fillStyle = 'red';
 		// contextPlayer.fillRect(x, y, width, height);
-		contextPlayer.fillRect(player.x, player.y, player.playerWidth, player.playerHeight);
+		contextPlayer.drawImage(playerImage, player.x, player.y, player.playerWidth, player.playerHeight);
+		//contextPlayer.fillRect(player.x, player.y, player.playerWidth, player.playerHeight);
 	}
+
 
 	function renderBackground () {
 		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
@@ -156,14 +156,13 @@ var canvasPlayer = document.getElementById('player'),
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 		contextBackground.fillStyle = backgroundPattern1;
-
+		// contextPlayer.drawImage(imageSrc, x, y, width, height);
 		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+
+		// I have to draw this image when the player arrive to determinada position of x.
 		// contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 		// contextBackground.fillStyle = backgroundPattern2;
-		// contextBackground.drawImage(backgroundImage2, background.x, background.y, backgroundImage2.width, backgroundImage2.height);
-
-		// contextBackground.fillStyle = backgroundPattern;
-		// contextBackground.fillRect(background.x, background.y, background.backgroundWidth, background.backgroundHeight);
+		// contextBackground.drawImage(backgroundImage2, backgroundImage1.width, background.y, backgroundImage2.width, backgroundImage2.height);
 	}
 
 	function renders () {
