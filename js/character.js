@@ -87,7 +87,7 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push enemies into the array
 	enemiesArray.push(
-					  new Enemies(enemiesImage, canvasWidth, canvasHeight - 130, 100, 100, 0, 0.9, 2)
+					  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2)
 					  );
 
 
@@ -178,7 +178,13 @@ var canvasPlayer = document.getElementById('player'),
 		//contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		//contextPlayer.drawImage(imageSrc, x, y, width, height);
-		contextPlayer.drawImage(playerImage, player.x, player.y, player.playerWidth, player.playerHeight);
+		contextPlayer.drawImage(
+			playerImage,
+			player.x,
+			player.y,
+			player.playerWidth,
+			player.playerHeight
+			);
 	}
 
 
@@ -202,7 +208,12 @@ var canvasPlayer = document.getElementById('player'),
 		// Loop though the enemiesArray and draw all the enemies
 		for (var i = 0; enemiesArray.length > i; i++) {
 			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
-			contextBackground.drawImage(enemiesArray[i].image, enemiesArray[i].x + background.x, background.y + enemiesImageDifference, enemiesArray[i].width, enemiesArray[i].height);
+			contextBackground.drawImage(
+				enemiesArray[i].image,
+				enemiesArray[i].x + background.x,
+				enemiesArray[i].y + background.y,
+				enemiesArray[i].width,
+				enemiesArray[i].height);
 		};
 
 	}
@@ -211,42 +222,31 @@ var canvasPlayer = document.getElementById('player'),
 
 	function checkCollision(player, enemies) {
 		// get the vectors to check against
-		var distanceToCollisionX = (player.x + (player.playerWidth / 2)) - (enemies.x + (enemies.width / 2)),
-			distanceToCollisionY = (player.y + (player.playerHeight / 2)) - (enemies.y + (enemies.height / 2)),
+		// Here less the background.x to the player.x becouse the player.x is allways the same. The player isn't animated. The background is animated.
+		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemies.x + (enemies.width / 2)),
+			distanceToCollisionY = (player.y - background.y + (player.playerHeight / 2)) - (enemies.y + (enemies.height / 2)),
 
 			// add the half widths and half heights of the objects
 			halfWidths = (player.playerWidth / 2) + (enemies.width / 2),
 			halfHeights = (player.playerHeight / 2) + (enemies.height / 2),
 			collisionDirection = null;
 
-			//Me falta hacer el se compare con la posicion x del fondo porque el personaje no se mueve.
-			//console.log(player.x);
-
-
 		// if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
 		if (Math.abs(distanceToCollisionX) < halfWidths && Math.abs(distanceToCollisionY) < halfHeights) {
-		// figures out on which side we are colliding (top, bottom, left, or right)
+			// figures out on which side we are colliding (top, bottom, left, or right)
 			var oX = halfWidths - Math.abs(distanceToCollisionX),
 				oY = halfHeights - Math.abs(distanceToCollisionY);
 			if (oX >= oY) {
 				if (distanceToCollisionY > 0) {
 					collisionDirection = "top";
-					console.log(collisionDirection);
-					//player.y += oY;
 				} else {
 					collisionDirection = "button";
-					console.log(collisionDirection);
-					//player.y -= oY;
 				}
 			} else {
 				if (distanceToCollisionX > 0) {
 					collisionDirection = "left";
-					console.log(collisionDirection);
-					//player.x += oX;
 				} else {
 					collisionDirection = "rigth";
-					console.log(collisionDirection);
-					//player.x -= oX;
 				}
 			}
 		}
