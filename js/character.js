@@ -51,7 +51,6 @@ var canvasPlayer = document.getElementById('player'),
 		enemiesImage = new Image(),
 		playerImage = new Image();
 
-
 	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
@@ -65,26 +64,36 @@ var canvasPlayer = document.getElementById('player'),
 	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
 
 
-
-	// Array to add and remove enemies in the game
-	var enemiesArray = [];
-
-	function Enemies (image, x, y, width, height) {
+	/**
+	 * Class constructor of enemies
+	 * @function
+	 * @params {image, x, y, width, height, velX}
+	 * @example
+	 * new Enemies(enemiesImage, canvasWidth, canvasHeight - 130, 100, 100, 0, 0.9, 5);
+	 */
+	function Enemies (image, x, y, width, height, velocityX, friction, speed) {
 		this.image = image;
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.velocityX = velocityX;
+		this.friction = friction;
+		this.speed = speed;
 	}
 
-	// Push enemies into the array
-	enemiesArray.push(new Enemies(enemiesImage, canvasWidth - 100, canvasHeight - 130, 100, 100), new Enemies(enemiesImage, canvasWidth - 500, canvasHeight - 130, 100, 100));
+	// Array to add and remove enemies in the game
+	var enemiesArray = [];
 
+	// Push enemies into the array
+	enemiesArray.push(
+					  new Enemies(enemiesImage, canvasWidth, canvasHeight - 130, 100, 100, 0, 0.9, 2)
+					  );
 
 
     /**
-	 * Create the caracter and update it with requesAnimationFrame.
-	 * @returns {Function}
+	 * Move the player and the enemies and update it with requesAnimationFrame.
+	 * @returns {renders(), requestAnimationFrame(update)}
 	 * @function
 	 * @example
 	 * update();
@@ -114,17 +123,21 @@ var canvasPlayer = document.getElementById('player'),
 			}
 		}
 
-		// apply friction to the horizontal movement
-		background.velX *= friction;
+		// apply friction to the horizontal movement of the background
 		background.velX *= friction;
 
-		// apply friction to the up movement
+		// apply friction to the up movement of the background
 		background.velY -= gravity;
 
-		// Move the character
+		// Move the the background
 		background.x += background.velX;
 		background.y += background.velY;
 
+		// reset the jump property when the background hits the ground
+		if (background.y <= canvasHeight - background.backgroundHeight) {
+			background.y = canvasHeight - background.backgroundHeight;
+			background.jumping = false;
+		}
 
 		//The player stop and not go outside of the canvas
 		//console.log(background.x);
@@ -134,15 +147,26 @@ var canvasPlayer = document.getElementById('player'),
 		// 	background.x = 0;
 		// }
 
-		// reset the jump property when the background hits the ground
-		if (background.y <= canvasHeight - background.backgroundHeight) {
-			background.y = canvasHeight - background.backgroundHeight;
-			background.jumping = false;
-		}
+
+		// Moving the enemies
+		for (var j = 0; enemiesArray.length > j; j++) {
+
+			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+				enemiesArray[j].velocityX--;
+			}
+
+			enemiesArray[j].velocityX *= friction;
+
+			enemiesArray[j].x += enemiesArray[j].velocityX;
+		};
 
 
 		// render all the game
 		renders();
+
+		// check the collision of two objects
+		checkCollision(player, enemiesArray[0]);
 
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
@@ -173,14 +197,62 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	function renderEnemies () {
-		// Loop though the enemiesArray and draw all the enemies
+		var enemiesImageDifference = canvasHeight - enemiesImage.height;
 
+		// Loop though the enemiesArray and draw all the enemies
 		for (var i = 0; enemiesArray.length > i; i++) {
-			//console.log(enemiesArray.length);
-			contextBackground.drawImage(enemiesArray[i].image, enemiesArray[i].x, enemiesArray[i].y, enemiesArray[i].width, enemiesArray[i].height);
+			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
+			contextBackground.drawImage(enemiesArray[i].image, enemiesArray[i].x + background.x, background.y + enemiesImageDifference, enemiesArray[i].width, enemiesArray[i].height);
 		};
 
 	}
+
+
+
+	function checkCollision(player, enemies) {
+		// get the vectors to check against
+		var distanceToCollisionX = (player.x + (player.playerWidth / 2)) - (enemies.x + (enemies.width / 2)),
+			distanceToCollisionY = (player.y + (player.playerHeight / 2)) - (enemies.y + (enemies.height / 2)),
+
+			// add the half widths and half heights of the objects
+			halfWidths = (player.playerWidth / 2) + (enemies.width / 2),
+			halfHeights = (player.playerHeight / 2) + (enemies.height / 2),
+			collisionDirection = null;
+
+			//Me falta hacer el se compare con la posicion x del fondo porque el personaje no se mueve.
+			//console.log(player.x);
+
+
+		// if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
+		if (Math.abs(distanceToCollisionX) < halfWidths && Math.abs(distanceToCollisionY) < halfHeights) {
+		// figures out on which side we are colliding (top, bottom, left, or right)
+			var oX = halfWidths - Math.abs(distanceToCollisionX),
+				oY = halfHeights - Math.abs(distanceToCollisionY);
+			if (oX >= oY) {
+				if (distanceToCollisionY > 0) {
+					collisionDirection = "top";
+					console.log(collisionDirection);
+					//player.y += oY;
+				} else {
+					collisionDirection = "button";
+					console.log(collisionDirection);
+					//player.y -= oY;
+				}
+			} else {
+				if (distanceToCollisionX > 0) {
+					collisionDirection = "left";
+					console.log(collisionDirection);
+					//player.x += oX;
+				} else {
+					collisionDirection = "rigth";
+					console.log(collisionDirection);
+					//player.x -= oX;
+				}
+			}
+		}
+		return collisionDirection;
+	}
+
 
 
 	function renders () {
