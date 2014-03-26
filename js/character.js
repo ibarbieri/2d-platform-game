@@ -21,7 +21,8 @@ var canvasPlayer = document.getElementById('player'),
 			speed: 4,
 			velX: 0,
 			velY: 0,
-			jumping : false
+			jumping : false,
+			life : 100
 		},
 		background = {
 			x : 0,
@@ -46,22 +47,55 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	// Create new image object to use as pattern for the background game.
+	// ATTENTION, for testing, the images must have the url with ip. Does' t work with localhost
 	var backgroundImage1 = new Image(),
 		backgroundImage2 = new Image(),
 		enemiesImage = new Image(),
-		playerImage = new Image();
+		playerImage = new Image(),
+		rockObstacle = new Image();
 
-	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
-	// backgroundImage1.onload = function () {
-	// 	// Create a pattern with this image, and set it to "repeat".
-	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
-	// }
+	// backgrounds images
+	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.onload = function () {
+		// Create a pattern with this image, and set it to "repeat".
+		backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
+	}
 
-	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
+	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-2.jpg';
 
-	enemiesImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	// enemies images
+	enemiesImage.src = 'http://192.168.1.34/2d-platform-game/img/enemie.png';
 
-	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
+	// player images
+	playerImage.src = 'http://192.168.1.34/2d-platform-game/img/player.png';
+
+	// obstacles images
+	rockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/rock.png';
+
+
+	/**
+	 * Class constructor of obstacle
+	 * @function
+	 * @params {image, x, y, width, height}
+	 * @example
+	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120, 150, 150);
+	 */
+	function Obstacles (image, x, y, width, height) {
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
+	// Array to add and remove obstacles in the game
+	var obstaclesArray = [];
+
+	// Push obstacles into the array
+	obstaclesArray.push(
+				  new Obstacles(rockObstacle, canvasWidth, canvasHeight -120, 150, 150),
+				  new Obstacles(rockObstacle, canvasWidth - 400, canvasHeight -80, 80, 80)
+				  );
 
 
 	/**
@@ -87,8 +121,9 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push enemies into the array
 	enemiesArray.push(
-					  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2)
-					  );
+				  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2),
+				  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4)
+				  );
 
 
     /**
@@ -148,6 +183,10 @@ var canvasPlayer = document.getElementById('player'),
 		// }
 
 
+		// render all the game
+		renders();
+
+
 		// Moving the enemies
 		for (var j = 0; enemiesArray.length > j; j++) {
 
@@ -161,12 +200,15 @@ var canvasPlayer = document.getElementById('player'),
 			enemiesArray[j].x += enemiesArray[j].velocityX;
 		};
 
+		// check the collision whit the enemies
+		for (var k = 0; enemiesArray.length > k; k++) {
+			checkCollision(player, enemiesArray[k]);
+		}
 
-		// render all the game
-		renders();
-
-		// check the collision of two objects
-		checkCollision(player, enemiesArray[0]);
+		// check the collision with the obstacles
+		for (var h = 0; obstaclesArray.length > h; h++) {
+			checkCollision(player, obstaclesArray[h]);
+		}
 
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
@@ -174,9 +216,6 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	function renderPlayer () {
-		//clearRect(x, y, width, height);
-		//contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
-
 		//contextPlayer.drawImage(imageSrc, x, y, width, height);
 		contextPlayer.drawImage(
 			playerImage,
@@ -219,39 +258,71 @@ var canvasPlayer = document.getElementById('player'),
 	}
 
 
+	function renderObstacles () {
+		for (var n = 0; obstaclesArray.length > n; n++) {
+			contextBackground.drawImage(
+					obstaclesArray[n].image,
+					obstaclesArray[n].x + background.x,
+					obstaclesArray[n].y + background.y,
+					obstaclesArray[n].width,
+					obstaclesArray[n].height);
+		}
+	}
 
-	function checkCollision(player, enemies) {
+
+	function checkCollision(player, enemieOrObstacle) {
 		// get the vectors to check against
 		// Here less the background.x to the player.x becouse the player.x is allways the same. The player isn't animated. The background is animated.
-		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemies.x + (enemies.width / 2)),
-			distanceToCollisionY = (player.y - background.y + (player.playerHeight / 2)) - (enemies.y + (enemies.height / 2)),
+		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemieOrObstacle.x + (enemieOrObstacle.width / 2)),
+			distanceToCollisionY = (player.y - background.y + (player.playerHeight / 2)) - (enemieOrObstacle.y + (enemieOrObstacle.height / 2)),
 
 			// add the half widths and half heights of the objects
-			halfWidths = (player.playerWidth / 2) + (enemies.width / 2),
-			halfHeights = (player.playerHeight / 2) + (enemies.height / 2),
+			halfWidths = (player.playerWidth / 2) + (enemieOrObstacle.width / 2),
+			halfHeights = (player.playerHeight / 2) + (enemieOrObstacle.height / 2),
 			collisionDirection = null;
 
 		// if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
 		if (Math.abs(distanceToCollisionX) < halfWidths && Math.abs(distanceToCollisionY) < halfHeights) {
 			// figures out on which side we are colliding (top, bottom, left, or right)
 			var oX = halfWidths - Math.abs(distanceToCollisionX),
-				oY = halfHeights - Math.abs(distanceToCollisionY);
+				oY = halfHeights - Math.abs(distanceToCollisionY);,
+				onObstacle = undefined;
+
 			if (oX >= oY) {
 				if (distanceToCollisionY > 0) {
-					collisionDirection = "top";
-				} else {
 					collisionDirection = "button";
+				} else {
+					collisionDirection = "top";
+					background.velY = -0.7;
+					background.velY++;
+					onObstacle = true;
+
+
+					//background.velY = background.backgroundHeight - enemieOrObstacle.height;
+					// console.log(enemieOrObstacle.height);
+					// background.velY = 0;
+					// background.y -= enemieOrObstacle.height;
+					//background.y += background.velY
+
+					//console.log(background.backgroundHeight, background.velY);
+
 				}
 			} else {
 				if (distanceToCollisionX > 0) {
 					collisionDirection = "left";
+					background.velX = 0;
+					background.velX--;
 				} else {
-					collisionDirection = "rigth";
+					collisionDirection = "right";
+					background.velX = 0;
+					background.velX++;
 				}
 			}
 		}
+
 		return collisionDirection;
 	}
+
 
 
 
@@ -262,8 +333,11 @@ var canvasPlayer = document.getElementById('player'),
 		// Call the function tha render the background image
 		renderBackground();
 
-		// Call the function tha render the enemies. I have yo call this function random or when y want to a enemie apear.
+		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
 		renderEnemies();
+
+		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
+		renderObstacles();
 	}
 
 	// Listen when a key is pressed
