@@ -13,3 +13,11 @@ body {
 	overflow: hidden; /*  Disable scrollbars */
 	display: block;  /* No floating content on sides */
 }
+
+
+/* Player life */
+#playerLife {
+	z-index: 2;
+	position: absolute;
+	font-size: 20px;
+}

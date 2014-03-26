@@ -1,7 +1,10 @@
 var canvasPlayer = document.getElementById('player'),
 	canvasBackground = document.getElementById('background'),
 	contextPlayer = canvasPlayer.getContext('2d'),
-	contextBackground = canvasBackground.getContext('2d');
+	contextBackground = canvasBackground.getContext('2d'),
+	onObstacle,
+	playerOnObstacle,
+	playerLife = $('#playerLife');
 
 (function (win) {
 
@@ -22,7 +25,7 @@ var canvasPlayer = document.getElementById('player'),
 			velX: 0,
 			velY: 0,
 			jumping : false,
-			life : 100
+			life : 10000
 		},
 		background = {
 			x : 0,
@@ -45,26 +48,30 @@ var canvasPlayer = document.getElementById('player'),
 	canvasBackground.width = canvasWidth;
 	canvasBackground.height = canvasHeight;
 
-
-	// Create new image object to use as pattern for the background game.
+	// Create news images objects to use in the game.
 	// ATTENTION, for testing, the images must have the url with ip. Does' t work with localhost
 	var backgroundImage1 = new Image(),
 		backgroundImage2 = new Image(),
+
 		enemiesImage = new Image(),
+		warlockImage = new Image(),
+
 		playerImage = new Image(),
+
 		rockObstacle = new Image();
 
 	// backgrounds images
 	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
-	backgroundImage1.onload = function () {
-		// Create a pattern with this image, and set it to "repeat".
-		backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
-	}
+	// backgroundImage1.onload = function () {
+	// 	// Create a pattern with this image, and set it to "repeat".
+	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
+	// }
 
 	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-2.jpg';
 
 	// enemies images
 	enemiesImage.src = 'http://192.168.1.34/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://192.168.1.34/2d-platform-game/img/warlock.png';
 
 	// player images
 	playerImage.src = 'http://192.168.1.34/2d-platform-game/img/player.png';
@@ -125,9 +132,8 @@ var canvasPlayer = document.getElementById('player'),
 				  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4)
 				  );
 
-
     /**
-	 * Move the player and the enemies and update it with requesAnimationFrame.
+	 * Move the players and the enemies and update it with requesAnimationFrame.
 	 * @returns {renders(), requestAnimationFrame(update)}
 	 * @function
 	 * @example
@@ -136,6 +142,7 @@ var canvasPlayer = document.getElementById('player'),
 	function update(){
 		// up arrow or space
 		if (keys[38] || keys[32]) {
+			onObstacle = false;
 			if (!background.jumping) {
 				background.jumping = true;
 				background.velY =+ background.speed * 2;
@@ -174,22 +181,24 @@ var canvasPlayer = document.getElementById('player'),
 			background.jumping = false;
 		}
 
-		//The player stop and not go outside of the canvas
-		//console.log(background.x);
-		// if (background.x >= canvasWidth - background.backgroundWidth) {
-		// 	background.x = canvasWidth - background.backgroundWidth;
-		// } else if (background.x <= 0) {
-		// 	background.x = 0;
-		// }
+		//The player stop and not go outside of the canvas and add the last enemie
+		// I have to plus the with images tha i add for the background
+		var backgroundPlusImages = background.x + backgroundImage1.width;
 
+		if (background.x > 0) {
+			background.x = 0;
+		} else if (backgroundPlusImages < -(backgroundImage2.width - canvasWidth)) {
+			background.x = -(backgroundImage1.width + backgroundImage2.width - canvasWidth);
+
+			// Add the final enemie
+			addFinalEnemie();
+		}
 
 		// render all the game
 		renders();
 
-
 		// Moving the enemies
 		for (var j = 0; enemiesArray.length > j; j++) {
-
 			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
 				enemiesArray[j].velocityX--;
@@ -199,6 +208,7 @@ var canvasPlayer = document.getElementById('player'),
 
 			enemiesArray[j].x += enemiesArray[j].velocityX;
 		};
+
 
 		// check the collision whit the enemies
 		for (var k = 0; enemiesArray.length > k; k++) {
@@ -210,10 +220,12 @@ var canvasPlayer = document.getElementById('player'),
 			checkCollision(player, obstaclesArray[h]);
 		}
 
+		// Update player's life
+		playerLife.html(player.life);
+
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
 	}
-
 
 	function renderPlayer () {
 		//contextPlayer.drawImage(imageSrc, x, y, width, height);
@@ -226,7 +238,6 @@ var canvasPlayer = document.getElementById('player'),
 			);
 	}
 
-
 	function renderBackground () {
 		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
 		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
@@ -234,12 +245,9 @@ var canvasPlayer = document.getElementById('player'),
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
 
-		// I have to draw this image when the player arrive to determinada position of x.
-		// contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		// contextBackground.fillStyle = backgroundPattern2;
-		// contextBackground.drawImage(backgroundImage2, backgroundImage1.width, background.y, backgroundImage2.width, backgroundImage2.height);
+		// draw the second image when the player arrive to determinada position of x.
+		contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 	}
-
 
 	function renderEnemies () {
 		var enemiesImageDifference = canvasHeight - enemiesImage.height;
@@ -257,7 +265,6 @@ var canvasPlayer = document.getElementById('player'),
 
 	}
 
-
 	function renderObstacles () {
 		for (var n = 0; obstaclesArray.length > n; n++) {
 			contextBackground.drawImage(
@@ -269,6 +276,11 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+	function addFinalEnemie () {
+		enemiesArray.push(
+				new Enemies(warlockImage, backgroundImage1.width + backgroundImage2.width - warlockImage.width, canvasHeight -275, 245, 258, 0, 0, 0)
+				);
+	}
 
 	function checkCollision(player, enemieOrObstacle) {
 		// get the vectors to check against
@@ -285,45 +297,44 @@ var canvasPlayer = document.getElementById('player'),
 		if (Math.abs(distanceToCollisionX) < halfWidths && Math.abs(distanceToCollisionY) < halfHeights) {
 			// figures out on which side we are colliding (top, bottom, left, or right)
 			var oX = halfWidths - Math.abs(distanceToCollisionX),
-				oY = halfHeights - Math.abs(distanceToCollisionY);,
-				onObstacle = undefined;
+				oY = halfHeights - Math.abs(distanceToCollisionY);
 
 			if (oX >= oY) {
-				if (distanceToCollisionY > 0) {
-					collisionDirection = "button";
-				} else {
-					collisionDirection = "top";
-					background.velY = -0.7;
-					background.velY++;
-					onObstacle = true;
-
-
-					//background.velY = background.backgroundHeight - enemieOrObstacle.height;
-					// console.log(enemieOrObstacle.height);
-					// background.velY = 0;
-					// background.y -= enemieOrObstacle.height;
-					//background.y += background.velY
-
-					//console.log(background.backgroundHeight, background.velY);
-
+				if (onObstacle == false) {
+					if (distanceToCollisionY > 0) {
+						collisionDirection = "button";
+					} else {
+						// Block de background
+						collisionDirection = "top";
+						background.velY = 0;
+						background.velY--;
+						onObstacle = true;
+					}
 				}
 			} else {
 				if (distanceToCollisionX > 0) {
+					// Block de background
 					collisionDirection = "left";
 					background.velX = 0;
 					background.velX--;
+
+					// Remove player life
+					player.life -= 25;
+
 				} else {
+					// Block de background
 					collisionDirection = "right";
 					background.velX = 0;
 					background.velX++;
+
+					// Remove player life
+					player.life -= 25;
 				}
 			}
 		}
 
 		return collisionDirection;
 	}
-
-
 
 
 	function renders () {
