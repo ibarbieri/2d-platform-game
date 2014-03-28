@@ -7,7 +7,6 @@ var canvasPlayer = document.getElementById('player'),
 	playerLife = $('#playerLife');
 
 (function (win) {
-
 	// requestAnimationFrame fallback
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
@@ -25,7 +24,9 @@ var canvasPlayer = document.getElementById('player'),
 			velX: 0,
 			velY: 0,
 			jumping : false,
-			life : 10000
+			life : 5400,
+			attack : false,
+			aggressive : 25
 		},
 		background = {
 			x : 0,
@@ -48,12 +49,12 @@ var canvasPlayer = document.getElementById('player'),
 	canvasBackground.width = canvasWidth;
 	canvasBackground.height = canvasHeight;
 
-	// Create news images objects to use in the game.
+	// Create images objects to use in the game.
 	// ATTENTION, for testing, the images must have the url with ip. Does' t work with localhost
 	var backgroundImage1 = new Image(),
 		backgroundImage2 = new Image(),
 
-		enemiesImage = new Image(),
+		wolfImage = new Image(),
 		warlockImage = new Image(),
 
 		playerImage = new Image(),
@@ -61,27 +62,27 @@ var canvasPlayer = document.getElementById('player'),
 		rockObstacle = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-2.jpg';
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
 
 	// enemies images
-	enemiesImage.src = 'http://192.168.1.34/2d-platform-game/img/enemie.png';
-	warlockImage.src = 'http://192.168.1.34/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://192.168.1.34/2d-platform-game/img/player.png';
+	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
 
 	// obstacles images
-	rockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/rock.png';
+	rockObstacle.src = 'http://localhost/2d-platform-game/img/rock.png';
 
 
 	/**
-	 * Class constructor of obstacle
+	 * Class constructor of obstacles
 	 * @function
 	 * @params {image, x, y, width, height}
 	 * @example
@@ -100,8 +101,7 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push obstacles into the array
 	obstaclesArray.push(
-				  new Obstacles(rockObstacle, canvasWidth, canvasHeight -120, 150, 150),
-				  new Obstacles(rockObstacle, canvasWidth - 400, canvasHeight -80, 80, 80)
+				  new Obstacles(rockObstacle, canvasWidth, canvasHeight -146, 247, 110)
 				  );
 
 
@@ -110,9 +110,11 @@ var canvasPlayer = document.getElementById('player'),
 	 * @function
 	 * @params {image, x, y, width, height, velX}
 	 * @example
-	 * new Enemies(enemiesImage, canvasWidth, canvasHeight - 130, 100, 100, 0, 0.9, 5);
+	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
 	 */
-	function Enemies (image, x, y, width, height, velocityX, friction, speed) {
+	function Enemies (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
+		this.life = life;
+		this.name = name;
 		this.image = image;
 		this.x = x;
 		this.y = y;
@@ -121,6 +123,7 @@ var canvasPlayer = document.getElementById('player'),
 		this.velocityX = velocityX;
 		this.friction = friction;
 		this.speed = speed;
+		this.aggressive = aggressive;
 	}
 
 	// Array to add and remove enemies in the game
@@ -128,8 +131,10 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push enemies into the array
 	enemiesArray.push(
-				  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2),
-				  new Enemies(enemiesImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4)
+				  new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50),
+				  new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4, 50),
+				  new Enemies(100, 'wolf', wolfImage, canvasWidth + 800, canvasHeight -80, 50, 50, 0, 0.9, 1.5, 50),
+				  new Enemies(100, 'wolf', wolfImage, canvasWidth + 1400, canvasHeight -80, 50, 50, 0, 0.9, 1.5, 50)
 				  );
 
     /**
@@ -139,7 +144,11 @@ var canvasPlayer = document.getElementById('player'),
 	 * @example
 	 * update();
 	 */
-	function update(){
+	function update () {
+
+		// reset the player attack to false when the user suelta the key a
+		player.attack = false;
+
 		// up arrow or space
 		if (keys[38] || keys[32]) {
 			onObstacle = false;
@@ -149,7 +158,7 @@ var canvasPlayer = document.getElementById('player'),
 			}
 		}
 
-		// left arrow.
+		// left arrow
 		if (keys[37]) {
 			if (background.velX < background.speed) {
 				// Here i plus the velX becouse the gravity is rotated.
@@ -165,11 +174,21 @@ var canvasPlayer = document.getElementById('player'),
 			}
 		}
 
+		// a key
+		if (keys[65]) {
+			// run the sprite animation for the attack
+			player.attack = true;
+		}
+
 		// apply friction to the horizontal movement of the background
 		background.velX *= friction;
 
-		// apply friction to the up movement of the background
-		background.velY -= gravity;
+		// apply gravity to the up movement of the background
+		if (onObstacle) {
+			background.velY = 0;
+		} else {
+			background.velY -= gravity;
+		}
 
 		// Move the the background
 		background.x += background.velX;
@@ -181,8 +200,8 @@ var canvasPlayer = document.getElementById('player'),
 			background.jumping = false;
 		}
 
-		//The player stop and not go outside of the canvas and add the last enemie
-		// I have to plus the with images tha i add for the background
+		// the player stop and not go outside of the canvas and add the last enemie
+		// plus the with images that i add for the background
 		var backgroundPlusImages = background.x + backgroundImage1.width;
 
 		if (background.x > 0) {
@@ -190,14 +209,14 @@ var canvasPlayer = document.getElementById('player'),
 		} else if (backgroundPlusImages < -(backgroundImage2.width - canvasWidth)) {
 			background.x = -(backgroundImage1.width + backgroundImage2.width - canvasWidth);
 
-			// Add the final enemie
+			// add the final enemie
 			addFinalEnemie();
 		}
 
 		// render all the game
 		renders();
 
-		// Moving the enemies
+		// move the enemies
 		for (var j = 0; enemiesArray.length > j; j++) {
 			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
@@ -208,7 +227,6 @@ var canvasPlayer = document.getElementById('player'),
 
 			enemiesArray[j].x += enemiesArray[j].velocityX;
 		};
-
 
 		// check the collision whit the enemies
 		for (var k = 0; enemiesArray.length > k; k++) {
@@ -227,6 +245,12 @@ var canvasPlayer = document.getElementById('player'),
 		requestAnimationFrame(update);
 	}
 
+	/**
+	 * Render the player in the middle of the scene game
+	 * @function
+	 * @example
+	 * renderBackground();
+	 */
 	function renderPlayer () {
 		//contextPlayer.drawImage(imageSrc, x, y, width, height);
 		contextPlayer.drawImage(
@@ -238,6 +262,12 @@ var canvasPlayer = document.getElementById('player'),
 			);
 	}
 
+	/**
+	 * Render the background in the game
+	 * @function
+	 * @example
+	 * renderBackground();
+	 */
 	function renderBackground () {
 		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
 		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
@@ -249,10 +279,15 @@ var canvasPlayer = document.getElementById('player'),
 		contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 	}
 
+	/**
+	 * Render all the enemies in the game
+	 * @function
+	 * @example
+	 * renderObstacles();
+	 */
 	function renderEnemies () {
-		var enemiesImageDifference = canvasHeight - enemiesImage.height;
+		var wolfImageDifference = canvasHeight - wolfImage.height;
 
-		// Loop though the enemiesArray and draw all the enemies
 		for (var i = 0; enemiesArray.length > i; i++) {
 			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
 			contextBackground.drawImage(
@@ -265,6 +300,12 @@ var canvasPlayer = document.getElementById('player'),
 
 	}
 
+	/**
+	 * Render all the obstacles in the game
+	 * @function
+	 * @example
+	 * renderObstacles();
+	 */
 	function renderObstacles () {
 		for (var n = 0; obstaclesArray.length > n; n++) {
 			contextBackground.drawImage(
@@ -276,13 +317,28 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+	/**
+	 * Add the final enemie to the game.
+	 * @function
+	 * @example
+	 * addFinalEnemie();
+	 */
 	function addFinalEnemie () {
 		enemiesArray.push(
-				new Enemies(warlockImage, backgroundImage1.width + backgroundImage2.width - warlockImage.width, canvasHeight -275, 245, 258, 0, 0, 0)
+				new Enemies(100, 'warlock', warlockImage, backgroundImage1.width + backgroundImage2.width - warlockImage.width, canvasHeight -275, 245, 258, 0, 0, 0, 150)
 				);
 	}
 
+	/**
+	 * Check the right/left top/button collisions between the player and enemies or obstacles.
+	 * @param {object} player, {object} enemie or obstacle
+	 * @returns {collisionDirection}
+	 * @function
+	 * @example
+	 * checkCollision(player, enemiesArray[k]);
+	 */
 	function checkCollision(player, enemieOrObstacle) {
+		console.log(enemieOrObstacle);
 		// get the vectors to check against
 		// Here less the background.x to the player.x becouse the player.x is allways the same. The player isn't animated. The background is animated.
 		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemieOrObstacle.x + (enemieOrObstacle.width / 2)),
@@ -306,9 +362,10 @@ var canvasPlayer = document.getElementById('player'),
 					} else {
 						// Block de background
 						collisionDirection = "top";
-						background.velY = 0;
-						background.velY--;
+
+						background.y = enemieOrObstacle.height;
 						onObstacle = true;
+
 					}
 				}
 			} else {
@@ -318,8 +375,38 @@ var canvasPlayer = document.getElementById('player'),
 					background.velX = 0;
 					background.velX--;
 
-					// Remove player life
-					player.life -= 25;
+					// if the collision come from enemie
+					if (enemieOrObstacle.name == 'wolf') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							// cuando el jugador esta atacando tengo que hace que no le saque pida
+							enemieOrObstacle.life -= player.aggressive;
+							console.log('enemie life' + enemieOrObstacle.life);
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+							console.log('player life' + player.life);
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+					} else if (enemieOrObstacle.name == 'warlock') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+					};
 
 				} else {
 					// Block de background
@@ -327,8 +414,38 @@ var canvasPlayer = document.getElementById('player'),
 					background.velX = 0;
 					background.velX++;
 
-					// Remove player life
-					player.life -= 25;
+					// If the collision come from enemie remove player life
+					if (enemieOrObstacle.name == 'wolf') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+							console.log('enemie life' + enemieOrObstacle.life);
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+							console.log('player life' + player.life);
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+					} else if (enemieOrObstacle.name == 'warlock') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+					};
+
 				}
 			}
 		}
@@ -337,6 +454,41 @@ var canvasPlayer = document.getElementById('player'),
 	}
 
 
+	/**
+	 * Check the right/left top/button collisions between the player and enemies or obstacles.
+	 * @param {object} player, {object} enemie or obstacle
+	 * @returns {collisionDirection}
+	 * @function
+	 * @example
+	 * checkCollision(player, enemiesArray[k]);
+	 */
+	function entityIsAlive (player, enemieOrObstacle) {
+		if (player.life < 0) {
+			console.log('GAME OVER');
+		} else if (enemieOrObstacle.life < 0) {
+			console.log(enemieOrObstacle);
+			//removeEnemies();
+			//remove the enemie died;
+			//enemiesArray.splice(-1);
+		}
+	}
+
+
+	/* Sprite animation */
+	var playerSprite = new Image();
+
+		playerSprite.src = 'http://localhost/2d-platform-game/img/enemie.png';
+
+
+
+
+	/**
+	 * Render all the game's component.
+	 * @returns {renderPlayer(), renderBackground(), renderEnemies(), renderObstacles()}
+	 * @function
+	 * @example
+	 * renders();
+	 */
 	function renders () {
 		// Call the function tha render the player
 		renderPlayer();
