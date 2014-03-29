@@ -24,7 +24,7 @@ var canvasPlayer = document.getElementById('player'),
 			velX: 0,
 			velY: 0,
 			jumping : false,
-			life : 5400,
+			life : 5100,
 			attack : false,
 			aggressive : 25
 		},
@@ -131,10 +131,10 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push enemies into the array
 	enemiesArray.push(
-				  new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50),
-				  new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4, 50),
-				  new Enemies(100, 'wolf', wolfImage, canvasWidth + 800, canvasHeight -80, 50, 50, 0, 0.9, 1.5, 50),
-				  new Enemies(100, 'wolf', wolfImage, canvasWidth + 1400, canvasHeight -80, 50, 50, 0, 0.9, 1.5, 50)
+				  new Enemies(400, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50),
+				  new Enemies(400, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 4, 50),
+				  new Enemies(400, 'wolf', wolfImage, canvasWidth + 800, canvasHeight -80, 50, 50, 0, 0.9, 3, 50),
+				  new Enemies(400, 'wolf', wolfImage, canvasWidth + 1400, canvasHeight -80, 50, 50, 0, 0.9, 2, 50)
 				  );
 
     /**
@@ -331,14 +331,13 @@ var canvasPlayer = document.getElementById('player'),
 
 	/**
 	 * Check the right/left top/button collisions between the player and enemies or obstacles.
-	 * @param {object} player, {object} enemie or obstacle
+	 * @param {object} player, {object} enemie or obstacle array position. Later i get the position of the array with indexOF
 	 * @returns {collisionDirection}
 	 * @function
 	 * @example
 	 * checkCollision(player, enemiesArray[k]);
 	 */
 	function checkCollision(player, enemieOrObstacle) {
-		console.log(enemieOrObstacle);
 		// get the vectors to check against
 		// Here less the background.x to the player.x becouse the player.x is allways the same. The player isn't animated. The background is animated.
 		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemieOrObstacle.x + (enemieOrObstacle.width / 2)),
@@ -368,6 +367,7 @@ var canvasPlayer = document.getElementById('player'),
 
 					}
 				}
+
 			} else {
 				if (distanceToCollisionX > 0) {
 					// Block de background
@@ -381,13 +381,12 @@ var canvasPlayer = document.getElementById('player'),
 						// if the player is attacking
 						if (player.attack) {
 							//remove enemie life
-							// cuando el jugador esta atacando tengo que hace que no le saque pida
+							// cuando el jugador esta atacando tengo que hace que no le saque vida al jugador
 							enemieOrObstacle.life -= player.aggressive;
-							console.log('enemie life' + enemieOrObstacle.life);
+							console.log(player.life);
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
-							console.log('player life' + player.life);
 						}
 
 						// check if the player or enemie is alive
@@ -399,6 +398,7 @@ var canvasPlayer = document.getElementById('player'),
 						if (player.attack) {
 							//remove enemie life
 							enemieOrObstacle.life -= player.aggressive;
+
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
@@ -421,11 +421,12 @@ var canvasPlayer = document.getElementById('player'),
 						if (player.attack) {
 							//remove enemie life
 							enemieOrObstacle.life -= player.aggressive;
-							console.log('enemie life' + enemieOrObstacle.life);
+
+							console.log(player.life);
+
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
-							console.log('player life' + player.life);
 						}
 
 						// check if the player or enemie is alive
@@ -456,20 +457,24 @@ var canvasPlayer = document.getElementById('player'),
 
 	/**
 	 * Check the right/left top/button collisions between the player and enemies or obstacles.
-	 * @param {object} player, {object} enemie or obstacle
+	 * @param {object} player, {object} enemie array
 	 * @returns {collisionDirection}
 	 * @function
 	 * @example
-	 * checkCollision(player, enemiesArray[k]);
+	 * checkCollision(player, enemies);
 	 */
-	function entityIsAlive (player, enemieOrObstacle) {
+	function entityIsAlive (player, enemies) {
 		if (player.life < 0) {
+
 			console.log('GAME OVER');
-		} else if (enemieOrObstacle.life < 0) {
-			console.log(enemieOrObstacle);
-			//removeEnemies();
+
+		} else if (enemies.life < 0) {
+
+			//get the position of the enemie died;
+			var enemiesArrayPosition = enemiesArray.indexOf(enemies);
+
 			//remove the enemie died;
-			//enemiesArray.splice(-1);
+			enemiesArray.splice(enemiesArrayPosition, 1);
 		}
 	}
 
