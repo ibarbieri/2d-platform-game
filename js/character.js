@@ -4,7 +4,13 @@ var canvasPlayer = document.getElementById('player'),
 	contextBackground = canvasBackground.getContext('2d'),
 	onObstacle,
 	playerOnObstacle,
-	playerLife = $('#playerLife');
+	playerLife = $('#playerLife'),
+	controls = document.getElementById('controls'),
+	mobileJump,
+	mobileLeft,
+	mobileRight,
+	mobileAttack;
+
 
 (function (win) {
 	// requestAnimationFrame fallback
@@ -62,23 +68,23 @@ var canvasPlayer = document.getElementById('player'),
 		rockObstacle = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://192.168.1.37/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
+	backgroundImage2.src = 'http://192.168.1.37/2d-platform-game/img/background-2.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
-	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://192.168.1.37/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://192.168.1.37/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
+	playerImage.src = 'http://192.168.1.37/2d-platform-game/img/player.png';
 
 	// obstacles images
-	rockObstacle.src = 'http://localhost/2d-platform-game/img/rock.png';
+	rockObstacle.src = 'http://192.168.1.37/2d-platform-game/img/rock.png';
 
 
 	/**
@@ -145,12 +151,11 @@ var canvasPlayer = document.getElementById('player'),
 	 * update();
 	 */
 	function update () {
-
-		// reset the player attack to false when the user suelta the key a
+		// reset the player attack to false when the user drop the key a
 		player.attack = false;
 
 		// up arrow or space
-		if (keys[38] || keys[32]) {
+		if (keys[38] || keys[32] || mobileJump) {
 			onObstacle = false;
 			if (!background.jumping) {
 				background.jumping = true;
@@ -159,7 +164,7 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 		// left arrow
-		if (keys[37]) {
+		if (keys[37] || mobileLeft) {
 			if (background.velX < background.speed) {
 				// Here i plus the velX becouse the gravity is rotated.
 				background.velX++;
@@ -167,7 +172,7 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 		// right arrow
-		if (keys[39]) {
+		if (keys[39] || mobileRight) {
 			if (background.velX >- background.speed) {
 				// Here i less the velX becouse the gravity is rotated.
 				background.velX--;
@@ -175,7 +180,7 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 		// a key
-		if (keys[65]) {
+		if (keys[65] || mobileAttack) {
 			// run the sprite animation for the attack
 			player.attack = true;
 		}
@@ -383,7 +388,6 @@ var canvasPlayer = document.getElementById('player'),
 							//remove enemie life
 							// cuando el jugador esta atacando tengo que hace que no le saque vida al jugador
 							enemieOrObstacle.life -= player.aggressive;
-							console.log(player.life);
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
@@ -421,8 +425,6 @@ var canvasPlayer = document.getElementById('player'),
 						if (player.attack) {
 							//remove enemie life
 							enemieOrObstacle.life -= player.aggressive;
-
-							console.log(player.life);
 
 						} else {
 							//remove player life
@@ -468,6 +470,12 @@ var canvasPlayer = document.getElementById('player'),
 
 			console.log('GAME OVER');
 
+			// Display inline or block to an element in the html that is diplay none and z-index -100 whit the menu desing and buttons.
+			// Player a la position 0.
+			// Enemies and obstacles reset the array.
+			// Life player set to 100%.
+
+
 		} else if (enemies.life < 0) {
 
 			//get the position of the enemie died;
@@ -508,14 +516,57 @@ var canvasPlayer = document.getElementById('player'),
 		renderObstacles();
 	}
 
-	// Listen when a key is pressed
-	document.body.addEventListener("keydown", function(e) {
-		keys[e.keyCode] = true;
+	// ATENCION: VER SI SETEANDO ALGUN FLAGA ACA PUEDO ARREGLAR LO DE DEJAR DE SALTAR OBSTACLES
+	// listen when a key is pressed
+	document.body.addEventListener("keydown", function (event) {
+		keys[event.keyCode] = true;
 	});
 
-	// Listen when a key is dropped
-	document.body.addEventListener("keyup", function(e) {
-		keys[e.keyCode] = false;
+	// listen when a key is dropped
+	document.body.addEventListener("keyup", function (event) {
+		keys[event.keyCode] = false;
+	});
+
+	// listen when a mobile button is pressed
+	controls.addEventListener("touchstart", function (event) {
+		switch (event.target.className) {
+            case 'top-arrow':
+          		mobileJump = true;
+            break;
+
+            case 'left-arrow':
+            	mobileLeft = true;
+            break;
+
+            case 'right-arrow':
+            	mobileRight = true;
+            break;
+
+            case 'attack-key':
+            	mobileAttack = true;
+            break;
+        }
+	});
+
+	// listen when a mobile button is pressed
+	controls.addEventListener("touchend", function (event) {
+		switch (event.target.className) {
+            case 'top-arrow':
+          		mobileJump = false;
+            break;
+
+            case 'left-arrow':
+            	mobileLeft = false;
+            break;
+
+            case 'right-arrow':
+            	mobileRight = false;
+            break;
+
+            case 'attack-key':
+            	mobileAttack = false;
+            break;
+        }
 	});
 
 	//Call de update function when the page load.

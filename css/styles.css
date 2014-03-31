@@ -21,3 +21,26 @@ body {
 	position: absolute;
 	font-size: 20px;
 }
+
+
+/* Controls */
+#controls {
+	position: absolute;
+	z-index: 3;
+	bottom: 0;
+	padding: 0 30px;
+	display: block;
+	width: 100%;
+}
+
+#controls .jump-attack-controls {
+	float: right;
+	position: absolute;
+	bottom: 0;
+	right: 80px;
+}
+
+#controls input {
+	width: 35px;
+	font-size: 30px;
+}
