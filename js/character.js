@@ -68,23 +68,23 @@ var canvasPlayer = document.getElementById('player'),
 		rockObstacle = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://192.168.1.37/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://192.168.1.37/2d-platform-game/img/background-2.jpg';
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-2.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://192.168.1.37/2d-platform-game/img/enemie.png';
-	warlockImage.src = 'http://192.168.1.37/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://192.168.1.37/2d-platform-game/img/player.png';
+	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
 
 	// obstacles images
-	rockObstacle.src = 'http://192.168.1.37/2d-platform-game/img/rock.png';
+	rockObstacle.src = 'http://localhost/2d-platform-game/img/rock.png';
 
 
 	/**
@@ -232,6 +232,8 @@ var canvasPlayer = document.getElementById('player'),
 
 			enemiesArray[j].x += enemiesArray[j].velocityX;
 		};
+
+		onObstacle = false;
 
 		// check the collision whit the enemies
 		for (var k = 0; enemiesArray.length > k; k++) {
