@@ -12,14 +12,18 @@ body {
 	border: 0;
 	overflow: hidden; /*  Disable scrollbars */
 	display: block;  /* No floating content on sides */
+	font-family: arial, sans-serif;
 }
 
 
 /* Player life */
-#playerLife {
+#playerLife,
+#playerScore,
+#playerHeartsDragon {
 	z-index: 2;
 	position: absolute;
 	font-size: 20px;
+	color: #FFF;
 }
 
 
