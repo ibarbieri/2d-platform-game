@@ -11,10 +11,15 @@ var canvasPlayer = document.getElementById('player'),
 	playerHeartsDragon = $('#playerHeartsDragon'),
 	controls = document.getElementById('controls'),
 	mobileJump,
+	mobileCrouch,
 	mobileLeft,
 	mobileRight,
-	mobileAttack;
-
+	mobileAttack,
+	walkingLeft = false,
+	walkingRight = false,
+	walkingStopRigth = true,
+	walkingStopLeft = false,
+	attacking = false;
 
 
 (function (win) {
@@ -27,10 +32,10 @@ var canvasPlayer = document.getElementById('player'),
     	playerWidth,
     	playerHeight,
 		player = {
-			x : canvasWidth / 2,
-			y : canvasHeight - 300, // y position of the player: 230 + the heigth of the player
-			playerWidth : 86,
-			playerHeight : 102,
+			x : (canvasWidth / 2) - 80,
+			y : canvasHeight - 350, // y position of the player: 230 + the heigth of the player
+			playerWidth : 80,
+			playerHeight : 166,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -52,17 +57,9 @@ var canvasPlayer = document.getElementById('player'),
 			jumping : false
 		},
 		keys = [],
-		friction = 0.9,
+		friction = 0.75,
 		gravity = 0.25;
-		// extras = {
-		// 	x : 0,
-		// 	y : 0,
-		// 	backgroundWidth : canvasWidth,
-		// 	backgroundHeight : canvasHeight,
-		// 	speed: 4,
-		// 	velX: 0,
-		// 	velY: 0,
-		// }
+
 
 	// Set the canvas dimentions equal to the window dimentions
 	canvasPlayer.width = canvasWidth;
@@ -75,9 +72,9 @@ var canvasPlayer = document.getElementById('player'),
 	canvasExtras.height = canvasHeight;
 
 	// Rotate the background canvas
-	contextPlayer.rotate(-3.3 * Math.PI / 180);
-	contextBackground.rotate(-3.3 * Math.PI / 180);
-	contextExtras.rotate(-3.3 * Math.PI / 180);
+	contextPlayer.rotate(-5.3 * Math.PI / 180);
+	contextBackground.rotate(-5.3 * Math.PI / 180);
+	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 	// Create images objects to use in the game.
 	// ATTENTION, for testing, the images must have the url with ip. Does' t work with localhost
@@ -142,7 +139,7 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push obstacles into the array
 	extrasArray.push(
-				  new Extras(bigPlantExtra, canvasWidth + 300, canvasHeight - 310, 501, 188)
+				  new Extras(bigPlantExtra, canvasWidth + 400, canvasHeight - 310, 700, 215)
 				  //new Extras(waterObstacle, canvasWidth + 50, canvasHeight - 220, 222, 70)
 				  );
 
@@ -222,18 +219,34 @@ var canvasPlayer = document.getElementById('player'),
 	function update () {
 		// up arrow or space
 		if (keys[38] || keys[32] || mobileJump) {
+
+			setFramesPlayerSprite('jumping');
+			walkingStopRigth = false;
+			walkingStopLeft = false;
+
 			onObstacle = false;
+
+			// ejecutar eso cuando la animación del sprite llegue al 4to frame
 			if (!background.jumping) {
 				background.jumping = true;
 				background.velY =+ background.speed * 2;
 			}
 		}
 
+		// down arrow
+		if (keys[40] || mobileCrouch) {
+			setFramesPlayerSprite('crouch');
+		}
+
+
 		// left arrow
 		if (keys[37] || mobileLeft) {
 			if (background.velX < background.speed) {
 				// Here i plus the velX becouse the gravity is rotated.
 				background.velX++;
+
+				setFramesPlayerSprite('walkingLeft');
+				walkingLeft = true;
 			}
 		}
 
@@ -242,16 +255,56 @@ var canvasPlayer = document.getElementById('player'),
 			if (background.velX >- background.speed) {
 				// Here i less the velX becouse the gravity is rotated.
 				background.velX--;
+
+				setFramesPlayerSprite('walkingRight');
+				walkingRight = true;
 			}
 		}
 
-		// reset the player attack to false when the user drop the key a
-		player.attack = false;
+		// If the player isn't walking
+		if (walkingLeft == false && walkingRight == false) {
+			if (walkingStopRigth) {
+				setFramesPlayerSprite('walkingStopRigth');
+			} else if (walkingStopLeft) {
+				//console.log('animacion parado para la izquierda');
+				setFramesPlayerSprite('walkingStopLeft');
+			}
+		}
+
+		// If left arrow is drop
+		// El problema esta que cuando se suelta una telca
+		// ese evento se caputra todo el tiempo por el rqf. Yo necesit capturarlo una sola vez.
+		// Si pongo un console log me doy cuenta todas las veces q se ejectua
+		// el problema es que el primer boton que se suelta, queda siempre suelto. Se puede ver con el console.
+		if (keys[37] == false) {
+			console.log('walkingStopLeft' + walkingStopLeft);
+			walkingLeft = false;
+			walkingStopLeft = true;
+			walkingStopRigth = false;
+		}
+
+		// If right arrow is drop
+		if (keys[39] == false) {
+			console.log('walkingStopRigth' + walkingStopRigth);
+			walkingRight = false;
+			walkingStopRigth = true;
+			walkingStopLeft = false;
+		}
+
+
+
+		// reset the player attack to false when the user drop the key a or the mobile button attack
+		if (keys[65] == false || mobileAttack == false) {
+			player.attack = false;
+		}
 
 		// a key
 		if (keys[65] || mobileAttack) {
-			// run the sprite animation for the attack
 			player.attack = true;
+
+			// run the sprite animation for the attack
+			setFramesPlayerSprite('attack');
+			attacking = true;
 		}
 
 		// apply friction to the horizontal movement of the background
@@ -316,7 +369,6 @@ var canvasPlayer = document.getElementById('player'),
 		for (k = 0; lengthEnemiesArray > k; k += 1) {
 
 			checkCollision(player, enemiesArray[k]);
-
 			// if (lengthEnemiesArray > 5) {
 			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
 			// }
@@ -342,6 +394,7 @@ var canvasPlayer = document.getElementById('player'),
 		requestAnimationFrame(update);
 	}
 
+
 	/**
 	 * Render the player in the middle of the scene game
 	 * @function
@@ -359,6 +412,7 @@ var canvasPlayer = document.getElementById('player'),
 			);
 	}
 
+
 	/**
 	 * Render the background in the game
 	 * @function
@@ -370,11 +424,13 @@ var canvasPlayer = document.getElementById('player'),
 		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+
 		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
 
 		// draw the second image when the player arrive to determinada position of x.
 		contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 	}
+
 
 	/**
 	 * Render all the enemies in the game
@@ -400,6 +456,7 @@ var canvasPlayer = document.getElementById('player'),
 
 	}
 
+
 	/**
 	 * Render all the obstacles in the game
 	 * @function
@@ -421,18 +478,22 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+
 	/**
 	 * Render all the extras in the game
 	 * @function
 	 * @example
 	 * renderExtras();
 	 */
+	// ATENCIÓN: EL PROBLEMA DE QUE SE VE EL CLEAR REC ABAJO A LA IZQUERDA CAPAZ SE PUEDE SOLUCIONAR CON EL SAVE() AND RESTORE CONTEXT.
+	// ARMAR UNA IMAGEN DEL MISMO WIDTH QUE EL BACKGROUND Y ARMAR UNA SECUENCIA DE OSBTACLES.
+	// LUEGO DIBUJAR ESA IMAGEN EN UN CANVAS ARRIBA DEL BACKGROUND Y HACER QUE SE REPITA IGUAL QUE EL BACKGROUND.
 	function renderExtras () {
 		var lengthExtrasArray = extrasArray.length,
 		l;
 
 		// Clean the context para que no se vayan agregando una imagen arriba de la otra
-		contextExtras.clearRect(0, 0, canvasWidth, canvasHeight);
+		contextExtras.clearRect(0, 0, canvasWidth + 500, canvasHeight);
 
 		for (l = 0; lengthExtrasArray > l; l += 1) {
 			//console.log('extrasArray[l].x', extrasArray[l].x , 'background.x', background.x, 'position of extra', extrasArray[l].x + background.x);
@@ -445,6 +506,7 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+
 	/**
 	 * Add the final enemie to the game.
 	 * @function
@@ -456,6 +518,7 @@ var canvasPlayer = document.getElementById('player'),
 				new Enemies(100, 'warlock', warlockImage, backgroundImage1.width + backgroundImage2.width - warlockImage.width, canvasHeight -508, 245, 258, 0, 0, 0, 150)
 				);
 	}
+
 
 	/**
 	 * Check the right/left top/button collisions between the player and enemies or obstacles.
@@ -501,7 +564,7 @@ var canvasPlayer = document.getElementById('player'),
 							background.y = enemieOrObstacle.height - enemieOrObstacle.differenceY;
 							onObstacle = true;
 						}
-												// } else if (enemieOrObstacle.name == 'water') {
+						// } else if (enemieOrObstacle.name == 'water') {
 						// 	//console.log('estoy sobre water');
 						// 	background.velX -= 0.5;
 						// 	onObstacle = true;
@@ -549,8 +612,8 @@ var canvasPlayer = document.getElementById('player'),
 
 					}
 					// else if (enemieOrObstacle.name == 'water') {
- 				// 		console.log('left');
- 				// 		onObstacle = true;
+ 					// console.log('left');
+ 					// onObstacle = true;
 					// }
 
 
@@ -617,9 +680,7 @@ var canvasPlayer = document.getElementById('player'),
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
 		if (player.life < 0) {
-
 			console.log('GAME OVER');
-
 			// Display inline or block to an element in the html that is diplay none and z-index -100 whit the menu desing and buttons.
 			// Player a la position 0.
 			// Enemies and obstacles reset the array.
@@ -636,10 +697,26 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+
+	/**
+	 * Update the player score when the player kill an enemie.
+	 * @param {number} score,
+	 * @function
+	 * @example
+	 * playerUpdateScore(100);
+	 */
 	function playerUpdateScore (scoreGet) {
 		player.score += scoreGet;
 	}
 
+
+	/**
+	 * Chek if the enemie is out the canvas
+	 * @param {Array} enemiesArray[j],
+	 * @function
+	 * @example
+	 * enemiesIsOutTheCanvas(enemiesArray[j]);
+	 */
 	function enemiesIsOutTheCanvas (enemies) {
 		var positionXOfEnemie = enemiesArray[enemiesArray.indexOf(enemies)].x;
 		if (positionXOfEnemie < 100) {
@@ -650,13 +727,115 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
-
 	/* Sprite animation */
-	var playerSprite = new Image();
+	var playerSpriteRight = new Image(),
+		playerSpriteLeft = new Image(),
+		frame = 0,
+		delta,
+		lastUpdateTime = 0,
+		updateDelta = 0,
+		msPerFrame = 100;
 
-		playerSprite.src = 'http://localhost/2d-platform-game/img/player-animation.png';
+	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
 
 
+	/**
+	 * Set the frames amount and speed.
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * setFramesPlayerSprite('walkingRight');
+	 */
+	function setFramesPlayerSprite (walkingDirection) {
+
+		delta = Date.now() - lastUpdateTime;
+
+		if (updateDelta > msPerFrame) {
+			updateDelta = 0;
+
+			drawSpriteAnimation(walkingDirection);
+
+			frame += 1;
+
+			if (frame >= 9) {
+				frame = 0;
+			}
+
+		} else {
+			updateDelta += delta;
+		}
+
+		lastUpdateTime = Date.now();
+	}
+
+
+	/**
+	 * Draw the sprite animation depending on the direction of the arrow down
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * drawSpriteAnimation('walkingRight');
+	 */
+	function drawSpriteAnimation (walkingDirection) {
+
+		// 	contextPlayer.drawImage(img, sx, sy, swidth, sheight, x, y, width, height);
+		// 	img	Specifies the image, canvas, or video element to use
+		// 	sx	Optional parameter. The x coordinate where to start clipping
+		// 	sy	Optional parameter. The y coordinate where to start clipping
+		// 	swidth	Optional parameter. The width of the clipped image
+		// 	sheight	Optional parameter. The height of the clipped image
+		// 	x	The x coordinate where to place the image on the canvas
+		// 	y	The y coordinate where to place the image on the canvas
+		// 	width	Optional parameter. The width of the image to use (stretch or reduce the image)
+		// 	height	Optional parameter. The height of the image to use (stretch or reduce the image)
+
+		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		switch (walkingDirection) {
+            case 'walkingRight':
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'walkingStopRigth':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
+            break;
+
+            case 'crouch':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'jumping':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'attack':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
+            break;
+
+
+            case 'walkingLeft':
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'walkingStopLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
+            break;
+
+            case 'crouchLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'jumpingLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            break;
+
+            case 'attackLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
+            break;
+
+        }
+	}
 
 
 	/**
@@ -668,19 +847,19 @@ var canvasPlayer = document.getElementById('player'),
 	 */
 	function renders () {
 		// Call the function tha render the player
-		renderPlayer();
+		//renderPlayer();
 
 		// Call the function tha render the background image
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		renderEnemies();
+		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		renderObstacles();
+		//renderObstacles();
 
 		// Call the function tha render the extras.
-		renderExtras();
+		//renderExtras();
 	}
 
 
@@ -712,6 +891,10 @@ var canvasPlayer = document.getElementById('player'),
           		mobileJump = true;
             break;
 
+            case 'down-arrow':
+          		mobileCrouch = true;
+            break;
+
             case 'left-arrow':
             	mobileLeft = true;
             break;
@@ -731,6 +914,10 @@ var canvasPlayer = document.getElementById('player'),
 		switch (event.target.className) {
             case 'top-arrow':
           		mobileJump = false;
+            break;
+
+            case 'down-arrow':
+          		mobileCrouch = true;
             break;
 
             case 'left-arrow':
