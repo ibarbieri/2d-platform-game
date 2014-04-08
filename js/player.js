@@ -17,7 +17,7 @@ var canvasPlayer = document.getElementById('player'),
 	mobileAttack,
 	walkingLeft = false,
 	walkingRight = false,
-	walkingStopRigth = true,
+	walkingStopRigth = false,
 	walkingStopLeft = false,
 	attacking = false;
 
@@ -238,7 +238,6 @@ var canvasPlayer = document.getElementById('player'),
 			setFramesPlayerSprite('crouch');
 		}
 
-
 		// left arrow
 		if (keys[37] || mobileLeft) {
 			if (background.velX < background.speed) {
@@ -247,6 +246,8 @@ var canvasPlayer = document.getElementById('player'),
 
 				setFramesPlayerSprite('walkingLeft');
 				walkingLeft = true;
+
+				walkingStopRigth = false;
 			}
 		}
 
@@ -258,39 +259,35 @@ var canvasPlayer = document.getElementById('player'),
 
 				setFramesPlayerSprite('walkingRight');
 				walkingRight = true;
+
+				walkingStopLeft = false;
 			}
 		}
 
-		// If the player isn't walking
+		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
-			if (walkingStopRigth) {
-				setFramesPlayerSprite('walkingStopRigth');
-			} else if (walkingStopLeft) {
-				//console.log('animacion parado para la izquierda');
+			setFramesPlayerSprite('walkingStopRigth');
+			walkingStopRigth = true;
+			walkingStopLeft = true;
+		}
+
+		// If left arrow is drop
+		if (keys[37] == false) {
+			walkingStopLeft = true;
+			if (walkingStopLeft) {
+				console.log('drop arrow left');
 				setFramesPlayerSprite('walkingStopLeft');
 			}
 		}
 
-		// If left arrow is drop
-		// El problema esta que cuando se suelta una telca
-		// ese evento se caputra todo el tiempo por el rqf. Yo necesit capturarlo una sola vez.
-		// Si pongo un console log me doy cuenta todas las veces q se ejectua
-		// el problema es que el primer boton que se suelta, queda siempre suelto. Se puede ver con el console.
-		if (keys[37] == false) {
-			console.log('walkingStopLeft' + walkingStopLeft);
-			walkingLeft = false;
-			walkingStopLeft = true;
-			walkingStopRigth = false;
-		}
-
 		// If right arrow is drop
 		if (keys[39] == false) {
-			console.log('walkingStopRigth' + walkingStopRigth);
-			walkingRight = false;
-			walkingStopRigth = true;
-			walkingStopLeft = false;
+			walkingStopRight = true;
+			if (walkingStopRigth) {
+				console.log('drop arrow right');
+				setFramesPlayerSprite('walkingStopRigth');
+			}
 		}
-
 
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
@@ -813,7 +810,6 @@ var canvasPlayer = document.getElementById('player'),
             	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
             break;
 
-
             case 'walkingLeft':
           		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
@@ -853,13 +849,13 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		//renderEnemies();
+		renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		//renderObstacles();
+		renderObstacles();
 
 		// Call the function tha render the extras.
-		//renderExtras();
+		renderExtras();
 	}
 
 
@@ -882,6 +878,7 @@ var canvasPlayer = document.getElementById('player'),
 	// listen when a key is dropped
 	document.body.addEventListener("keyup", function (event) {
 		keys[event.keyCode] = false;
+
 	});
 
 	// listen when a mobile button is pressed
