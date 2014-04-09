@@ -62,13 +62,13 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	// Set the canvas dimentions equal to the window dimentions
-	canvasPlayer.width = canvasWidth;
+	canvasPlayer.width = canvasWidth + 200;
 	canvasPlayer.height = canvasHeight;
 
-	canvasBackground.width = canvasWidth;
+	canvasBackground.width = canvasWidth + 200;
 	canvasBackground.height = canvasHeight;
 
-	canvasExtras.width = canvasWidth;
+	canvasExtras.width = canvasWidth + 200;
 	canvasExtras.height = canvasHeight;
 
 	// Rotate the background canvas
@@ -94,29 +94,29 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	// backgrounds images
-	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://192.168.1.35/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
+	backgroundImage2.src = 'http://192.168.1.35/2d-platform-game/img/background-1.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
-	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://192.168.1.35/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://192.168.1.35/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
+	playerImage.src = 'http://192.168.1.35/2d-platform-game/img/player.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://localhost/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://localhost/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'http://192.168.1.35/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://192.168.1.35/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://localhost/2d-platform-game/img/water.png';
+	waterObstacle.src = 'http://192.168.1.35/2d-platform-game/img/water.png';
 
 	// extras images
-	bigPlantExtra.src = 'http://localhost/2d-platform-game/img/big-plant.png';
+	bigPlantExtra.src = 'http://192.168.1.35/2d-platform-game/img/big-plant.png';
 
 
 	/**
@@ -447,10 +447,11 @@ var canvasPlayer = document.getElementById('player'),
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 
-		contextBackground.drawImage(backgroundImage1, background.x, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+		// background.x - 200 Becouse i less the 200px withe space that leave the rotation.
+		contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
 
 		// draw the second image when the player arrive to determinada position of x.
-		contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		//contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width -200, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 	}
 
 
@@ -758,8 +759,8 @@ var canvasPlayer = document.getElementById('player'),
 		updateDelta = 0,
 		msPerFrame = 100;
 
-	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'http://192.168.1.35/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://192.168.1.35/2d-platform-game/img/player-actions-left.png';
 
 
 	/**
@@ -874,7 +875,7 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		renderEnemies();
+		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
 		renderObstacles();
