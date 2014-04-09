@@ -244,17 +244,25 @@ var canvasPlayer = document.getElementById('player'),
 
 			setFramesPlayerSprite('crouch', 0, 9, 100);
 
-			if (frame == 6) {
+			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				setFramesPlayerSprite('crouch', 6, 1, 100);
+				setFramesPlayerSprite('crouch', 4, 1, 100);
 			}
 		}
 
 
 		// If down arrow is drop
 		// if (keys[40] == false) {
-		// 	console.log('solte tecla down');
-		// 	setFramesPlayerSprite('crouch', 7, 9, 100);
+
+		// 	if (frame >= 4) {
+
+		// 		setFramesPlayerSprite('crouch', 5, 9, 100);
+
+		// 		if (frame == 8) {
+		// 			//setFramesPlayerSprite('crouch', 8, 1, 100);
+		// 			setFramesPlayerSprite('walkingRight', 0, 9, 100);
+		// 		}
+		// 	}
 		// }
 
 
