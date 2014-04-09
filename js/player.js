@@ -17,8 +17,8 @@ var canvasPlayer = document.getElementById('player'),
 	mobileAttack,
 	walkingLeft = false,
 	walkingRight = false,
-	walkingStopRigth = false,
-	walkingStopLeft = false,
+	crouch = false,
+	jump = false,
 	attacking = false;
 
 
@@ -94,29 +94,29 @@ var canvasPlayer = document.getElementById('player'),
 
 
 	// backgrounds images
-	backgroundImage1.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/background-1.jpg';
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/background-1.jpg';
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/enemie.png';
-	warlockImage.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/warlock.png';
+	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/player.png';
+	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/small-rock.png';
-	bigRockObstacle.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/big-rock.png';
+	smallRockObstacle.src = 'http://localhost/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://localhost/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/water.png';
+	waterObstacle.src = 'http://localhost/2d-platform-game/img/water.png';
 
 	// extras images
-	bigPlantExtra.src = 'http://ibdesigns.com.ar/clients/lesath/game/img/big-plant.png';
+	bigPlantExtra.src = 'http://localhost/2d-platform-game/img/big-plant.png';
 
 
 	/**
@@ -217,26 +217,47 @@ var canvasPlayer = document.getElementById('player'),
 	 * update();
 	 */
 	function update () {
+
 		// up arrow or space
 		if (keys[38] || keys[32] || mobileJump) {
 
-			setFramesPlayerSprite('jumping');
-			walkingStopRigth = false;
-			walkingStopLeft = false;
-
 			onObstacle = false;
 
-			// ejecutar eso cuando la animación del sprite llegue al 4to frame
 			if (!background.jumping) {
 				background.jumping = true;
-				background.velY =+ background.speed * 2;
+
+				setFramesPlayerSprite('jumping', 0, 9, 55);
+
+				if (frame == 6) {
+					background.velY =+ (background.speed * 2);
+				}
+				// This run when the character touch the land.
+				// if (background.velY <= 0) {
+				//   	//frame = 0;
+				// }
 			}
 		}
 
+
 		// down arrow
 		if (keys[40] || mobileCrouch) {
-			setFramesPlayerSprite('crouch');
+
+			setFramesPlayerSprite('crouch', 0, 9, 100);
+
+			if (frame == 6) {
+				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+				setFramesPlayerSprite('crouch', 6, 1, 100);
+			}
 		}
+
+
+		// If down arrow is drop
+		// if (keys[40] == false) {
+		// 	console.log('solte tecla down');
+		// 	setFramesPlayerSprite('crouch', 7, 9, 100);
+		// }
+
+
 
 		// left arrow
 		if (keys[37] || mobileLeft) {
@@ -244,10 +265,9 @@ var canvasPlayer = document.getElementById('player'),
 				// Here i plus the velX becouse the gravity is rotated.
 				background.velX++;
 
-				setFramesPlayerSprite('walkingLeft');
 				walkingLeft = true;
 
-				walkingStopRigth = false;
+				setFramesPlayerSprite('walkingLeft', 0, 9, 100);
 			}
 		}
 
@@ -257,35 +277,30 @@ var canvasPlayer = document.getElementById('player'),
 				// Here i less the velX becouse the gravity is rotated.
 				background.velX--;
 
-				setFramesPlayerSprite('walkingRight');
 				walkingRight = true;
 
-				walkingStopLeft = false;
+				setFramesPlayerSprite('walkingRight', 0, 9, 100);
 			}
 		}
 
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
-			setFramesPlayerSprite('walkingStopRigth');
-			walkingStopRigth = true;
-			walkingStopLeft = true;
+			if (crouch == false) {
+				setFramesPlayerSprite('walkingStopRight', 0, 9, 100);
+			}
 		}
 
 		// If left arrow is drop
 		if (keys[37] == false) {
-			walkingStopLeft = true;
-			if (walkingStopLeft) {
-				console.log('drop arrow left');
-				setFramesPlayerSprite('walkingStopLeft');
+			if (!walkingRight) {
+				setFramesPlayerSprite('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
 		// If right arrow is drop
 		if (keys[39] == false) {
-			walkingStopRight = true;
-			if (walkingStopRigth) {
-				console.log('drop arrow right');
-				setFramesPlayerSprite('walkingStopRigth');
+			if (!walkingLeft) {
+				setFramesPlayerSprite('walkingStopRight', 0, 9, 100);
 			}
 		}
 
@@ -742,9 +757,9 @@ var canvasPlayer = document.getElementById('player'),
 	 * @param {String} walkingRight,
 	 * @function
 	 * @example
-	 * setFramesPlayerSprite('walkingRight');
+	 * setFramesPlayerSprite('walkingRight', 9, 0, 100);
 	 */
-	function setFramesPlayerSprite (walkingDirection) {
+	function setFramesPlayerSprite (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
 
 		delta = Date.now() - lastUpdateTime;
 
@@ -755,8 +770,8 @@ var canvasPlayer = document.getElementById('player'),
 
 			frame += 1;
 
-			if (frame >= 9) {
-				frame = 0;
+			if (frame >= frameCuantity) {
+				frame = frameStartPosition;
 			}
 
 		} else {
@@ -794,7 +809,7 @@ var canvasPlayer = document.getElementById('player'),
           		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
 
-            case 'walkingStopRigth':
+            case 'walkingStopRight':
             	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
             break;
 
