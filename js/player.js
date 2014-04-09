@@ -226,7 +226,7 @@ var canvasPlayer = document.getElementById('player'),
 			if (!background.jumping) {
 				background.jumping = true;
 
-				setFramesPlayerSprite('jumping', 0, 9, 55);
+				setFramesPlayerSprite('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
 					background.velY =+ (background.speed * 2);
@@ -241,12 +241,12 @@ var canvasPlayer = document.getElementById('player'),
 
 		// down arrow
 		if (keys[40] || mobileCrouch) {
-
-			setFramesPlayerSprite('crouch', 0, 9, 100);
+			// Function OK when the player only walk from right
+			setFramesPlayerSprite('crouchRight', 0, 9, 100);
 
 			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				setFramesPlayerSprite('crouch', 4, 1, 100);
+				setFramesPlayerSprite('crouchRight', 4, 1, 100);
 			}
 		}
 
@@ -312,20 +312,22 @@ var canvasPlayer = document.getElementById('player'),
 			}
 		}
 
+		// a key
+		if (keys[65] || mobileAttack) {
+			player.attack = true;
+
+			// run the sprite animation for the attack
+			setFramesPlayerSprite('attackRight');
+			attacking = true;
+		}
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
 		if (keys[65] == false || mobileAttack == false) {
 			player.attack = false;
 		}
 
-		// a key
-		if (keys[65] || mobileAttack) {
-			player.attack = true;
 
-			// run the sprite animation for the attack
-			setFramesPlayerSprite('attack');
-			attacking = true;
-		}
+
 
 		// apply friction to the horizontal movement of the background
 		background.velX *= friction;
@@ -821,15 +823,15 @@ var canvasPlayer = document.getElementById('player'),
             	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
             break;
 
-            case 'crouch':
+            case 'crouchRight':
             	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
 
-            case 'jumping':
+            case 'jumpingRight':
             	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
 
-            case 'attack':
+            case 'attackRight':
             	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
             break;
 
