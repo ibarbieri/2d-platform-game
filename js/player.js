@@ -19,7 +19,8 @@ var canvasPlayer = document.getElementById('player'),
 	walkingRight = false,
 	crouch = false,
 	jump = false,
-	attacking = false;
+	attacking = false,
+	backgroundPlusImages;
 
 
 (function (win) {
@@ -54,10 +55,21 @@ var canvasPlayer = document.getElementById('player'),
 			speed: 4,
 			velX: 0,
 			velY: 0,
+			friction: 0.75,
+			jumping : false
+		},
+		extras = {
+			x : 0,
+			y : 0,
+			extrasWidth : canvasWidth,
+			extrasHeight : canvasHeight,
+			speed: 6,
+			velX: 0,
+			velY: 0,
+			friction: 0.85,
 			jumping : false
 		},
 		keys = [],
-		friction = 0.75,
 		gravity = 0.25;
 
 
@@ -90,58 +102,35 @@ var canvasPlayer = document.getElementById('player'),
 		bigRockObstacle = new Image(),
 		waterObstacle = new Image(),
 
-		bigPlantExtra = new Image();
+		extras1 = new Image(),
+		extras2 = new Image();
 
 
 	// backgrounds images
-	backgroundImage1.src = 'http://192.168.1.35/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://192.168.1.35/2d-platform-game/img/background-1.jpg';
+	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://192.168.1.35/2d-platform-game/img/enemie.png';
-	warlockImage.src = 'http://192.168.1.35/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://192.168.1.35/2d-platform-game/img/player.png';
+	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://192.168.1.35/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://192.168.1.35/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'http://localhost/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://localhost/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://192.168.1.35/2d-platform-game/img/water.png';
+	waterObstacle.src = 'http://localhost/2d-platform-game/img/water.png';
 
 	// extras images
-	bigPlantExtra.src = 'http://192.168.1.35/2d-platform-game/img/big-plant.png';
-
-
-	/**
-	 * Class constructor of obstacles
-	 * @function
-	 * @params {image, x, y, width, height}
-	 * @example
-	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120 -(the height of the image plus 230 of the canvas), 150, 150);
-	 */
-	function Extras (image, x, y, width, height) {
-		this.image = image;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-	}
-
-	// Array to add and remove obstacles in the game
-	var extrasArray = [];
-
-	// Push obstacles into the array
-	extrasArray.push(
-				  new Extras(bigPlantExtra, canvasWidth + 400, canvasHeight - 310, 700, 215)
-				  //new Extras(waterObstacle, canvasWidth + 50, canvasHeight - 220, 222, 70)
-				  );
+	extras1.src = 'http://localhost/2d-platform-game/img/extras-1.png';
+	extras2.src = 'http://localhost/2d-platform-game/img/extras-2.png';
 
 	/**
 	 * Class constructor of obstacles
@@ -229,7 +218,9 @@ var canvasPlayer = document.getElementById('player'),
 				setFramesPlayerSprite('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
+
 					background.velY =+ (background.speed * 2);
+
 				}
 				// This run when the character touch the land.
 				// if (background.velY <= 0) {
@@ -269,9 +260,11 @@ var canvasPlayer = document.getElementById('player'),
 
 		// left arrow
 		if (keys[37] || mobileLeft) {
-			if (background.velX < background.speed) {
-				// Here i plus the velX becouse the gravity is rotated.
+			if (background.velX < background.speed  ||  extras.velX < extras.speed) {
+
 				background.velX++;
+
+				extras.velX++;
 
 				walkingLeft = true;
 
@@ -281,9 +274,11 @@ var canvasPlayer = document.getElementById('player'),
 
 		// right arrow
 		if (keys[39] || mobileRight) {
-			if (background.velX >- background.speed) {
-				// Here i less the velX becouse the gravity is rotated.
+			if (background.velX >- background.speed && extras.velX >- extras.speed) {
+
 				background.velX--;
+
+				extras.velX--;
 
 				walkingRight = true;
 
@@ -330,7 +325,10 @@ var canvasPlayer = document.getElementById('player'),
 
 
 		// apply friction to the horizontal movement of the background
-		background.velX *= friction;
+		background.velX *= background.friction;
+
+		extras.velX *= extras.friction;
+
 
 		// apply gravity to the up movement of the background
 		if (onObstacle) {
@@ -343,6 +341,10 @@ var canvasPlayer = document.getElementById('player'),
 		background.x += background.velX;
 		background.y += background.velY;
 
+		// Move the the extras
+		extras.x += extras.velX;
+
+
 		// reset the jump property when the background hits the ground
 		if (background.y <= canvasHeight - background.backgroundHeight) {
 			background.y = canvasHeight - background.backgroundHeight;
@@ -350,13 +352,15 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 		// the player stop and not go outside of the canvas and add the last enemie
-		// plus the with images that i add for the background
-		var backgroundPlusImages = background.x + backgroundImage1.width;
+		// plus the with images that repeat in the background
+		backgroundPlusImages = backgroundImage1.width * 5
 
 		if (background.x > 0) {
 			background.x = 0;
-		} else if (backgroundPlusImages < -(backgroundImage2.width - canvasWidth)) {
-			background.x = -(backgroundImage1.width + backgroundImage2.width - canvasWidth);
+
+		} else if ( -(background.x) >= backgroundPlusImages - canvasWidth - 200) {
+
+			background.x = -(backgroundPlusImages - canvasWidth - 200);
 
 			// add the final enemie
 			addFinalEnemie();
@@ -374,34 +378,34 @@ var canvasPlayer = document.getElementById('player'),
 			h;
 
 		// move the enemies
-		for (j = 0; lengthEnemiesArray > j; j += 1) {
-			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
-			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
-				enemiesArray[j].velocityX--;
-			}
+		// for (j = 0; lengthEnemiesArray > j; j += 1) {
+		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+		// 		enemiesArray[j].velocityX--;
+		// 	}
 
-			enemiesArray[j].velocityX *= friction;
+		// 	enemiesArray[j].velocityX *= friction;
 
-			enemiesArray[j].x += enemiesArray[j].velocityX;
-		};
+		// 	enemiesArray[j].x += enemiesArray[j].velocityX;
+		// };
 
 		onObstacle = false;
 
-		// check the collision whit the enemies and if the enemie is out the canvas
-		for (k = 0; lengthEnemiesArray > k; k += 1) {
+		//check the collision whit the enemies and if the enemie is out the canvas
+		// for (k = 0; lengthEnemiesArray > k; k += 1) {
 
-			checkCollision(player, enemiesArray[k]);
-			// if (lengthEnemiesArray > 5) {
-			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-			// }
-		}
+		// 	checkCollision(player, enemiesArray[k]);
+		// 	// if (lengthEnemiesArray > 5) {
+		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
+		// 	// }
+		// }
 
-		// check the collision with the obstacles
-		for (h = 0; lengthobstaclesArray > h; h += 1) {
-			if (obstaclesArray[h].name == 'rock') {
-				checkCollision(player, obstaclesArray[h]);
-			}
-		}
+		// //check the collision with the obstacles
+		// for (h = 0; lengthobstaclesArray > h; h += 1) {
+		// 	if (obstaclesArray[h].name == 'rock') {
+		// 		checkCollision(player, obstaclesArray[h]);
+		// 	}
+		// }
 
 		// Update player life
 		playerLife.html('PLAYER LIFE :' + player.life);
@@ -421,7 +425,7 @@ var canvasPlayer = document.getElementById('player'),
 	 * Render the player in the middle of the scene game
 	 * @function
 	 * @example
-	 * renderBackground();
+	 * renderPlayer();
 	 */
 	function renderPlayer () {
 		//contextPlayer.drawImage(imageSrc, x, y, width, height);
@@ -447,11 +451,27 @@ var canvasPlayer = document.getElementById('player'),
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 
-		// background.x - 200 Becouse i less the 200px withe space that leave the rotation.
-		contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+		if ( -(background.x) <= (backgroundImage1.width - 200) ) {
+			contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+		}
 
-		// draw the second image when the player arrive to determinada position of x.
-		//contextBackground.drawImage(backgroundImage2, background.x + backgroundImage1.width -200, background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		// Ask if the background.x position is less than the backgroundImage1.width - 200 AND ask if the background.x position is higher
+		// than backgroundImage1.width * 2) - 200 tha is the position where start the third image.
+		if ( -(background.x) >= (backgroundImage1.width - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 2) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1.width - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(background.x) >= (backgroundImage1.width * 2 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 3) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 2) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(background.x) >= (backgroundImage1.width * 3 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 4) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 3) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(background.x) >= (backgroundImage1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 5) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 4) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
 	}
 
 
@@ -508,25 +528,9 @@ var canvasPlayer = document.getElementById('player'),
 	 * @example
 	 * renderExtras();
 	 */
-	// ATENCIÓN: EL PROBLEMA DE QUE SE VE EL CLEAR REC ABAJO A LA IZQUERDA CAPAZ SE PUEDE SOLUCIONAR CON EL SAVE() AND RESTORE CONTEXT.
-	// ARMAR UNA IMAGEN DEL MISMO WIDTH QUE EL BACKGROUND Y ARMAR UNA SECUENCIA DE OSBTACLES.
-	// LUEGO DIBUJAR ESA IMAGEN EN UN CANVAS ARRIBA DEL BACKGROUND Y HACER QUE SE REPITA IGUAL QUE EL BACKGROUND.
 	function renderExtras () {
-		var lengthExtrasArray = extrasArray.length,
-		l;
-
-		// Clean the context para que no se vayan agregando una imagen arriba de la otra
-		contextExtras.clearRect(0, 0, canvasWidth + 500, canvasHeight);
-
-		for (l = 0; lengthExtrasArray > l; l += 1) {
-			//console.log('extrasArray[l].x', extrasArray[l].x , 'background.x', background.x, 'position of extra', extrasArray[l].x + background.x);
-			contextExtras.drawImage(
-					extrasArray[l].image,
-					extrasArray[l].x + background.x,
-					extrasArray[l].y + background.y,
-					extrasArray[l].width,
-					extrasArray[l].height);
-		}
+		contextExtras.clearRect(-200, 0, canvasWidth + 200, canvasHeight);
+		contextExtras.drawImage(extras1, extras.x, background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
 	}
 
 
@@ -538,7 +542,7 @@ var canvasPlayer = document.getElementById('player'),
 	 */
 	function addFinalEnemie () {
 		enemiesArray.push(
-				new Enemies(100, 'warlock', warlockImage, backgroundImage1.width + backgroundImage2.width - warlockImage.width, canvasHeight -508, 245, 258, 0, 0, 0, 150)
+				new Enemies(100, 'warlock', warlockImage, (backgroundPlusImages - 200) - warlockImage.width, canvasHeight -450, 245, 258, 0, 0, 0, 150)
 				);
 	}
 
@@ -759,8 +763,8 @@ var canvasPlayer = document.getElementById('player'),
 		updateDelta = 0,
 		msPerFrame = 100;
 
-	playerSpriteRight.src = 'http://192.168.1.35/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://192.168.1.35/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
 
 
 	/**
@@ -875,10 +879,10 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		//renderEnemies();
+		renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		renderObstacles();
+		//renderObstacles();
 
 		// Call the function tha render the extras.
 		renderExtras();
