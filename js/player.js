@@ -66,7 +66,7 @@ var canvasPlayer = document.getElementById('player'),
 			speed: 6,
 			velX: 0,
 			velY: 0,
-			friction: 0.85,
+			friction: 0.82,
 			jumping : false
 		},
 		keys = [],
@@ -88,23 +88,27 @@ var canvasPlayer = document.getElementById('player'),
 	contextBackground.rotate(-5.3 * Math.PI / 180);
 	contextExtras.rotate(-5.3 * Math.PI / 180);
 
+
 	// Create images objects to use in the game.
-	// ATTENTION, for testing, the images must have the url with ip. Does' t work with localhost
 	var backgroundImage1 = new Image(),
 		backgroundImage2 = new Image(),
 
+		// enemies images
 		wolfImage = new Image(),
 		warlockImage = new Image(),
 
-		playerImage = new Image(),
+		// player images
+		playerSpriteRight = new Image(),
+		playerSpriteLeft = new Image(),
 
+		// obstacles images
 		smallRockObstacle = new Image(),
 		bigRockObstacle = new Image(),
 		waterObstacle = new Image(),
 
+		// extras images
 		extras1 = new Image(),
 		extras2 = new Image();
-
 
 	// backgrounds images
 	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
@@ -116,11 +120,12 @@ var canvasPlayer = document.getElementById('player'),
 	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://localhost/2d-platform-game/img/enemie.png';
+	wolfImage.src = 'http://localhost/2d-platform-game/img/wolf-animation.png';
 	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerImage.src = 'http://localhost/2d-platform-game/img/player.png';
+	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
 
 	// obstacles images
 	smallRockObstacle.src = 'http://localhost/2d-platform-game/img/small-rock.png';
@@ -207,6 +212,7 @@ var canvasPlayer = document.getElementById('player'),
 	 */
 	function update () {
 
+		// USAR PARA TODAS LAS COMPARACIONES TRIPLE ===
 		// up arrow or space
 		if (keys[38] || keys[32] || mobileJump) {
 
@@ -215,7 +221,7 @@ var canvasPlayer = document.getElementById('player'),
 			if (!background.jumping) {
 				background.jumping = true;
 
-				setFramesPlayerSprite('jumpingRight', 0, 9, 55);
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
 
@@ -233,11 +239,11 @@ var canvasPlayer = document.getElementById('player'),
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 			// Function OK when the player only walk from right
-			setFramesPlayerSprite('crouchRight', 0, 9, 100);
+			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
 
 			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				setFramesPlayerSprite('crouchRight', 4, 1, 100);
+				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
 			}
 		}
 
@@ -247,11 +253,11 @@ var canvasPlayer = document.getElementById('player'),
 
 		// 	if (frame >= 4) {
 
-		// 		setFramesPlayerSprite('crouch', 5, 9, 100);
+		// 		setFramesSpriteAnimation('crouch', 5, 9, 100);
 
 		// 		if (frame == 8) {
-		// 			//setFramesPlayerSprite('crouch', 8, 1, 100);
-		// 			setFramesPlayerSprite('walkingRight', 0, 9, 100);
+		// 			//setFramesSpriteAnimation('crouch', 8, 1, 100);
+		// 			setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 		// 		}
 		// 	}
 		// }
@@ -268,7 +274,7 @@ var canvasPlayer = document.getElementById('player'),
 
 				walkingLeft = true;
 
-				setFramesPlayerSprite('walkingLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
 			}
 		}
 
@@ -282,28 +288,28 @@ var canvasPlayer = document.getElementById('player'),
 
 				walkingRight = true;
 
-				setFramesPlayerSprite('walkingRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 			}
 		}
 
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
 			if (crouch == false) {
-				setFramesPlayerSprite('walkingStopRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
 		// If left arrow is drop
 		if (keys[37] == false) {
 			if (!walkingRight) {
-				setFramesPlayerSprite('walkingStopLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
 		// If right arrow is drop
 		if (keys[39] == false) {
 			if (!walkingLeft) {
-				setFramesPlayerSprite('walkingStopRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
@@ -312,7 +318,7 @@ var canvasPlayer = document.getElementById('player'),
 			player.attack = true;
 
 			// run the sprite animation for the attack
-			setFramesPlayerSprite('attackRight');
+			setFramesSpriteAnimation('attackRight');
 			attacking = true;
 		}
 
@@ -371,27 +377,27 @@ var canvasPlayer = document.getElementById('player'),
 		renders();
 
 
-		var lengthEnemiesArray = enemiesArray.length,
-			lengthobstaclesArray = obstaclesArray.length,
-			j,
-			k,
-			h;
+		// var lengthEnemiesArray = enemiesArray.length,
+		// 	lengthobstaclesArray = obstaclesArray.length,
+		// 	j,
+		// 	k,
+		// 	h;
 
-		// move the enemies
+		// // move the enemies
 		// for (j = 0; lengthEnemiesArray > j; j += 1) {
 		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
 		// 		enemiesArray[j].velocityX--;
 		// 	}
 
-		// 	enemiesArray[j].velocityX *= friction;
+		// 	enemiesArray[j].velocityX *= background.friction;
 
 		// 	enemiesArray[j].x += enemiesArray[j].velocityX;
 		// };
 
-		onObstacle = false;
+		// onObstacle = false;
 
-		//check the collision whit the enemies and if the enemie is out the canvas
+		// //check the collision whit the enemies and if the enemie is out the canvas
 		// for (k = 0; lengthEnemiesArray > k; k += 1) {
 
 		// 	checkCollision(player, enemiesArray[k]);
@@ -446,7 +452,7 @@ var canvasPlayer = document.getElementById('player'),
 	 * renderBackground();
 	 */
 	function renderBackground () {
-		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
+			// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
 		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -489,6 +495,7 @@ var canvasPlayer = document.getElementById('player'),
 
 		for (i = 0; lengthEnemiesArray > i; i += 1) {
 			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
+			// para la animacion hay que hacer otro swech case porque entra al mismo que el del personaje y solmaente se puede dar un case a la vez.
 			contextBackground.drawImage(
 				enemiesArray[i].image,
 				enemiesArray[i].x + background.x,
@@ -496,7 +503,6 @@ var canvasPlayer = document.getElementById('player'),
 				enemiesArray[i].width,
 				enemiesArray[i].height);
 		};
-
 	}
 
 
@@ -529,8 +535,37 @@ var canvasPlayer = document.getElementById('player'),
 	 * renderExtras();
 	 */
 	function renderExtras () {
+// guardar todos los extras1.width etc en variables para q los calcule una sola vez.
+
 		contextExtras.clearRect(-200, 0, canvasWidth + 200, canvasHeight);
-		contextExtras.drawImage(extras1, extras.x, background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+
+		if ( -(extras.x) <= (extras1.width - 200) ) {
+			contextExtras.drawImage(extras1, extras.x - 200, background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+	 	//contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 2) - 200 ) ) {
+			contextExtras.drawImage(extras2, extras.x + (extras2.width - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
+		//contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1.width - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 2 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 3) - 200 ) ) {
+			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 2) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+		//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 2) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 3 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 4) - 200 ) ) {
+			contextExtras.drawImage(extras2, extras.x + ((extras2.width * 3) - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
+		//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 3) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 5) - 200 ) ) {
+			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 4) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+
+			//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 4) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		}
+
+
 	}
 
 
@@ -754,27 +789,22 @@ var canvasPlayer = document.getElementById('player'),
 		}
 	}
 
+
 	/* Sprite animation */
-	var playerSpriteRight = new Image(),
-		playerSpriteLeft = new Image(),
-		frame = 0,
+	var frame = 0,
 		delta,
 		lastUpdateTime = 0,
 		updateDelta = 0,
 		msPerFrame = 100;
-
-	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
-
 
 	/**
 	 * Set the frames amount and speed.
 	 * @param {String} walkingRight,
 	 * @function
 	 * @example
-	 * setFramesPlayerSprite('walkingRight', 9, 0, 100);
+	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
 	 */
-	function setFramesPlayerSprite (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
+	function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
 
 		delta = Date.now() - lastUpdateTime;
 
@@ -820,6 +850,7 @@ var canvasPlayer = document.getElementById('player'),
 		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		switch (walkingDirection) {
+            //Player
             case 'walkingRight':
           		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
@@ -859,7 +890,6 @@ var canvasPlayer = document.getElementById('player'),
             case 'attackLeft':
             	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
             break;
-
         }
 	}
 
@@ -879,7 +909,7 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		renderEnemies();
+		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
 		//renderObstacles();
