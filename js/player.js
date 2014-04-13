@@ -108,7 +108,8 @@ var canvasPlayer = document.getElementById('player'),
 
 		// extras images
 		extras1 = new Image(),
-		extras2 = new Image();
+		extras2 = new Image(),
+		extrasCave = new Image();
 
 	// backgrounds images
 	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
@@ -136,6 +137,7 @@ var canvasPlayer = document.getElementById('player'),
 	// extras images
 	extras1.src = 'http://localhost/2d-platform-game/img/extras-1.png';
 	extras2.src = 'http://localhost/2d-platform-game/img/extras-2.png';
+	extrasCave.src = 'http://localhost/2d-platform-game/img/extrasCave.png';
 
 	/**
 	 * Class constructor of obstacles
@@ -367,6 +369,7 @@ var canvasPlayer = document.getElementById('player'),
 		} else if ( -(background.x) >= backgroundPlusImages - canvasWidth - 200) {
 
 			background.x = -(backgroundPlusImages - canvasWidth - 200);
+			extras.x = -(backgroundPlusImages - canvasWidth - 200);
 
 			// add the final enemie
 			addFinalEnemie();
@@ -377,41 +380,41 @@ var canvasPlayer = document.getElementById('player'),
 		renders();
 
 
-		var lengthEnemiesArray = enemiesArray.length,
-			lengthobstaclesArray = obstaclesArray.length,
-			j,
-			k,
-			h;
+		// var lengthEnemiesArray = enemiesArray.length,
+		// 	lengthobstaclesArray = obstaclesArray.length,
+		// 	j,
+		// 	k,
+		// 	h;
 
-		// move the enemies
-		for (j = 0; lengthEnemiesArray > j; j += 1) {
-			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
-			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
-				enemiesArray[j].velocityX--;
-			}
+		// // move the enemies
+		// for (j = 0; lengthEnemiesArray > j; j += 1) {
+		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+		// 		enemiesArray[j].velocityX--;
+		// 	}
 
-			enemiesArray[j].velocityX *= background.friction;
+		// 	enemiesArray[j].velocityX *= background.friction;
 
-			enemiesArray[j].x += enemiesArray[j].velocityX;
-		};
+		// 	enemiesArray[j].x += enemiesArray[j].velocityX;
+		// };
 
-		onObstacle = false;
+		// onObstacle = false;
 
-		//check the collision whit the enemies and if the enemie is out the canvas
-		for (k = 0; lengthEnemiesArray > k; k += 1) {
+		// //check the collision whit the enemies and if the enemie is out the canvas
+		// for (k = 0; lengthEnemiesArray > k; k += 1) {
 
-			checkCollision(player, enemiesArray[k]);
-			// if (lengthEnemiesArray > 5) {
-			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-			// }
-		}
+		// 	checkCollision(player, enemiesArray[k]);
+		// 	// if (lengthEnemiesArray > 5) {
+		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
+		// 	// }
+		// }
 
-		// //check the collision with the obstacles
-		for (h = 0; lengthobstaclesArray > h; h += 1) {
-			if (obstaclesArray[h].name == 'rock') {
-				checkCollision(player, obstaclesArray[h]);
-			}
-		}
+		// // //check the collision with the obstacles
+		// for (h = 0; lengthobstaclesArray > h; h += 1) {
+		// 	if (obstaclesArray[h].name == 'rock') {
+		// 		checkCollision(player, obstaclesArray[h]);
+		// 	}
+		// }
 
 		// Update player life
 		playerLife.html('PLAYER LIFE :' + player.life);
@@ -543,20 +546,32 @@ var canvasPlayer = document.getElementById('player'),
 			contextExtras.drawImage(extras1, extras.x - 200, background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
 		}
 
-		if ( -(extras.x) >= (extras1.width - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 2) - 200 ) ) {
+		if ( -(extras.x) >= (extras1.width - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 2) - 200 ) ) {
 			contextExtras.drawImage(extras2, extras.x + (extras2.width - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
 		}
 
-		if ( -(extras.x) >= (extras1.width * 2 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 3) - 200 ) ) {
+		if ( -(extras.x) >= (extras1.width * 2 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 3) - 200 ) ) {
 			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 2) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
 		}
 
-		if ( -(extras.x) >= (extras1.width * 3 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 4) - 200 ) ) {
+		if ( -(extras.x) >= (extras1.width * 3 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 4) - 200 ) ) {
 			contextExtras.drawImage(extras2, extras.x + ((extras2.width * 3) - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
 		}
 
-		if ( -(extras.x) >= (extras1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 5) - 200 ) ) {
+		if ( -(extras.x) >= (extras1.width * 4 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 5) - 200 ) ) {
 			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 4) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 5 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 6) - 200 ) ) {
+			contextExtras.drawImage(extras2, extras.x + ((extras1.width * 5) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 6 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 7) - 200 ) ) {
+			contextExtras.drawImage(extras2, extras.x + ((extras1.width * 6) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
+		}
+
+		if ( -(extras.x) >= (extras1.width * 7 - 200) - canvasWidth  &&  -(extras.x) <= ( (extras1.width * 8) - 200 ) ) {
+			contextExtras.drawImage(extras2, extras.x + ((extras1.width * 7) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
 		}
 
 	}
@@ -906,7 +921,7 @@ var canvasPlayer = document.getElementById('player'),
 	 */
 	function renders () {
 		// Call the function tha render the player
-		//renderPlayer();
+		//	renderPlayer();
 
 		// Call the function tha render the background image
 		renderBackground();
