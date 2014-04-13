@@ -20,7 +20,8 @@ var canvasPlayer = document.getElementById('player'),
 	crouch = false,
 	jump = false,
 	attacking = false,
-	backgroundPlusImages;
+	backgroundPlusImages,
+	extrasPlusImages;
 
 
 (function (win) {
@@ -92,6 +93,7 @@ var canvasPlayer = document.getElementById('player'),
 	// Create images objects to use in the game.
 	var backgroundImage1 = new Image(),
 		backgroundImage2 = new Image(),
+		backgroundFinal = new Image(),
 
 		// enemies images
 		wolfImage = new Image(),
@@ -119,6 +121,7 @@ var canvasPlayer = document.getElementById('player'),
 	// }
 
 	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
+	backgroundFinal.src = 'http://localhost/2d-platform-game/img/background-final.jpg';
 
 	// enemies images
 	wolfImage.src = 'http://localhost/2d-platform-game/img/wolf-animation.png';
@@ -138,6 +141,7 @@ var canvasPlayer = document.getElementById('player'),
 	extras1.src = 'http://localhost/2d-platform-game/img/extras-1.png';
 	extras2.src = 'http://localhost/2d-platform-game/img/extras-2.png';
 	extrasCave.src = 'http://localhost/2d-platform-game/img/extrasCave.png';
+
 
 	/**
 	 * Class constructor of obstacles
@@ -352,7 +356,6 @@ var canvasPlayer = document.getElementById('player'),
 		// Move the the extras
 		extras.x += extras.velX;
 
-
 		// reset the jump property when the background hits the ground
 		if (background.y <= canvasHeight - background.backgroundHeight) {
 			background.y = canvasHeight - background.backgroundHeight;
@@ -361,15 +364,18 @@ var canvasPlayer = document.getElementById('player'),
 
 		// the player stop and not go outside of the canvas and add the last enemie
 		// plus the with images that repeat in the background
-		backgroundPlusImages = backgroundImage1.width * 5
+		backgroundPlusImages = backgroundImage1.width * 5;
 
 		if (background.x > 0) {
+
 			background.x = 0;
+			extras.x = 0;
 
 		} else if ( -(background.x) >= backgroundPlusImages - canvasWidth - 200) {
 
 			background.x = -(backgroundPlusImages - canvasWidth - 200);
-			extras.x = -(backgroundPlusImages - canvasWidth - 200);
+			//extras.x = -(extrasPlusImages  - canvasWidth - 200);
+			extras.velX = 0;
 
 			// add the final enemie
 			addFinalEnemie();
@@ -380,41 +386,41 @@ var canvasPlayer = document.getElementById('player'),
 		renders();
 
 
-		// var lengthEnemiesArray = enemiesArray.length,
-		// 	lengthobstaclesArray = obstaclesArray.length,
-		// 	j,
-		// 	k,
-		// 	h;
+		var lengthEnemiesArray = enemiesArray.length,
+			lengthobstaclesArray = obstaclesArray.length,
+			j,
+			k,
+			h;
 
-		// // move the enemies
-		// for (j = 0; lengthEnemiesArray > j; j += 1) {
-		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
-		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
-		// 		enemiesArray[j].velocityX--;
-		// 	}
+		// move the enemies
+		for (j = 0; lengthEnemiesArray > j; j += 1) {
+			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+				enemiesArray[j].velocityX--;
+			}
 
-		// 	enemiesArray[j].velocityX *= background.friction;
+			enemiesArray[j].velocityX *= background.friction;
 
-		// 	enemiesArray[j].x += enemiesArray[j].velocityX;
-		// };
+			enemiesArray[j].x += enemiesArray[j].velocityX;
+		};
 
-		// onObstacle = false;
+		onObstacle = false;
 
-		// //check the collision whit the enemies and if the enemie is out the canvas
-		// for (k = 0; lengthEnemiesArray > k; k += 1) {
+		//check the collision whit the enemies and if the enemie is out the canvas
+		for (k = 0; lengthEnemiesArray > k; k += 1) {
 
-		// 	checkCollision(player, enemiesArray[k]);
-		// 	// if (lengthEnemiesArray > 5) {
-		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-		// 	// }
-		// }
+			checkCollision(player, enemiesArray[k]);
+			// if (lengthEnemiesArray > 5) {
+			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
+			// }
+		}
 
-		// // //check the collision with the obstacles
-		// for (h = 0; lengthobstaclesArray > h; h += 1) {
-		// 	if (obstaclesArray[h].name == 'rock') {
-		// 		checkCollision(player, obstaclesArray[h]);
-		// 	}
-		// }
+		// //check the collision with the obstacles
+		for (h = 0; lengthobstaclesArray > h; h += 1) {
+			if (obstaclesArray[h].name == 'rock') {
+				checkCollision(player, obstaclesArray[h]);
+			}
+		}
 
 		// Update player life
 		playerLife.html('PLAYER LIFE :' + player.life);
@@ -456,7 +462,9 @@ var canvasPlayer = document.getElementById('player'),
 	 */
 	function renderBackground () {
 			// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
-		var backgroundImage1Difference = backgroundImage1.height - canvasHeight;
+		var backgroundImage1Difference = backgroundImage1.height - canvasHeight,
+			backgroundExtraCaveDifference = extrasCave.height - canvasHeight;
+
 
 		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -479,7 +487,10 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 		if ( -(background.x) >= (backgroundImage1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 5) - 200 ) ) {
-			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 4) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+			contextBackground.drawImage(backgroundFinal, background.x + ((backgroundFinal.width * 4) - 200), background.y - backgroundImage1Difference, backgroundFinal.width, backgroundFinal.height);
+
+			// add the cave of the warlok
+			contextBackground.drawImage(extrasCave, background.x + ((backgroundFinal.width * 5) - 200) - extrasCave.width, background.y - backgroundExtraCaveDifference, extrasCave.width, extrasCave.height);
 		}
 	}
 
@@ -493,8 +504,8 @@ var canvasPlayer = document.getElementById('player'),
 	function renderEnemies () {
 
 		var wolfImageDifference = canvasHeight - wolfImage.height,
-		lengthEnemiesArray = enemiesArray.length,
-		i;
+			lengthEnemiesArray = enemiesArray.length,
+			i;
 
 		for (i = 0; lengthEnemiesArray > i; i += 1) {
 			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
@@ -868,7 +879,6 @@ var canvasPlayer = document.getElementById('player'),
 		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
 
 		switch (walkingDirection) {
-            //Player
             case 'walkingRight':
           		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
             break;
