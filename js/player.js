@@ -21,7 +21,9 @@ var canvasPlayer = document.getElementById('player'),
 	jump = false,
 	attacking = false,
 	backgroundPlusImages,
-	extrasPlusImages;
+	extrasPlusImages,
+	panelGameOver = $('#panelGameOver'),
+	playAgain = $('#playAgain');
 
 
 (function (win) {
@@ -771,11 +773,20 @@ var canvasPlayer = document.getElementById('player'),
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
 		if (player.life < 0) {
-			console.log('GAME OVER');
-			// Display inline or block to an element in the html that is diplay none and z-index -100 whit the menu desing and buttons.
-			// Player a la position 0.
-			// Enemies and obstacles reset the array.
-			// Life player set to 100%.
+
+			// Show the Game Over panel
+			panelGameOver.show();
+
+			// Play again. Reset all the values
+			playAgain.on('click', function () {
+				enemiesArray.length = 0;
+				obstaclesArray.length = 0;
+				background.x = 0;
+				player.life = 5100;
+				player.score = 0;
+				player.heartsDragon = 0;
+				panelGameOver.hide();
+			});
 
 		} else if (enemies.life < 0) {
 			//get the position of the enemie died;
