@@ -377,41 +377,41 @@ var canvasPlayer = document.getElementById('player'),
 		renders();
 
 
-		// var lengthEnemiesArray = enemiesArray.length,
-		// 	lengthobstaclesArray = obstaclesArray.length,
-		// 	j,
-		// 	k,
-		// 	h;
+		var lengthEnemiesArray = enemiesArray.length,
+			lengthobstaclesArray = obstaclesArray.length,
+			j,
+			k,
+			h;
 
-		// // move the enemies
-		// for (j = 0; lengthEnemiesArray > j; j += 1) {
-		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
-		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
-		// 		enemiesArray[j].velocityX--;
-		// 	}
+		// move the enemies
+		for (j = 0; lengthEnemiesArray > j; j += 1) {
+			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+				enemiesArray[j].velocityX--;
+			}
 
-		// 	enemiesArray[j].velocityX *= background.friction;
+			enemiesArray[j].velocityX *= background.friction;
 
-		// 	enemiesArray[j].x += enemiesArray[j].velocityX;
-		// };
+			enemiesArray[j].x += enemiesArray[j].velocityX;
+		};
 
-		// onObstacle = false;
+		onObstacle = false;
 
-		// //check the collision whit the enemies and if the enemie is out the canvas
-		// for (k = 0; lengthEnemiesArray > k; k += 1) {
+		//check the collision whit the enemies and if the enemie is out the canvas
+		for (k = 0; lengthEnemiesArray > k; k += 1) {
 
-		// 	checkCollision(player, enemiesArray[k]);
-		// 	// if (lengthEnemiesArray > 5) {
-		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-		// 	// }
-		// }
+			checkCollision(player, enemiesArray[k]);
+			// if (lengthEnemiesArray > 5) {
+			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
+			// }
+		}
 
 		// //check the collision with the obstacles
-		// for (h = 0; lengthobstaclesArray > h; h += 1) {
-		// 	if (obstaclesArray[h].name == 'rock') {
-		// 		checkCollision(player, obstaclesArray[h]);
-		// 	}
-		// }
+		for (h = 0; lengthobstaclesArray > h; h += 1) {
+			if (obstaclesArray[h].name == 'rock') {
+				checkCollision(player, obstaclesArray[h]);
+			}
+		}
 
 		// Update player life
 		playerLife.html('PLAYER LIFE :' + player.life);
@@ -535,36 +535,29 @@ var canvasPlayer = document.getElementById('player'),
 	 * renderExtras();
 	 */
 	function renderExtras () {
-// guardar todos los extras1.width etc en variables para q los calcule una sola vez.
+		// guardar todos los extras1.width etc en variables para q los calcule una sola vez.
 
 		contextExtras.clearRect(-200, 0, canvasWidth + 200, canvasHeight);
 
 		if ( -(extras.x) <= (extras1.width - 200) ) {
 			contextExtras.drawImage(extras1, extras.x - 200, background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
-	 	//contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
 		}
 
 		if ( -(extras.x) >= (extras1.width - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 2) - 200 ) ) {
 			contextExtras.drawImage(extras2, extras.x + (extras2.width - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
-		//contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1.width - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
 		if ( -(extras.x) >= (extras1.width * 2 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 3) - 200 ) ) {
 			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 2) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
-		//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 2) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
 		if ( -(extras.x) >= (extras1.width * 3 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 4) - 200 ) ) {
 			contextExtras.drawImage(extras2, extras.x + ((extras2.width * 3) - 200), background.y - (extras2.height - canvasHeight), extras2.width, extras2.height);
-		//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 3) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
 		if ( -(extras.x) >= (extras1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (extras1.width * 5) - 200 ) ) {
 			contextExtras.drawImage(extras1, extras.x + ((extras1.width * 4) - 200), background.y - (extras1.height - canvasHeight), extras1.width, extras1.height);
-
-			//contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 4) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
-
 
 	}
 
@@ -636,10 +629,15 @@ var canvasPlayer = document.getElementById('player'),
 
 			} else {
 				if (distanceToCollisionX > 0) {
-					// Block de background
 					collisionDirection = "LEFT";
+
+					// Block de background
 					background.velX = 0;
 					background.velX--;
+
+					// Block de extras canvas
+					extras.velX = 0;
+					extras.velX--;
 
 					// if the collision come from wolf
 					if (enemieOrObstacle.name == 'wolf') {
@@ -680,10 +678,15 @@ var canvasPlayer = document.getElementById('player'),
 
 
 				} else {
-					// Block de background
 					collisionDirection = "RIGHT";
+
+					// Block de background
 					background.velX = 0;
 					background.velX++;
+
+					// Block de extras canvas
+					extras.velX = 0;
+					extras.velX++;
 
 					// If the collision come from enemie remove player life
 					if (enemieOrObstacle.name == 'wolf') {
@@ -909,10 +912,10 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		//renderEnemies();
+		renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		//renderObstacles();
+		renderObstacles();
 
 		// Call the function tha render the extras.
 		renderExtras();
