@@ -6,9 +6,9 @@ var canvasPlayer = document.getElementById('player'),
 	contextExtras = canvasExtras.getContext('2d'),
 	onObstacle,
 	playerOnObstacle,
-	playerLife = $('#playerLife'),
-	playerScore = $('#playerScore'),
-	playerHeartsDragon = $('#playerHeartsDragon'),
+	adarhaLife = $('#adarhaLife'),
+	adarhaScore = $('#adarhaScore'),
+	adarhaHeartsDragon = $('#adarhaHeartsDragon'),
 	controls = document.getElementById('controls'),
 	mobileJump,
 	mobileCrouch,
@@ -73,7 +73,7 @@ var canvasPlayer = document.getElementById('player'),
 			jumping : false
 		},
 		keys = [],
-		gravity = 0.25;
+		gravity = 0.20;
 
 
 	// Set the canvas dimentions equal to the window dimentions
@@ -116,33 +116,33 @@ var canvasPlayer = document.getElementById('player'),
 		extrasCave = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'img/background-1.jpg';
 	// backgroundImage1.onload = function () {
 	// 	// Create a pattern with this image, and set it to "repeat".
 	// 	backgroundPattern1 = contextBackground.createPattern(backgroundImage1, 'repeat');
 	// }
 
-	backgroundImage2.src = 'http://localhost/2d-platform-game/img/background-1.jpg';
-	backgroundFinal.src = 'http://localhost/2d-platform-game/img/background-final.jpg';
+	backgroundImage2.src = 'img/background-1.jpg';
+	backgroundFinal.src = 'img/background-final.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://localhost/2d-platform-game/img/wolf-animation.png';
-	warlockImage.src = 'http://localhost/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'img/wolf-animation.png';
+	warlockImage.src = 'img/warlock.png';
 
 	// player images
-	playerSpriteRight.src = 'http://localhost/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://localhost/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'img/player-actions-right.png';
+	playerSpriteLeft.src = 'img/player-actions-left.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://localhost/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://localhost/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'img/small-rock.png';
+	bigRockObstacle.src = 'img/big-rock.png';
 
-	waterObstacle.src = 'http://localhost/2d-platform-game/img/water.png';
+	waterObstacle.src = 'img/water.png';
 
 	// extras images
-	extras1.src = 'http://localhost/2d-platform-game/img/extras-1.png';
-	extras2.src = 'http://localhost/2d-platform-game/img/extras-2.png';
-	extrasCave.src = 'http://localhost/2d-platform-game/img/extrasCave.png';
+	extras1.src = 'img/extras-1.png';
+	extras2.src = 'img/extras-2.png';
+	extrasCave.src = 'img/extrasCave.png';
 
 
 	/**
@@ -199,7 +199,7 @@ var canvasPlayer = document.getElementById('player'),
 	// Push enemies into the array
 	function pushEnemies () {
 		enemiesArray.push(
-					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight -250, 50, 50, 0, 0.9, 2, 50)
+					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight -250, 160, 140, 0, 0.9, 2, 50)
 					  );
 	}
 
@@ -336,8 +336,6 @@ var canvasPlayer = document.getElementById('player'),
 		}
 
 
-
-
 		// apply friction to the horizontal movement of the background
 		background.velX *= background.friction;
 
@@ -409,29 +407,29 @@ var canvasPlayer = document.getElementById('player'),
 		onObstacle = false;
 
 		//check the collision whit the enemies and if the enemie is out the canvas
-		for (k = 0; lengthEnemiesArray > k; k += 1) {
+		// for (k = 0; lengthEnemiesArray > k; k += 1) {
 
-			checkCollision(player, enemiesArray[k]);
-			// if (lengthEnemiesArray > 5) {
-			// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-			// }
-		}
+		// 	checkCollision(player, enemiesArray[k]);
+		// 	// if (lengthEnemiesArray > 5) {
+		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
+		// 	// }
+		// }
 
-		// //check the collision with the obstacles
-		for (h = 0; lengthobstaclesArray > h; h += 1) {
-			if (obstaclesArray[h].name == 'rock') {
-				checkCollision(player, obstaclesArray[h]);
-			}
-		}
+		// check the collision with the obstacles
+		// for (h = 0; lengthobstaclesArray > h; h += 1) {
+		// 	if (obstaclesArray[h].name == 'rock') {
+		// 		checkCollision(player, obstaclesArray[h]);
+		// 	}
+		// }
 
 		// Update player life
-		playerLife.html('PLAYER LIFE :' + player.life);
+		adarhaLife.html('PLAYER LIFE :' + player.life);
 
 		// Update player score
-		playerScore.html('PLAYER SCORE :' + player.score);
+		adarhaScore.html('PLAYER SCORE :' + player.score);
 
 		// Update player hearts dragon
-		playerHeartsDragon.html('PLAYER HEARTS DRAGON :' + player.heartsDragon);
+		adarhaHeartsDragon.html('PLAYER HEARTS DRAGON :' + player.heartsDragon);
 
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
@@ -476,22 +474,23 @@ var canvasPlayer = document.getElementById('player'),
 
 		// Ask if the background.x position is less than the backgroundImage1.width - 200 AND ask if the background.x position is higher
 		// than backgroundImage1.width * 2) - 200 tha is the position where start the third image.
-		if ( -(background.x) >= (backgroundImage1.width - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 2) - 200 ) ) {
+		if ( -(background.x) >= (backgroundImage1.width - 200) - canvasWidth - 200  &&  -(background.x) <= ( (backgroundImage1.width * 2) - 200 ) ) {
 			contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1.width - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 2 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 3) - 200 ) ) {
+		if ( -(background.x) >= (backgroundImage1.width * 2 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 3) - 200 ) ) {
 			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 2) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 3 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 4) - 200 ) ) {
+		if ( -(background.x) >= (backgroundImage1.width * 3 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 4) - 200 ) ) {
 			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 3) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 4 - 200) - canvasWidth  &&  -(background.x) <= ( (backgroundImage1.width * 5) - 200 ) ) {
+		if ( -(background.x) >= (backgroundImage1.width * 4 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 5) - 200 ) ) {
 			contextBackground.drawImage(backgroundFinal, background.x + ((backgroundFinal.width * 4) - 200), background.y - backgroundImage1Difference, backgroundFinal.width, backgroundFinal.height);
 
 			// add the cave of the warlok
+			// Al final de todo anda ma el clear. Ver de sumarle o restarle algun valor al extrasCave.width
 			contextBackground.drawImage(extrasCave, background.x + ((backgroundFinal.width * 5) - 200) - extrasCave.width, background.y - backgroundExtraCaveDifference, extrasCave.width, extrasCave.height);
 		}
 	}
@@ -509,15 +508,51 @@ var canvasPlayer = document.getElementById('player'),
 			lengthEnemiesArray = enemiesArray.length,
 			i;
 
+		/* Sprite animation */
+		var frame = 0,
+			delta,
+			lastUpdateTime = 0,
+			updateDelta = 0,
+			msPerFrame = 100;
+
 		for (i = 0; lengthEnemiesArray > i; i += 1) {
-			// plus this: enemiesArray[i].x + background.x: becouse i need to know all time where the background.x is and plus it to the positio of the enemie.
-			// para la animacion hay que hacer otro swech case porque entra al mismo que el del personaje y solmaente se puede dar un case a la vez.
+
+
+			// function setFramesSpriteAnimation (frameStartPosition, frameCuantity, msPerFrame) {
+			// 	delta = Date.now() - lastUpdateTime;
+
+			// 	if (updateDelta > msPerFrame) {
+			// 		updateDelta = 0;
+
+			// 		contextBackground.drawImage(
+			// 			wolfImage,
+			// 			enemiesArray[i].x + background.x,
+			// 			enemiesArray[i].y + background.y,
+			// 			enemiesArray[i].width,
+			// 			enemiesArray[i].height);
+
+			// 		frame += 1;
+
+			// 		if (frame >= frameCuantity) {
+			// 			frame = frameStartPosition;
+			// 		}
+
+			// 	} else {
+			// 		updateDelta += delta;
+			// 	}
+
+			// 	lastUpdateTime = Date.now();
+			// }
+
+			// setFramesSpriteAnimation(0, 9, 100);
+
 			contextBackground.drawImage(
-				enemiesArray[i].image,
-				enemiesArray[i].x + background.x,
-				enemiesArray[i].y + background.y,
-				enemiesArray[i].width,
-				enemiesArray[i].height);
+						wolfImage,
+						enemiesArray[i].x + background.x,
+						enemiesArray[i].y + background.y,
+						enemiesArray[i].width,
+						enemiesArray[i].height);
+
 		};
 	}
 
@@ -845,7 +880,6 @@ var canvasPlayer = document.getElementById('player'),
 	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
 	 */
 	function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
-
 		delta = Date.now() - lastUpdateTime;
 
 		if (updateDelta > msPerFrame) {
@@ -865,7 +899,6 @@ var canvasPlayer = document.getElementById('player'),
 
 		lastUpdateTime = Date.now();
 	}
-
 
 	/**
 	 * Draw the sprite animation depending on the direction of the arrow down
@@ -891,43 +924,43 @@ var canvasPlayer = document.getElementById('player'),
 
 		switch (walkingDirection) {
             case 'walkingRight':
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 355, 148, 200);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 355, 149, 200);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 355, 151, 200);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
             break;
         }
 	}
@@ -948,13 +981,13 @@ var canvasPlayer = document.getElementById('player'),
 		renderBackground();
 
 		// Call the function tha render the enemies. I have to call this function random or when y want to a enemie appear.
-		renderEnemies();
+		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		renderObstacles();
+		//renderObstacles();
 
 		// Call the function tha render the extras.
-		renderExtras();
+		//renderExtras();
 	}
 
 
