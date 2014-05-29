@@ -33,7 +33,33 @@ body {
 #extras,
 #player,
 #background {
-	box-shadow: 8px 8px 29px 8px #000 inset;
+	box-shadow: 3px 4px 29px 6px #000 inset;
+}
+
+#extras {
+	position: absolute;
+	top: -140px;
+	margin: 0 auto;
+	right: 0;
+	left: 0;
+	z-index: 2;
+}
+
+#player {
+	position: absolute;
+	top: -140px;
+	margin: 0 auto;
+	right: 0;
+	left: 0;
+	z-index: 1;
+}
+
+#background {
+	position: absolute;
+	top: -140px;
+	margin: 0 auto;
+	right: 0;
+	left: 0;
 }
 
 
@@ -43,7 +69,7 @@ body {
 	position: absolute;
 	font-size: 20px;
 	color: #FFF;
-	max-width: 1200px;
+	width: 1090px;
 	margin: 0 auto;
 	left: 0;
 	right: 0;
@@ -64,21 +90,21 @@ body {
 
 #playerOptions #adarhaPotion {
 	background: url('../img/pocima-adarha.png') no-repeat;
-	width: 220px;
+	width: 173px;
 	height: 108px;
 	position: absolute;
 	right: 0;
-	top: 0;
+	top: 15px;
 	text-indent: -9999px;
 }
 
 #playerOptions #adarhaHeartsDragon {
 	background: url('../img/heart-dragon-adarha.png') no-repeat;
-	width: 166px;
+	width: 132px;
 	height: 108px;
 	position: absolute;
 	right: 0;
-	top: 85px;
+	top: 78px;
 	text-indent: -9999px;
 }
 
@@ -128,10 +154,9 @@ body {
 	background: url('../img/background-panel-game.jpg') no-repeat;
 	background-position: top center;
 	background-color: #000;
-	max-width: 1200px;
-	max-height: 1200px;
+	width: 1090px;
 	margin: 0 auto;
-	bottom: 70px;
+	top: 560px;
 	right: 0;
 	left: 0;
 	z-index: 10;
@@ -148,17 +173,17 @@ body {
 }
 
 #panelGame .left-actions {
-	position: absolute;
-	top: 44px;
-	left: 30px;
 	display: block;
+	margin-top: 34px;
+	width: 310px;
+	margin-left: 28px;
 }
 
 #panelGame .brand-lesath {
 	position: absolute;
 	margin: 0 auto;
 	text-align: center;
-	top: -40px;
+	top: -30px;
 	right: 0;
 	left: 0;
 }
@@ -178,10 +203,10 @@ body {
 /* Controls */
 #controls {
 	position: absolute;
-	z-index: 3;
+	z-index: 10;
 	bottom: 0;
 	padding: 0 30px;
-	display: block;
+/*	display: block;*/
 	width: 100%;
 }
 

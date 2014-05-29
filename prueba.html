@@ -1,3 +1,69 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html lang="en" class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7 ie6"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 7]><html lang="en" class="no-js lt-ie10 lt-ie9 lt-ie8 ie7"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 8]><html lang="en" class="no-js lt-ie10 lt-ie9 ie8"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 9]><html lang="en" class="no-js lt-ie10 ie9"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if gt IE 9] <!-->
+<head>
+	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1"/>
+	<meta charset="utf-8"/>
+	<title>Game</title>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body>
+	<section id="panelGameOver" class="display-none">
+		<h2>Game Over</h2>
+		<a href="#" id="playAgain">Jugar de nuevo</a>
+		<a href="#" id="postScore">Compartir puntaje</a>
+	</section>
+
+	<section id="playerOptions">
+		<div id="adarhaLife"></div>
+		<div id="adarhaPotion"></div>
+		<div id="adarhaHeartsDragon"></div>
+		<div id="adarhaScore" style="display:none"></div>
+	</section>
+
+	<div id="controls">
+		<div class="walk-controls">
+			<input type="button" value="<" class="left-arrow">
+			<input type="button" value="-" class="down-arrow">
+			<input type="button" value=">" class="right-arrow">
+		</div>
+		<div class="jump-attack-controls">
+			<input type="button" value="^" class="top-arrow">
+			<input type="button" value="a" class="attack-key">
+		</div>
+	</div>
+
+	<section id="panelGame">
+		<div class="left-actions">
+			<a href="www.lesath.com.ar">Creditos</a> |
+			<a href="www.lesath.com.ar">Compartir</a>
+		</div>
+
+		<div class="brand-lesath">
+			<img src="img/brand-lesath.png">
+		</div>
+
+		<div class="right-actions">
+			<img src="img/icon-twitter.png">
+			<img src="img/icon-facebook.png">
+			<img src="img/icon-pause.png">
+			<img src="img/icon-sound.png">
+		</div>
+	</section>
+
+
+	<canvas id="extras"></canvas>
+	<canvas id="player"></canvas>
+	<canvas id="background"></canvas>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<script type="text/javascript" src="js/game.js"></script>
+<script type="text/javascript">
 var canvasPlayer = document.getElementById('player'),
 	canvasBackground = document.getElementById('background'),
 	canvasExtras = document.getElementById('extras'),
@@ -25,21 +91,20 @@ var canvasPlayer = document.getElementById('player'),
 	panelGameOver = $('#panelGameOver'),
 	playAgain = $('#playAgain');
 
-
 (function (win) {
 	// requestAnimationFrame fallback
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
-	var canvasWidth = win.innerWidth,
-    	canvasHeight = win.innerHeight + 200, // plus 230 to fix the space withe that leaves the rotation diagonal of the canvas
+	var canvasWidth = 900, //win.innerWidth,
+    	canvasHeight = 700, //win.innerHeight + 200, // plus 230 to fix the space withe that leaves the rotation diagonal of the canvas
     	playerWidth,
     	playerHeight,
 		player = {
 			x : (canvasWidth / 2) - 80,
 			y : canvasHeight - 350, // y position of the player: 230 + the heigth of the player
-			playerWidth : 80,
-			playerHeight : 166,
+			playerWidth : 60,
+			playerHeight : 122,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -75,16 +140,88 @@ var canvasPlayer = document.getElementById('player'),
 		keys = [],
 		gravity = 0.20;
 
+	// Set the dimentions of the canvas for tablets and small devices
+	var userAgent = window.navigator.userAgent;
 
-	// Set the canvas dimentions equal to the window dimentions
-	canvasPlayer.width = canvasWidth + 200;
-	canvasPlayer.height = canvasHeight;
+	if (userAgent.indexOf('iPad') > -1) {
 
-	canvasBackground.width = canvasWidth + 200;
-	canvasBackground.height = canvasHeight;
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth);
 
-	canvasExtras.width = canvasWidth + 200;
-	canvasExtras.height = canvasHeight;
+		canvasWidth = win.innerWidth;
+    	canvasHeight = win.innerHeight;
+
+		canvasPlayer.width = win.innerWidth;
+		canvasPlayer.height = win.innerHeight;
+
+		canvasBackground.width = win.innerWidth;
+		canvasBackground.height = win.innerHeight;
+
+		canvasExtras.width = win.innerWidth;
+		canvasExtras.height = win.innerHeight;
+
+	} else if (userAgent.indexOf('iPhone') > -1) {
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth);
+
+		canvasWidth = win.innerWidth;
+    	canvasHeight = win.innerHeight;
+
+		canvasPlayer.width = win.innerWidth;
+		canvasPlayer.height = win.innerHeight;
+
+		canvasBackground.width = win.innerWidth;
+		canvasBackground.height = win.innerHeight;
+
+		canvasExtras.width = win.innerWidth;
+		canvasExtras.height = win.innerHeight;
+
+
+	} else if (userAgent.indexOf('Android') > -1) {
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth);
+
+		canvasWidth = win.innerWidth;
+    	canvasHeight = win.innerHeight;
+
+		canvasPlayer.width = win.innerWidth;
+		canvasPlayer.height = win.innerHeight;
+
+		canvasBackground.width = win.innerWidth;
+		canvasBackground.height = win.innerHeight;
+
+		canvasExtras.width = win.innerWidth;
+		canvasExtras.height = win.innerHeight;
+
+	} else {
+		// Desktop. Set the canvas dimentions
+		canvasWidth = 900;
+    	canvasHeight = 700;
+
+		canvasPlayer.width = canvasWidth + 200;
+		canvasPlayer.height = canvasHeight;
+
+		canvasBackground.width = canvasWidth + 200;
+		canvasBackground.height = canvasHeight;
+
+		canvasExtras.width = canvasWidth + 200;
+		canvasExtras.height = canvasHeight;
+	}
+
 
 	// Rotate the background canvas
 	contextPlayer.rotate(-5.3 * Math.PI / 180);
@@ -117,33 +254,36 @@ var canvasPlayer = document.getElementById('player'),
 		extrasCave = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
-	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
+	backgroundImage2.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
 
-	backgroundImagePatter.src = 'http://192.168.1.34/2d-platform-game/img/background-pattern.jpg';
+	// backgroundImagePatter.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
+	// backgroundImagePatter.onload = function(){
+	//     var ptrn = contextBackground.createPattern(backgroundImagePatter,'repeat-x');
+	//     contextBackground.fillStyle = ptrn;
+	// }
 
 
-	backgroundFinal.src = 'http://192.168.1.34/2d-platform-game/img/background-final.jpg';
+	backgroundFinal.src = 'http://10.10.33.96/2d-platform-game/img/background-final.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://192.168.1.34/2d-platform-game/img/wolf-animation.png';
-	warlockImage.src = 'http://192.168.1.34/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://10.10.33.96/2d-platform-game/img/wolf-animation.png';
+	warlockImage.src = 'http://10.10.33.96/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerSpriteRight.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'http://10.10.33.96/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://10.10.33.96/2d-platform-game/img/player-actions-left.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'http://10.10.33.96/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://10.10.33.96/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://192.168.1.34/2d-platform-game/img/water.png';
+	waterObstacle.src = 'http://10.10.33.96/2d-platform-game/img/water.png';
 
 	// extras images
-	extras1.src = 'http://192.168.1.34/2d-platform-game/img/extras-1.png';
-	extras2.src = 'http://192.168.1.34/2d-platform-game/img/extras-2.png';
-	extrasCave.src = 'http://192.168.1.34/2d-platform-game/img/extrasCave.png';
-
+	extras1.src = 'http://10.10.33.96/2d-platform-game/img/extras-1.png';
+	extras2.src = 'http://10.10.33.96/2d-platform-game/img/extras-2.png';
+	extrasCave.src = 'http://10.10.33.96/2d-platform-game/img/extrasCave.png';
 
 	/**
 	 * Class constructor of obstacles
@@ -162,7 +302,7 @@ var canvasPlayer = document.getElementById('player'),
 		this.differenceY = differenceY;
 	}
 
-	// Array to add and remove obstacles in the game
+	//Array to add and remove obstacles in the game
 	var obstaclesArray = [];
 
 	// Push obstacles into the array
@@ -193,7 +333,7 @@ var canvasPlayer = document.getElementById('player'),
 		this.aggressive = aggressive;
 	}
 
-	// Array to add and remove enemies in the game
+	//Array to add and remove enemies in the game
 	var enemiesArray = [];
 
 	// Push enemies into the array
@@ -203,7 +343,7 @@ var canvasPlayer = document.getElementById('player'),
 					  );
 	}
 
-	// Add random enemies
+	//Add random enemies
 	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
@@ -228,7 +368,7 @@ var canvasPlayer = document.getElementById('player'),
 			if (!background.jumping) {
 				background.jumping = true;
 
-				//setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
 
@@ -245,11 +385,11 @@ var canvasPlayer = document.getElementById('player'),
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 			// Function OK when the player only walk from right
-			//setFramesSpriteAnimation('crouchRight', 0, 9, 100);
+			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
 
 			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				//setFramesSpriteAnimation('crouchRight', 4, 1, 100);
+				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
 			}
 		}
 
@@ -277,7 +417,7 @@ var canvasPlayer = document.getElementById('player'),
 
 				walkingLeft = true;
 
-				//setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
 			}
 		}
 
@@ -291,8 +431,17 @@ var canvasPlayer = document.getElementById('player'),
 
 				walkingRight = true;
 
-				//setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 			}
+
+			// if (!walkingRight) {
+
+			// 	background.x = -3;
+			// 	walkingRight = true;
+			// }
+
+			// setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+
 		}
 
 		// If the player is on the start position
@@ -305,14 +454,15 @@ var canvasPlayer = document.getElementById('player'),
 		// If left arrow is drop
 		if (keys[37] == false) {
 			if (!walkingRight) {
-				//setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
 		// If right arrow is drop
 		if (keys[39] == false) {
+
 			if (!walkingLeft) {
-				//setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
@@ -321,7 +471,7 @@ var canvasPlayer = document.getElementById('player'),
 			player.attack = true;
 
 			// run the sprite animation for the attack
-			//setFramesSpriteAnimation('attackRight');
+			setFramesSpriteAnimation('attackRight');
 			attacking = true;
 		}
 
@@ -381,13 +531,13 @@ var canvasPlayer = document.getElementById('player'),
 		renders();
 
 
-		// var lengthEnemiesArray = enemiesArray.length,
-		// 	lengthobstaclesArray = obstaclesArray.length,
-		// 	j,
-		// 	k,
-		// 	h;
+		var lengthEnemiesArray = enemiesArray.length,
+			lengthobstaclesArray = obstaclesArray.length,
+			j,
+			k,
+			h;
 
-		// move the enemies
+		//move the enemies
 		// for (j = 0; lengthEnemiesArray > j; j += 1) {
 		// 	// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 		// 	if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
@@ -405,17 +555,17 @@ var canvasPlayer = document.getElementById('player'),
 		// for (k = 0; lengthEnemiesArray > k; k += 1) {
 
 		// 	checkCollision(player, enemiesArray[k]);
-		// 	// if (lengthEnemiesArray > 5) {
-		// 	// 	enemiesIsOutTheCanvas(enemiesArray[k]);
-		// 	// }
-		// }
-
-		// check the collision with the obstacles
-		// for (h = 0; lengthobstaclesArray > h; h += 1) {
-		// 	if (obstaclesArray[h].name == 'rock') {
-		// 		checkCollision(player, obstaclesArray[h]);
+		// 	if (lengthEnemiesArray > 5) {
+		// 		enemiesIsOutTheCanvas(enemiesArray[k]);
 		// 	}
 		// }
+
+		//check the collision with the obstacles
+		for (h = 0; lengthobstaclesArray > h; h += 1) {
+			if (obstaclesArray[h].name == 'rock') {
+				checkCollision(player, obstaclesArray[h]);
+			}
+		}
 
 		// Update player life
 		adarhaLife.html('PLAYER LIFE :' + player.life);
@@ -437,16 +587,16 @@ var canvasPlayer = document.getElementById('player'),
 	 * @example
 	 * renderPlayer();
 	 */
-	function renderPlayer () {
-		//contextPlayer.drawImage(imageSrc, x, y, width, height);
-		contextPlayer.drawImage(
-			playerImage,
-			player.x,
-			player.y,
-			player.playerWidth,
-			player.playerHeight
-			);
-	}
+	// function renderPlayer () {
+	// 	//contextPlayer.drawImage(imageSrc, x, y, width, height);
+	// 	contextPlayer.drawImage(
+	// 		playerImage,
+	// 		player.x,
+	// 		player.y,
+	// 		player.playerWidth,
+	// 		player.playerHeight
+	// 		);
+	// }
 
 
 	/**
@@ -455,42 +605,64 @@ var canvasPlayer = document.getElementById('player'),
 	 * @example
 	 * renderBackground();
 	 */
+
+	var backgroundImage1Difference,
+		backgroundExtraCaveDifferenc,
+		backgroundImage1Width,
+		backgroundImage1Height,
+		backgroundImage1Widthx2,
+		backgroundImage1Widthx3,
+		backgroundImage1Widthx4,
+		backgroundImage1Widthx5;
+
+
 	function renderBackground () {
-			// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
-		var backgroundImage1Difference = backgroundImage1.height - canvasHeight,
-			backgroundExtraCaveDifference = extrasCave.height - canvasHeight;
+		// Less the canvasHeight to the height of the image to position the y positon of the image in the bottom of the page.
+		backgroundImage1Difference = backgroundImage1.height - canvasHeight;
+		backgroundExtraCaveDifferenc = extrasCave.height - canvasHeight;
+		backgroundImage1Width = backgroundImage1.width;
+		backgroundImage1Height = backgroundImage1.height;
+		backgroundImage1Widthx2 = backgroundImage1Width * 2;
+		backgroundImage1Widthx3 = backgroundImage1Width * 3;
+		backgroundImage1Widthx4 = backgroundImage1Width * 4;
+		backgroundImage1Widthx5 = backgroundImage1Width * 5;
+
+		// contextBackground.drawImage(backgroundImagePatter, background.x - 200, background.y, backgroundImagePatter.width, backgroundImagePatter.height);
+		//contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		//contextBackground.drawImage(backgroundImage1, background.x - 200, background.y, backgroundImage1Width, backgroundImage1Height);
 
 
-		//var pattern = contextBackground.createPattern(backgroundImagePatter, 'repeat');
+		// contextBackground.save();
 
-		// contextBackground.rect(0, 0, background.backgroundWidth, background.backgroundHeight);
-  //       contextBackground.fillStyle = pattern;
-  //       contextBackground.fill();
+		// contextBackground.fillRect(-200, 0, 5586, 800);
 
-        //contextBackground.drawImage(backgroundImagePatter, background.x - 200, background.y - backgroundImage1Difference, backgroundImagePatter.width, backgroundImagePatter.height);
+		// hay que hacer que el background.x se -2 cuando esta apretado el boton right y +2 cuando estre apretado el boton left
+		// contextBackground.translate(background.x, background.y);
 
-		contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		// contextBackground.restore();
 
-		if ( -(background.x) <= (backgroundImage1.width - 200) ) {
-			contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - backgroundImage1Difference, backgroundImage1.width, backgroundImage1.height);
+
+		//contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		if ( -(background.x) <= (backgroundImage1Width - 200) ) {
+			contextBackground.drawImage(backgroundImage1, background.x - 200, background.y, backgroundImage1Width, backgroundImage1Height);
 		}
 
 		// Ask if the background.x position is less than the backgroundImage1.width - 200 AND ask if the background.x position is higher
-		// than backgroundImage1.width * 2) - 200 tha is the position where start the third image.
-		if ( -(background.x) >= (backgroundImage1.width - 200) - canvasWidth - 200  &&  -(background.x) <= ( (backgroundImage1.width * 2) - 200 ) ) {
-			contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1.width - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		// than backgroundImage1.width * 2) - 200 that is the position where start the third image.
+		if ( -(background.x) >= (backgroundImage1Width - 200) - canvasWidth - 200  &&  -(background.x) <= ( (backgroundImage1Widthx2) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1Width - 200), background.y, backgroundImage1Width, backgroundImage1Height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 2 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 3) - 200 ) ) {
-			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 2) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		if ( -(background.x) >= (backgroundImage1Widthx2 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx3) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx2) - 200), background.y, backgroundImage1Width, backgroundImage1Height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 3 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 4) - 200 ) ) {
-			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1.width * 3) - 200), background.y - backgroundImage1Difference, backgroundImage2.width, backgroundImage2.height);
+		if ( -(background.x) >= (backgroundImage1Widthx3 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx4) - 200 ) ) {
+			contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx3) - 200), background.y, backgroundImage1Width, backgroundImage1Height);
 		}
 
-		if ( -(background.x) >= (backgroundImage1.width * 4 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1.width * 5) - 200 ) ) {
-			contextBackground.drawImage(backgroundFinal, background.x + ((backgroundFinal.width * 4) - 200), background.y - backgroundImage1Difference, backgroundFinal.width, backgroundFinal.height);
+		if ( -(background.x) >= (backgroundImage1Widthx4 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx5) - 200 ) ) {
+			contextBackground.drawImage(backgroundFinal, background.x + ((backgroundImage1Widthx4) - 200), background.y, backgroundFinal.width, backgroundFinal.height);
 
 			// add the cave of the warlok
 			// Al final de todo anda ma el clear. Ver de sumarle o restarle algun valor al extrasCave.width
@@ -634,11 +806,11 @@ var canvasPlayer = document.getElementById('player'),
 	 * @example
 	 * addFinalEnemie();
 	 */
-	function addFinalEnemie () {
-		enemiesArray.push(
-				new Enemies(100, 'warlock', warlockImage, (backgroundPlusImages - 200) - warlockImage.width, canvasHeight -450, 245, 258, 0, 0, 0, 150)
-				);
-	}
+	// function addFinalEnemie () {
+	// 	enemiesArray.push(
+	// 			new Enemies(100, 'warlock', warlockImage, (backgroundPlusImages - 200) - warlockImage.width, canvasHeight -450, 245, 258, 0, 0, 0, 150)
+	// 			);
+	// }
 
 
 	/**
@@ -862,7 +1034,6 @@ var canvasPlayer = document.getElementById('player'),
 		if (positionXOfEnemie < 100) {
 			//no me deja eliminarlo porque todavía esta chequeando si tiene colition
 			//enemiesArray.splice(enemiesArray[enemiesArray.indexOf(enemies)], 1);
-			console.log(enemiesArray.indexOf(enemies));
 			enemiesArray.splice(enemiesArray.indexOf(enemies), 1);
 		}
 	}
@@ -927,43 +1098,43 @@ var canvasPlayer = document.getElementById('player'),
 
 		switch (walkingDirection) {
             case 'walkingRight':
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -60, canvasHeight - 236, 160, 260);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -60, canvasHeight - 236, 160, 260);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -100, canvasHeight - 390, 200, 300);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
             break;
         }
 	}
@@ -987,10 +1158,10 @@ var canvasPlayer = document.getElementById('player'),
 		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		//renderObstacles();
+		renderObstacles();
 
 		// Call the function tha render the extras.
-		// renderExtras();
+		//renderExtras();
 	}
 
 
@@ -1066,9 +1237,16 @@ var canvasPlayer = document.getElementById('player'),
         }
 	});
 
+
 	//Call de update function when the page load.
 	win.addEventListener("load", function(){
 		update();
 	});
 
 })(this);
+
+</script>
+
+
+</body>
+</html>
