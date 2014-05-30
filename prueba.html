@@ -27,13 +27,13 @@
 
 	<div id="controls">
 		<div class="walk-controls">
-			<input type="button" value="<" class="left-arrow">
-			<input type="button" value="-" class="down-arrow">
-			<input type="button" value=">" class="right-arrow">
+			<input type="button" value="" class="left-arrow">
+			<input type="button" value="" class="down-arrow">
+			<input type="button" value="" class="right-arrow">
 		</div>
 		<div class="jump-attack-controls">
-			<input type="button" value="^" class="top-arrow">
-			<input type="button" value="a" class="attack-key">
+			<input type="button" value="" class="top-arrow">
+			<input type="button" value="" class="attack-key">
 		</div>
 	</div>
 
@@ -101,8 +101,8 @@ var canvasPlayer = document.getElementById('player'),
     	playerWidth,
     	playerHeight,
 		player = {
-			x : (canvasWidth / 2) - 80,
-			y : canvasHeight - 350, // y position of the player: 230 + the heigth of the player
+			x : (canvasWidth / 2) - 45,
+			y : canvasHeight - 260, // y position of the player: 230 + the heigth of the player
 			playerWidth : 60,
 			playerHeight : 122,
 			speed: 4,
@@ -145,24 +145,37 @@ var canvasPlayer = document.getElementById('player'),
 
 	if (userAgent.indexOf('iPad') > -1) {
 
-		$('#extras').css('top', 0);
-		$('#player').css('top', 0);
-		$('#background').css('top', 0);
-		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth);
+		// // $('#playerOptions').css('width', win.innerWidth);
+		// $('#controls').css('width', win.innerWidth).css('display', 'block').css('bottom', 120);
 
-		canvasWidth = win.innerWidth;
-    	canvasHeight = win.innerHeight;
+		// canvasWidth = 900;
+  //   	canvasHeight = 700;
+
+		// canvasPlayer.width = canvasWidth + 200;
+		// canvasPlayer.height = canvasHeight;
+
+		// canvasBackground.width = canvasWidth + 200;
+		// canvasBackground.height = canvasHeight;
+
+		// canvasExtras.width = canvasWidth + 200;
+		// canvasExtras.height = canvasHeight;
+
+
+		// Posible solucion al bad render es que en el ipad se vea un poco más chico
+		$('#controls').css('width', win.innerWidth).css('display', 'block').css('bottom', 120);
+
+		canvasWidth = win.innerWidth -200;
+    	canvasHeight = 700;
 
 		canvasPlayer.width = win.innerWidth;
-		canvasPlayer.height = win.innerHeight;
+		canvasPlayer.height = canvasHeight;
 
-		canvasBackground.width = win.innerWidth;
-		canvasBackground.height = win.innerHeight;
+		canvasBackground.width = win.innerWidth -200;
+		canvasBackground.height = canvasHeight;
 
 		canvasExtras.width = win.innerWidth;
-		canvasExtras.height = win.innerHeight;
+		canvasExtras.height = canvasHeight;
+
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
 
@@ -171,7 +184,7 @@ var canvasPlayer = document.getElementById('player'),
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
 		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth).css('display', 'block');
 
 		canvasWidth = win.innerWidth;
     	canvasHeight = win.innerHeight;
@@ -193,7 +206,7 @@ var canvasPlayer = document.getElementById('player'),
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
 		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth).css('display', 'block');
 
 		canvasWidth = win.innerWidth;
     	canvasHeight = win.innerHeight;
@@ -254,36 +267,36 @@ var canvasPlayer = document.getElementById('player'),
 		extrasCave = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
-	backgroundImage2.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
 
-	// backgroundImagePatter.src = 'http://10.10.33.96/2d-platform-game/img/background-1.jpg';
+	// backgroundImagePatter.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
 	// backgroundImagePatter.onload = function(){
 	//     var ptrn = contextBackground.createPattern(backgroundImagePatter,'repeat-x');
 	//     contextBackground.fillStyle = ptrn;
 	// }
 
 
-	backgroundFinal.src = 'http://10.10.33.96/2d-platform-game/img/background-final.jpg';
+	backgroundFinal.src = 'http://192.168.1.34/2d-platform-game/img/background-final.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://10.10.33.96/2d-platform-game/img/wolf-animation.png';
-	warlockImage.src = 'http://10.10.33.96/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://192.168.1.34/2d-platform-game/img/wolf-animation.png';
+	warlockImage.src = 'http://192.168.1.34/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerSpriteRight.src = 'http://10.10.33.96/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://10.10.33.96/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-left.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://10.10.33.96/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://10.10.33.96/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://10.10.33.96/2d-platform-game/img/water.png';
+	waterObstacle.src = 'http://192.168.1.34/2d-platform-game/img/water.png';
 
 	// extras images
-	extras1.src = 'http://10.10.33.96/2d-platform-game/img/extras-1.png';
-	extras2.src = 'http://10.10.33.96/2d-platform-game/img/extras-2.png';
-	extrasCave.src = 'http://10.10.33.96/2d-platform-game/img/extrasCave.png';
+	extras1.src = 'http://192.168.1.34/2d-platform-game/img/extras-1.png';
+	extras2.src = 'http://192.168.1.34/2d-platform-game/img/extras-2.png';
+	extrasCave.src = 'http://192.168.1.34/2d-platform-game/img/extrasCave.png';
 
 	/**
 	 * Class constructor of obstacles
@@ -307,7 +320,7 @@ var canvasPlayer = document.getElementById('player'),
 
 	// Push obstacles into the array
 	obstaclesArray.push(
-				  new Obstacles('rock', smallRockObstacle, canvasWidth + 700, canvasHeight - 280, 159, 125, 50),
+				  new Obstacles('rock', smallRockObstacle, canvasWidth + 700, canvasHeight - 220, 159, 125, 50),
 				  new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 				  new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 				  );
@@ -561,11 +574,11 @@ var canvasPlayer = document.getElementById('player'),
 		// }
 
 		//check the collision with the obstacles
-		for (h = 0; lengthobstaclesArray > h; h += 1) {
-			if (obstaclesArray[h].name == 'rock') {
-				checkCollision(player, obstaclesArray[h]);
-			}
-		}
+		// for (h = 0; lengthobstaclesArray > h; h += 1) {
+		// 	if (obstaclesArray[h].name == 'rock') {
+		// 		checkCollision(player, obstaclesArray[h]);
+		// 	}
+		// }
 
 		// Update player life
 		adarhaLife.html('PLAYER LIFE :' + player.life);
@@ -1098,43 +1111,43 @@ var canvasPlayer = document.getElementById('player'),
 
 		switch (walkingDirection) {
             case 'walkingRight':
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 148, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 200, (canvasWidth / 2) -60, canvasHeight - 236, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 148, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 200, (canvasWidth / 2) -60, canvasHeight - 236, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 151, 200, (canvasWidth / 2) -60, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
             break;
         }
 	}
@@ -1158,7 +1171,7 @@ var canvasPlayer = document.getElementById('player'),
 		//renderEnemies();
 
 		// Call the function tha render the obstacles. I have to call this function random or when y want to a obstacle appear.
-		renderObstacles();
+		//renderObstacles();
 
 		// Call the function tha render the extras.
 		//renderExtras();

@@ -206,8 +206,9 @@ body {
 	z-index: 10;
 	bottom: 0;
 	padding: 0 30px;
-/*	display: block;*/
+	display: none;
 	width: 100%;
+	-webkit-user-select: none;
 }
 
 #controls .jump-attack-controls {
@@ -215,9 +216,53 @@ body {
 	position: absolute;
 	bottom: 0;
 	right: 80px;
+	-webkit-user-select: none;
 }
 
 #controls input {
-	width: 35px;
+/*	width: 35px;*/
 	font-size: 30px;
+	border: none;
 }
+
+#controls input[type="button"]:focus {
+	display: none;
+}
+
+/* Mobile controls */
+.down-arrow {
+	width: 47px;
+	height: 47px;
+	background: url('../img/down-arrow.png') no-repeat;
+}
+
+.top-arrow {
+	width: 54px;
+	height: 56px;
+	background: url('../img/top-arrow.png') no-repeat;
+}
+
+.right-arrow {
+	width: 54px;
+	height: 56px;
+	background: url('../img/right-arrow.png') no-repeat;
+}
+
+.left-arrow {
+	width: 54px;
+	height: 56px;
+	background: url('../img/left-arrow.png') no-repeat;
+}
+
+.attack-key {
+	width: 54px;
+	height: 56px;
+	background: url('../img/attack-key.png') no-repeat;
+}
+
+
+
+
+
+
+
