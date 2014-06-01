@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html lang="en" class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7 ie6"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 7]><html lang="en" class="no-js lt-ie10 lt-ie9 lt-ie8 ie7"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 8]><html lang="en" class="no-js lt-ie10 lt-ie9 ie8"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if IE 9]><html lang="en" class="no-js lt-ie10 ie9"></html><script type="text/javascript" src="https://a248.e.akamai.net/secure.mlstatic.com/org-img/ch/tools/html5shiv/html5shiv.js"></script>
+<![endif]--><!--[if gt IE 9] <!-->
+<head>
+	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1"/>
+	<meta charset="utf-8"/>
+	<title>Game</title>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body>
+	<section id="panelGameOver" class="display-none">
+		<h2>Game Over</h2>
+		<a href="#" id="playAgain">Jugar de nuevo</a>
+		<a href="#" id="postScore">Compartir puntaje</a>
+	</section>
+
+	<section id="playerOptions">
+		<div id="adarhaLife"></div>
+		<div id="adarhaPotion"></div>
+		<div id="adarhaHeartsDragon"></div>
+		<div id="adarhaScore" style="display:none"></div>
+	</section>
+
+	<div id="controls">
+		<div class="walk-controls">
+			<input type="button" value="" class="left-arrow">
+			<input type="button" value="" class="down-arrow">
+			<input type="button" value="" class="right-arrow">
+		</div>
+		<div class="jump-attack-controls">
+			<input type="button" value="" class="top-arrow">
+			<input type="button" value="" class="attack-key">
+		</div>
+	</div>
+
+	<section id="panelGame">
+		<div class="left-actions">
+			<a href="www.lesath.com.ar">Creditos</a> |
+			<a href="www.lesath.com.ar">Compartir</a>
+		</div>
+
+		<div class="brand-lesath">
+			<img src="img/brand-lesath.png">
+		</div>
+
+		<div class="right-actions">
+			<img src="img/icon-twitter.png">
+			<img src="img/icon-facebook.png">
+			<img src="img/icon-pause.png">
+			<img src="img/icon-sound.png">
+		</div>
+	</section>
+
+
+	<canvas id="extras"></canvas>
+	<canvas id="player"></canvas>
+	<canvas id="background"></canvas>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<script type="text/javascript" src="js/game.js"></script>
+<script type="text/javascript">
+(function (win) {
+
+	// requestAnimationFrame fallback
+    var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
+    win.requestAnimationFrame = requestAnimationFrame;
+
+
+    // Canvas dimentions and declarations
+	var canvasWidth = 900,
+    	canvasHeight = 700,
+
+    	canvasBackground = document.getElementById('background'),
+    	contextBackground = canvasBackground.getContext('2d'),
+
+    	canvasPlayer = document.getElementById('player'),
+    	contextPlayer = canvasPlayer.getContext('2d'),
+
+    	canvasExtras = document.getElementById('extras'),
+    	contextExtras = canvasExtras.getContext('2d');
+
+    	canvasBackground.width = canvasWidth + 200;
+		canvasBackground.height = canvasHeight;
+
+		canvasPlayer.width = canvasWidth + 200;
+		canvasPlayer.height = canvasHeight;
+
+		canvasExtras.width = canvasWidth + 200;
+		canvasExtras.height = canvasHeight;
+
+
+    // Game objects declaration; Player, Background, Extras
+    var playerWidth,
+    	playerHeight,
+		player = {
+			x : (canvasWidth / 2) - 45, // Less the middel of the width of the image player
+			y : canvasHeight - 260, // Less the height of the image player
+			playerWidth : 60,
+			playerHeight : 122,
+			speed: 4,
+			velX: 0,
+			velY: 0,
+			jumping : false,
+			life : 5100,
+			score : 0,
+			heartsDragon : 0,
+			attack : false,
+			aggressive : 25
+		},
+		background = {
+			x : 0,
+			y : 0,
+			backgroundWidth : canvasWidth,
+			backgroundHeight : canvasHeight,
+			speed: 4,
+			velX: 0,
+			velY: 0,
+			friction: 0.75,
+			jumping : false
+		},
+		extras = {
+			x : 0,
+			y : 0,
+			extrasWidth : canvasWidth,
+			extrasHeight : canvasHeight,
+			speed: 6,
+			velX: 0,
+			velY: 0,
+			friction: 0.82,
+			jumping : false
+		},
+		keys = [],
+		gravity = 0.20;
+
+
+	// Game elements, extras and flags
+	var onObstacle,
+		playerOnObstacle,
+		adarhaLife = $('#adarhaLife'),
+		adarhaScore = $('#adarhaScore'),
+		adarhaHeartsDragon = $('#adarhaHeartsDragon'),
+		controls = document.getElementById('controls'),
+		mobileJump,
+		mobileCrouch,
+		mobileLeft,
+		mobileRight,
+		mobileAttack,
+		walkingLeft = false,
+		walkingRight = false,
+		crouch = false,
+		jump = false,
+		attacking = false,
+		backgroundPlusImages,
+		extrasPlusImages,
+		panelGameOver = $('#panelGameOver'),
+		playAgain = $('#playAgain');
+
+
+	// Images
+	var backgroundImage1 = new Image(),
+		backgroundImagePatter = new Image(),
+		playerSpriteRight = new Image(),
+		playerSpriteLeft = new Image();
+
+		backgroundImage1.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
+		backgroundImagePatter.src = 'http://192.168.1.33/2d-platform-game/img/background-pattern.jpg';
+		playerSpriteRight.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-right.png';
+		playerSpriteLeft.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-left.png';
+
+
+	// Cache content
+	var secondaryCanvas = document.createElement('canvas');
+
+		secondaryCanvas.setAttribute('id', 'secondaryCanvas');
+
+		secondaryCanvas.width = canvasWidth + 200;
+    	secondaryCanvas.height = canvasHeight;
+
+    	secondaryCanvas.style = 'position: absolute';
+    	secondaryCanvas.style = 'background-color: #ffffff';
+
+    var	secondaryCtx = secondaryCanvas.getContext("2d");
+
+
+    // Canvas rotation
+	contextPlayer.rotate(-5.3 * Math.PI / 180);
+	contextBackground.rotate(-5.3 * Math.PI / 180);
+	contextExtras.rotate(-4 * Math.PI / 180);
+
+
+
+	// Devices adaptations
+	var userAgent = window.navigator.userAgent;
+
+	if (userAgent.indexOf('iPad') > -1) {
+		// Posible solucion al bad render es que en el ipad se vea un poco más chico
+		$('#controls').css('width', 900).css('display', 'block').css('bottom', 120);
+	}
+
+
+	function update () {
+
+		secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y);
+
+		// run through the loop again to refresh the game all time
+		requestAnimationFrame(update);
+
+		// up arrow or space
+		if (keys[38] || keys[32] || mobileJump) {
+
+			onObstacle = false;
+
+			if (!background.jumping) {
+				background.jumping = true;
+
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
+
+				if (frame == 6) {
+
+					background.velY =+ (background.speed * 2);
+
+				}
+				// This run when the character touch the land.
+				// if (background.velY <= 0) {
+				//   	//frame = 0;
+				// }
+			}
+		}
+
+		// down arrow
+		if (keys[40] || mobileCrouch) {
+			// Function OK when the player only walk from right
+			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
+
+			if (frame == 4) {
+				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
+			}
+		}
+
+		// If down arrow is drop
+		// if (keys[40] == false) {
+
+		// 	if (frame >= 4) {
+
+		// 		setFramesSpriteAnimation('crouch', 5, 9, 100);
+
+		// 		if (frame == 8) {
+		// 			//setFramesSpriteAnimation('crouch', 8, 1, 100);
+		// 			setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+		// 		}
+		// 	}
+		// }
+
+		// left arrow
+		if (keys[37] || mobileLeft) {
+			if (background.velX < background.speed  ||  extras.velX < extras.speed) {
+
+				background.velX++;
+
+				extras.velX++;
+
+				walkingLeft = true;
+
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+			}
+		}
+
+		// right arrow
+		if (keys[39] || mobileRight) {
+			if (background.velX >- background.speed && extras.velX >- extras.speed) {
+
+				background.velX--;
+
+				extras.velX--;
+
+				walkingRight = true;
+
+				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+			}
+
+			// if (!walkingRight) {
+
+			// 	background.x = -3;
+			// 	walkingRight = true;
+			// }
+
+			// setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+
+		}
+
+		// If the player is on the start position
+		if (walkingLeft == false && walkingRight == false) {
+			if (crouch == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+			}
+		}
+
+		// If left arrow is drop
+		if (keys[37] == false) {
+			if (!walkingRight) {
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+			}
+		}
+
+		// If right arrow is drop
+		if (keys[39] == false) {
+
+			if (!walkingLeft) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+			}
+		}
+
+		// a key
+		if (keys[65] || mobileAttack) {
+			player.attack = true;
+
+			// run the sprite animation for the attack
+			setFramesSpriteAnimation('attackRight');
+			attacking = true;
+		}
+
+		// reset the player attack to false when the user drop the key a or the mobile button attack
+		if (keys[65] == false || mobileAttack == false) {
+			player.attack = false;
+		}
+
+
+		// apply friction to the horizontal movement of the background
+		background.velX *= background.friction;
+
+		extras.velX *= extras.friction;
+
+
+		// apply gravity to the up movement of the background
+		if (onObstacle) {
+			background.velY = 0;
+		} else {
+			background.velY -= gravity;
+		}
+
+		// Move the the background
+		background.x += background.velX;
+		background.y += background.velY;
+
+		// Move the the extras
+		extras.x += extras.velX;
+
+		// reset the jump property when the background hits the ground
+		if (background.y <= canvasHeight - background.backgroundHeight) {
+			background.y = canvasHeight - background.backgroundHeight;
+			background.jumping = false;
+		}
+
+		// the player stop and not go outside of the canvas and add the last enemie
+		// plus the with images that repeat in the background
+		backgroundPlusImages = backgroundImage1.width * 5;
+
+		if (background.x > 0) {
+
+			background.x = 0;
+			extras.x = 0;
+
+		} else if ( -(background.x) >= backgroundPlusImages - canvasWidth - 200) {
+
+			background.x = -(backgroundPlusImages - canvasWidth - 200);
+			//extras.x = -(extrasPlusImages  - canvasWidth - 200);
+			extras.velX = 0;
+
+			// add the final enemie
+			addFinalEnemie();
+		}
+
+		onObstacle = false;
+
+		// render all the game
+		renders();
+	}
+
+
+	function renders () {
+		renderBackground();
+	}
+
+	function renderBackground () {
+
+		var backgroundImage1Difference,
+			backgroundExtraCaveDifferenc,
+			backgroundImage1Width,
+			backgroundImage1Height,
+			backgroundImage1Widthx2,
+			backgroundImage1Widthx3,
+			backgroundImage1Widthx4,
+			backgroundImage1Widthx5;
+
+		backgroundImage1Difference = backgroundImage1.height - canvasHeight;
+		//backgroundExtraCaveDifferenc = extrasCave.height - canvasHeight;
+		backgroundImage1Width = backgroundImage1.width;
+		backgroundImage1Height = backgroundImage1.height;
+		backgroundImage1Widthx2 = backgroundImage1Width * 2;
+		backgroundImage1Widthx3 = backgroundImage1Width * 3;
+		backgroundImage1Widthx4 = backgroundImage1Width * 4;
+		backgroundImage1Widthx5 = backgroundImage1Width * 5;
+
+
+
+		contextBackground.drawImage(secondaryCanvas, -100, 50, canvasWidth + 200, canvasHeight);
+		//contextBackground.drawImage(backgroundImagePatter, background.x -200, background.y);
+
+
+
+		// if ( -(background.x) <= (backgroundImage1Width - 200) ) {
+		// 	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y);
+		// }
+		// if ( -(background.x) >= (backgroundImage1Width - 200) - canvasWidth - 200  &&  -(background.x) <= ( (backgroundImage1Widthx2) - 200 ) ) {
+		// 	contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1Width - 200), background.y, backgroundImage1.width, backgroundImage1.height);
+		// }
+
+		// if ( -(background.x) >= (backgroundImage1Widthx2 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx3) - 200 ) ) {
+		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx2) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
+		// }
+
+		// if ( -(background.x) >= (backgroundImage1Widthx3 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx4) - 200 ) ) {
+		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx3) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
+		// }
+
+		// if ( -(background.x) >= (backgroundImage1Widthx4 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx5) - 200 ) ) {
+		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx4) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
+
+		// 	// add the cave of the warlok
+		// 	// Al final de todo anda ma el clear. Ver de sumarle o restarle algun valor al extrasCave.width
+		// 	// contextBackground.drawImage(extrasCave, background.x + ((backgroundFinal.width * 5) - 200) - extrasCave.width, background.y - backgroundExtraCaveDifference);
+		// }
+	}
+
+
+	/* Sprite animation */
+	var frame = 0,
+		delta,
+		lastUpdateTime = 0,
+		updateDelta = 0,
+		msPerFrame = 100;
+
+	/**
+	 * Set the frames amount and speed.
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
+	 */
+	function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
+		delta = Date.now() - lastUpdateTime;
+
+		if (updateDelta > msPerFrame) {
+			updateDelta = 0;
+
+			drawSpriteAnimation(walkingDirection);
+
+			frame += 1;
+
+			if (frame >= frameCuantity) {
+				frame = frameStartPosition;
+			}
+
+		} else {
+			updateDelta += delta;
+		}
+
+		lastUpdateTime = Date.now();
+	}
+
+	/**
+	 * Draw the sprite animation depending on the direction of the arrow down
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * drawSpriteAnimation('walkingRight');
+	 */
+	function drawSpriteAnimation (walkingDirection) {
+		// 	contextPlayer.drawImage(img, sx, sy, swidth, sheight, x, y, width, height);
+		// 	img	Specifies the image, canvas, or video element to use
+		// 	sx	Optional parameter. The x coordinate where to start clipping
+		// 	sy	Optional parameter. The y coordinate where to start clipping
+		// 	swidth	Optional parameter. The width of the clipped image
+		// 	sheight	Optional parameter. The height of the clipped image
+		// 	x	The x coordinate where to place the image on the canvas
+		// 	y	The y coordinate where to place the image on the canvas
+		// 	width	Optional parameter. The width of the image to use (stretch or reduce the image)
+		// 	height	Optional parameter. The height of the image to use (stretch or reduce the image)
+
+		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		switch (walkingDirection) {
+            case 'walkingRight':
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'walkingStopRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'crouchRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'jumpingRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
+            break;
+
+            case 'attackRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'walkingLeft':
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'walkingStopLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'crouchLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+
+            case 'jumpingLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
+            break;
+
+            case 'attackLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            break;
+        }
+	}
+
+	// listen when a key is pressed
+	document.body.addEventListener("keydown", function (event) {
+		keys[event.keyCode] = true;
+	});
+
+	// listen when a key is dropped
+	document.body.addEventListener("keyup", function (event) {
+		keys[event.keyCode] = false;
+
+	});
+
+	// listen when a mobile button is pressed
+	controls.addEventListener("touchstart", function (event) {
+		switch (event.target.className) {
+            case 'top-arrow':
+          		mobileJump = true;
+            break;
+
+            case 'down-arrow':
+          		mobileCrouch = true;
+            break;
+
+            case 'left-arrow':
+            	mobileLeft = true;
+            break;
+
+            case 'right-arrow':
+            	mobileRight = true;
+            break;
+
+            case 'attack-key':
+            	mobileAttack = true;
+            break;
+        }
+	});
+
+	// listen when a mobile button is pressed
+	controls.addEventListener("touchend", function (event) {
+		switch (event.target.className) {
+            case 'top-arrow':
+          		mobileJump = false;
+            break;
+
+            case 'down-arrow':
+          		mobileCrouch = false;
+            break;
+
+            case 'left-arrow':
+            	mobileLeft = false;
+            break;
+
+            case 'right-arrow':
+            	mobileRight = false;
+            break;
+
+            case 'attack-key':
+            	mobileAttack = false;
+            break;
+        }
+	});
+
+
+	//Call de update function when the page load.
+	win.addEventListener("load", function(){
+		update();
+	});
+
+})(this);
+
+</script>
+</body>
+</html>
