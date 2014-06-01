@@ -145,36 +145,27 @@ var canvasPlayer = document.getElementById('player'),
 
 	if (userAgent.indexOf('iPad') > -1) {
 
-		// // $('#playerOptions').css('width', win.innerWidth);
-		// $('#controls').css('width', win.innerWidth).css('display', 'block').css('bottom', 120);
-
-		// canvasWidth = 900;
-  //   	canvasHeight = 700;
-
-		// canvasPlayer.width = canvasWidth + 200;
-		// canvasPlayer.height = canvasHeight;
-
-		// canvasBackground.width = canvasWidth + 200;
-		// canvasBackground.height = canvasHeight;
-
-		// canvasExtras.width = canvasWidth + 200;
-		// canvasExtras.height = canvasHeight;
-
-
 		// Posible solucion al bad render es que en el ipad se vea un poco más chico
-		$('#controls').css('width', win.innerWidth).css('display', 'block').css('bottom', 120);
+		$('#panelGame').css('width', 900);
+		$('#playerOptions').css('width', 900);
+		$('#controls').css('width', 900).css('display', 'block').css('bottom', 120);
+		$('.walk-controls').css('margin-left', 20);
+		$('.jump-attack-controls').css('right', 30);
+		$('#adarhaLife').css('width', 270).css('margin-left', 30);
+		$('#adarhaPotion').css('margin-right', 10);
+		$('#adarhaHeartsDragon').css('margin-right', 10);
 
-		canvasWidth = win.innerWidth -200;
+		canvasWidth = 900;
     	canvasHeight = 700;
 
-		canvasPlayer.width = win.innerWidth;
-		canvasPlayer.height = canvasHeight;
+		canvasPlayer.width = 900;
+		canvasPlayer.height = 700;
 
-		canvasBackground.width = win.innerWidth -200;
-		canvasBackground.height = canvasHeight;
+		canvasBackground.width = 900;
+		canvasBackground.height = 700;
 
-		canvasExtras.width = win.innerWidth;
-		canvasExtras.height = canvasHeight;
+		canvasExtras.width = 900;
+		canvasExtras.height = 700;
 
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
@@ -184,7 +175,19 @@ var canvasPlayer = document.getElementById('player'),
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
 		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth).css('display', 'block');
+
+		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.jump-attack-controls').css('right', 0).css('float', 'none');
+		$('.down-arrow').css('background-size', 40);
+		$('.right-arrow').css('background-size', 40);
+		$('.left-arrow').css('background-size', 40);
+		$('.attack-key').css('background-size', 40);
+		$('.top-arrow').css('background-size', 40);
+
+
+		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
+		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
 
 		canvasWidth = win.innerWidth;
     	canvasHeight = win.innerHeight;
@@ -206,7 +209,12 @@ var canvasPlayer = document.getElementById('player'),
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
 		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth).css('display', 'block');
+		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.jump-attack-controls').css('right', 10).css('float', 'none');
+
+		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
+		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
 
 		canvasWidth = win.innerWidth;
     	canvasHeight = win.innerHeight;
@@ -267,36 +275,36 @@ var canvasPlayer = document.getElementById('player'),
 		extrasCave = new Image();
 
 	// backgrounds images
-	backgroundImage1.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
-	backgroundImage2.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	backgroundImage1.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
+	backgroundImage2.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
 
-	// backgroundImagePatter.src = 'http://192.168.1.34/2d-platform-game/img/background-1.jpg';
+	// backgroundImagePatter.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
 	// backgroundImagePatter.onload = function(){
 	//     var ptrn = contextBackground.createPattern(backgroundImagePatter,'repeat-x');
 	//     contextBackground.fillStyle = ptrn;
 	// }
 
 
-	backgroundFinal.src = 'http://192.168.1.34/2d-platform-game/img/background-final.jpg';
+	backgroundFinal.src = 'http://192.168.1.33/2d-platform-game/img/background-final.jpg';
 
 	// enemies images
-	wolfImage.src = 'http://192.168.1.34/2d-platform-game/img/wolf-animation.png';
-	warlockImage.src = 'http://192.168.1.34/2d-platform-game/img/warlock.png';
+	wolfImage.src = 'http://192.168.1.33/2d-platform-game/img/wolf-animation.png';
+	warlockImage.src = 'http://192.168.1.33/2d-platform-game/img/warlock.png';
 
 	// player images
-	playerSpriteRight.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-right.png';
-	playerSpriteLeft.src = 'http://192.168.1.34/2d-platform-game/img/player-actions-left.png';
+	playerSpriteRight.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-right.png';
+	playerSpriteLeft.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-left.png';
 
 	// obstacles images
-	smallRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/small-rock.png';
-	bigRockObstacle.src = 'http://192.168.1.34/2d-platform-game/img/big-rock.png';
+	smallRockObstacle.src = 'http://192.168.1.33/2d-platform-game/img/small-rock.png';
+	bigRockObstacle.src = 'http://192.168.1.33/2d-platform-game/img/big-rock.png';
 
-	waterObstacle.src = 'http://192.168.1.34/2d-platform-game/img/water.png';
+	waterObstacle.src = 'http://192.168.1.33/2d-platform-game/img/water.png';
 
 	// extras images
-	extras1.src = 'http://192.168.1.34/2d-platform-game/img/extras-1.png';
-	extras2.src = 'http://192.168.1.34/2d-platform-game/img/extras-2.png';
-	extrasCave.src = 'http://192.168.1.34/2d-platform-game/img/extrasCave.png';
+	extras1.src = 'http://192.168.1.33/2d-platform-game/img/extras-1.png';
+	extras2.src = 'http://192.168.1.33/2d-platform-game/img/extras-2.png';
+	extrasCave.src = 'http://192.168.1.33/2d-platform-game/img/extrasCave.png';
 
 	/**
 	 * Class constructor of obstacles
@@ -372,6 +380,8 @@ var canvasPlayer = document.getElementById('player'),
 	 * update();
 	 */
 	function update () {
+		// run through the loop again to refresh the game all time
+		requestAnimationFrame(update);
 
 		// up arrow or space
 		if (keys[38] || keys[32] || mobileJump) {
@@ -588,9 +598,6 @@ var canvasPlayer = document.getElementById('player'),
 
 		// Update player hearts dragon
 		adarhaHeartsDragon.html('PLAYER HEARTS DRAGON :' + player.heartsDragon);
-
-		// run through the loop again to refresh the game all time
-		requestAnimationFrame(update);
 	}
 
 
@@ -1233,7 +1240,7 @@ var canvasPlayer = document.getElementById('player'),
             break;
 
             case 'down-arrow':
-          		mobileCrouch = true;
+          		mobileCrouch = false;
             break;
 
             case 'left-arrow':
