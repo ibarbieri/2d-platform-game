@@ -6,12 +6,19 @@
 <![endif]--><!--[if gt IE 9] <!-->
 <head>
 	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1"/>
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+
 	<meta charset="utf-8"/>
 	<title>Game</title>
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 
 <body>
+	<section id="panelStartMobile" class="display-none">
+		<a href="#" id="starGameMobile">Start</a>
+	</section>
+
 	<section id="panelGameOver" class="display-none">
 		<h2>Game Over</h2>
 		<a href="#" id="playAgain">Jugar de nuevo</a>
@@ -70,12 +77,102 @@
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
+    // Full screen function
+    var element = document.documentElement;
+
+    function fullScreen (element) {
+		if (element.requestFullscreen) {
+			element.requestFullscreen();
+
+		} else if (element.msRequestFullscreen) {
+			element.msRequestFullscreen();
+
+		} else if (element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+
+		} else if (element.webkitRequestFullscreen) {
+			element.webkitRequestFullscreen();
+		}
+	}
+
+    // Devices adaptations
+	var userAgent = window.navigator.userAgent,
+		canvasWidth,
+    	canvasHeight;
+
+	if (userAgent.indexOf('iPad') > -1) {
+
+		$('#controls').css('display', 'block').css('bottom', 120);
+
+		canvasWidth = 800;
+		canvasHeight = 580;
+
+	} else if (userAgent.indexOf('Android') > -1) {
+
+		$('#panelStartMobile').toggleClass('display-none');
+
+		$('#starGameMobile').on('click', function () {
+			fullScreen(element);
+			$('#panelStartMobile').toggleClass('display-none');
+		});
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.outerWidth);
+		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.jump-attack-controls').css('right', 10).css('float', 'none');
+
+		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
+		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
+
+		canvasWidth = win.outerWidth;
+    	canvasHeight = win.screen.height;
+
+
+	} else if (userAgent.indexOf('iPhone') > -1) {
+
+		$('#panelStartMobile').toggleClass('display-none');
+
+		$('#starGameMobile').on('click', function () {
+			fullScreen(element);
+			$('#panelStartMobile').toggleClass('display-none');
+		});
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.outerWidth);
+
+		$('#controls').css('width', win.outerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.jump-attack-controls').css('right', 0).css('float', 'none');
+		$('.down-arrow').css('background-size', 40);
+		$('.right-arrow').css('background-size', 40);
+		$('.left-arrow').css('background-size', 40);
+		$('.attack-key').css('background-size', 40);
+		$('.top-arrow').css('background-size', 40);
+
+
+		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
+		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
+
+		canvasWidth = win.outerWidth;
+    	canvasHeight = win.screen.height;
+
+
+	} else {
+		// Desktop
+		canvasWidth = 950;
+		canvasHeight = 800;
+	}
+
 
     // Canvas dimentions and declarations
-	var canvasWidth = 900,
-    	canvasHeight = 700,
-
-    	canvasBackground = document.getElementById('background'),
+    var canvasBackground = document.getElementById('background'),
     	contextBackground = canvasBackground.getContext('2d'),
 
     	canvasPlayer = document.getElementById('player'),
@@ -84,24 +181,27 @@
     	canvasExtras = document.getElementById('extras'),
     	contextExtras = canvasExtras.getContext('2d');
 
-    	canvasBackground.width = canvasWidth + 200;
+    	canvasBackground.width = canvasWidth;
 		canvasBackground.height = canvasHeight;
 
-		canvasPlayer.width = canvasWidth + 200;
+		canvasPlayer.width = canvasWidth;
 		canvasPlayer.height = canvasHeight;
 
-		canvasExtras.width = canvasWidth + 200;
+		canvasExtras.width = canvasWidth;
 		canvasExtras.height = canvasHeight;
+
+
+
 
 
     // Game objects declaration; Player, Background, Extras
     var playerWidth,
     	playerHeight,
 		player = {
-			x : (canvasWidth / 2) - 45, // Less the middel of the width of the image player
-			y : canvasHeight - 260, // Less the height of the image player
-			playerWidth : 60,
-			playerHeight : 122,
+			x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
+			y : canvasHeight - 240, // Less the height of the image player
+			playerWidth : 90,
+			playerHeight : 185,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -164,25 +264,26 @@
 	// Images
 	var backgroundImage1 = new Image(),
 		backgroundImagePatter = new Image(),
+		backgroundImagePatterIpad = new Image(),
+		backgroundImageAndroid = new Image(),
 		playerSpriteRight = new Image(),
 		playerSpriteLeft = new Image();
 
-		backgroundImage1.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
-		backgroundImagePatter.src = 'http://192.168.1.33/2d-platform-game/img/background-pattern.jpg';
-		playerSpriteRight.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-right.png';
-		playerSpriteLeft.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-left.png';
+		backgroundImage1.src = 'http://10.10.33.107/2d-platform-game/img/background-1.jpg';
+		backgroundImagePatter.src = 'http://10.10.33.107/2d-platform-game/img/background-pattern.jpg';
+		backgroundImagePatterIpad.src = 'http://10.10.33.107/2d-platform-game/img/background-pattern-ipad.jpg';
+		backgroundImageAndroid.src = 'http://10.10.33.107/2d-platform-game/img/background-android.jpg';
+		playerSpriteRight.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-right.png';
+		playerSpriteLeft.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-left.png';
 
 
-	// Cache content
+	// Cache content in new canvas
 	var secondaryCanvas = document.createElement('canvas');
 
 		secondaryCanvas.setAttribute('id', 'secondaryCanvas');
 
-		secondaryCanvas.width = canvasWidth + 200;
+		secondaryCanvas.width = canvasWidth;
     	secondaryCanvas.height = canvasHeight;
-
-    	secondaryCanvas.style = 'position: absolute';
-    	secondaryCanvas.style = 'background-color: #ffffff';
 
     var	secondaryCtx = secondaryCanvas.getContext("2d");
 
@@ -190,22 +291,33 @@
     // Canvas rotation
 	contextPlayer.rotate(-5.3 * Math.PI / 180);
 	contextBackground.rotate(-5.3 * Math.PI / 180);
-	contextExtras.rotate(-4 * Math.PI / 180);
+	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 
-
-	// Devices adaptations
-	var userAgent = window.navigator.userAgent;
-
-	if (userAgent.indexOf('iPad') > -1) {
-		// Posible solucion al bad render es que en el ipad se vea un poco más chico
-		$('#controls').css('width', 900).css('display', 'block').css('bottom', 120);
-	}
-
-
+	// Function update
 	function update () {
 
-		secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y);
+		// if (canvasBackground.requestFullscreen) {
+		//   canvasBackground.requestFullscreen();
+		// } else if (canvasBackground.msRequestFullscreen) {
+		//   canvasBackground.msRequestFullscreen();
+		// } else if (canvasBackground.mozRequestFullScreen) {
+		//   canvasBackground.mozRequestFullScreen();
+		// } else if (canvasBackground.webkitRequestFullscreen) {
+		//   canvasBackground.webkitRequestFullscreen();
+		//   canvasExtras.webkitRequestFullscreen();
+		//   canvasPlayer.webkitRequestFullscreen();
+		//   $(document).webkitRequestFullscreen();
+		// }
+
+
+		if (userAgent.indexOf('iPad') > -1) {
+			// do nothing
+		} else if (userAgent.indexOf('Android') > -1) {
+			// do nothing
+		} else {
+			secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y, backgroundImagePatter.width, backgroundImagePatter.height);
+	 	}
 
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
@@ -388,54 +500,21 @@
 	}
 
 	function renderBackground () {
+		 if (userAgent.indexOf('iPad') > -1) {
+		 	contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		 	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y + 55, backgroundImage1.width, backgroundImage1.height + 530);
 
-		var backgroundImage1Difference,
-			backgroundExtraCaveDifferenc,
-			backgroundImage1Width,
-			backgroundImage1Height,
-			backgroundImage1Widthx2,
-			backgroundImage1Widthx3,
-			backgroundImage1Widthx4,
-			backgroundImage1Widthx5;
+		  } else if (userAgent.indexOf('Android') > -1) {
+		  	contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		  	contextBackground.drawImage(backgroundImageAndroid, background.x - 200, background.y + 205 - canvasHeight, backgroundImageAndroid.width, backgroundImageAndroid.height);
 
-		backgroundImage1Difference = backgroundImage1.height - canvasHeight;
-		//backgroundExtraCaveDifferenc = extrasCave.height - canvasHeight;
-		backgroundImage1Width = backgroundImage1.width;
-		backgroundImage1Height = backgroundImage1.height;
-		backgroundImage1Widthx2 = backgroundImage1Width * 2;
-		backgroundImage1Widthx3 = backgroundImage1Width * 3;
-		backgroundImage1Widthx4 = backgroundImage1Width * 4;
-		backgroundImage1Widthx5 = backgroundImage1Width * 5;
+		  } else if (userAgent.indexOf('iPhone') > -1) {
+		  	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - 90, backgroundImage1.width, backgroundImage1.height);
 
-
-
-		contextBackground.drawImage(secondaryCanvas, -100, 50, canvasWidth + 200, canvasHeight);
-		//contextBackground.drawImage(backgroundImagePatter, background.x -200, background.y);
-
-
-
-		// if ( -(background.x) <= (backgroundImage1Width - 200) ) {
-		// 	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y);
-		// }
-		// if ( -(background.x) >= (backgroundImage1Width - 200) - canvasWidth - 200  &&  -(background.x) <= ( (backgroundImage1Widthx2) - 200 ) ) {
-		// 	contextBackground.drawImage(backgroundImage1, background.x + (backgroundImage1Width - 200), background.y, backgroundImage1.width, backgroundImage1.height);
-		// }
-
-		// if ( -(background.x) >= (backgroundImage1Widthx2 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx3) - 200 ) ) {
-		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx2) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
-		// }
-
-		// if ( -(background.x) >= (backgroundImage1Widthx3 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx4) - 200 ) ) {
-		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx3) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
-		// }
-
-		// if ( -(background.x) >= (backgroundImage1Widthx4 - 200) - canvasWidth - 200 &&  -(background.x) <= ( (backgroundImage1Widthx5) - 200 ) ) {
-		// 	contextBackground.drawImage(backgroundImage1, background.x + ((backgroundImage1Widthx4) - 200), background.y, backgroundImage1.width, backgroundImage1.height);
-
-		// 	// add the cave of the warlok
-		// 	// Al final de todo anda ma el clear. Ver de sumarle o restarle algun valor al extrasCave.width
-		// 	// contextBackground.drawImage(extrasCave, background.x + ((backgroundFinal.width * 5) - 200) - extrasCave.width, background.y - backgroundExtraCaveDifference);
-		// }
+		  } else {
+			// Desktop
+			contextBackground.drawImage(secondaryCanvas, - 100, 50, canvasWidth + 200, canvasHeight);
+		 }
 	}
 
 
@@ -497,43 +576,44 @@
 
 		switch (walkingDirection) {
             case 'walkingRight':
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 256, 140, 240);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) -45, canvasHeight - 236, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 256, 140, 240);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) -45, canvasHeight - 220, 160, 260);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
             break;
         }
 	}
