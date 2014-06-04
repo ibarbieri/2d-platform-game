@@ -102,10 +102,23 @@
 
 	if (userAgent.indexOf('iPad') > -1) {
 
-		$('#controls').css('display', 'block').css('bottom', 120);
+		$('#extras').css('top', 90);
+		$('#player').css('top', 90);
+		$('#background').css('top', 90);
+
+		$('#playerOptions').css('width', 800).css('top', 80);
+		$('#panelGame').css('width', 800).css('top', 500);
+		$('#controls').css('display', 'block').css('bottom', 200).css('width', 800);
+
+		// $('.walk-controls').css('margin-left', 20);
+		// $('.jump-attack-controls').css('right', 30);
+
+		$('#adarhaLife').css('width', 270).css('margin-left', 30);
+		$('#adarhaPotion').css('margin-right', 10);
+		$('#adarhaHeartsDragon').css('margin-right', 10);
 
 		canvasWidth = 800;
-		canvasHeight = 580;
+		canvasHeight = 410;
 
 	} else if (userAgent.indexOf('Android') > -1) {
 
@@ -145,29 +158,31 @@
 		$('#player').css('top', 0);
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', win.outerWidth);
+		$('#playerOptions').css('width', win.innerWidth);
 
-		$('#controls').css('width', win.outerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
-		$('.jump-attack-controls').css('right', 0).css('float', 'none');
+		$('#controls').css('width', win.innerWidth).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
 		$('.down-arrow').css('background-size', 40);
 		$('.right-arrow').css('background-size', 40);
 		$('.left-arrow').css('background-size', 40);
-		$('.attack-key').css('background-size', 40);
 		$('.top-arrow').css('background-size', 40);
+
+		$('.jump-attack-controls').css('float', 'none');
+		$('.attack-key').css('background-size', 40);
 
 
 		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
 		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
 		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
 
-		canvasWidth = win.outerWidth;
-    	canvasHeight = win.screen.height;
+		canvasWidth = win.innerWidth;
+    	//canvasHeight = win.screen.height;
+    	canvasHeight = 320;//win.innerHeight + 100;
 
 
 	} else {
 		// Desktop
 		canvasWidth = 950;
-		canvasHeight = 800;
+		canvasHeight = 755;
 	}
 
 
@@ -192,16 +207,14 @@
 
 
 
-
-
     // Game objects declaration; Player, Background, Extras
     var playerWidth,
     	playerHeight,
 		player = {
-			x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
-			y : canvasHeight - 240, // Less the height of the image player
-			playerWidth : 90,
-			playerHeight : 185,
+			// x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
+			// y : canvasHeight - 240, // Less the height of the image player
+			// playerWidth : 90,
+			// playerHeight : 185,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -255,7 +268,6 @@
 		crouch = false,
 		jump = false,
 		attacking = false,
-		backgroundPlusImages,
 		extrasPlusImages,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
@@ -267,7 +279,9 @@
 		backgroundImagePatterIpad = new Image(),
 		backgroundImageAndroid = new Image(),
 		playerSpriteRight = new Image(),
-		playerSpriteLeft = new Image();
+		playerSpriteLeft = new Image(),
+		extrasCave = new Image(),
+		wolfImage = new Image();
 
 		backgroundImage1.src = 'http://10.10.33.107/2d-platform-game/img/background-1.jpg';
 		backgroundImagePatter.src = 'http://10.10.33.107/2d-platform-game/img/background-pattern.jpg';
@@ -275,6 +289,8 @@
 		backgroundImageAndroid.src = 'http://10.10.33.107/2d-platform-game/img/background-android.jpg';
 		playerSpriteRight.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-right.png';
 		playerSpriteLeft.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-left.png';
+		extrasCave.src = 'http://10.10.33.107/2d-platform-game/img/extrasCave.png';
+		wolfImage.src = 'http://10.10.33.107/2d-platform-game/img/wolf-animation.png';
 
 
 	// Cache content in new canvas
@@ -294,28 +310,54 @@
 	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 
+	/**
+	 * Class constructor of enemies
+	 * @function
+	 * @params {image, x, y, width, height, velX}
+	 * @example
+	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
+	 */
+	function Enemies (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
+		this.life = life;
+		this.name = name;
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.velocityX = velocityX;
+		this.friction = friction;
+		this.speed = speed;
+		this.aggressive = aggressive;
+	}
+
+	//Array to add and remove enemies in the game
+	var enemiesArray = [];
+
+	// Push enemies into the array
+	function pushEnemies () {
+		enemiesArray.push(
+					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight -250, 160, 140, 0, 0.9, 2, 50)
+					  );
+	}
+
+	//Add random enemies
+	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
+
+	setInterval(function() {
+		pushEnemies();
+	}, randomTimeEnemies);
+
+
 	// Function update
 	function update () {
-
-		// if (canvasBackground.requestFullscreen) {
-		//   canvasBackground.requestFullscreen();
-		// } else if (canvasBackground.msRequestFullscreen) {
-		//   canvasBackground.msRequestFullscreen();
-		// } else if (canvasBackground.mozRequestFullScreen) {
-		//   canvasBackground.mozRequestFullScreen();
-		// } else if (canvasBackground.webkitRequestFullscreen) {
-		//   canvasBackground.webkitRequestFullscreen();
-		//   canvasExtras.webkitRequestFullscreen();
-		//   canvasPlayer.webkitRequestFullscreen();
-		//   $(document).webkitRequestFullscreen();
-		// }
-
 
 		if (userAgent.indexOf('iPad') > -1) {
 			// do nothing
 		} else if (userAgent.indexOf('Android') > -1) {
 			// do nothing
 		} else {
+			// double buffering
 			secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y, backgroundImagePatter.width, backgroundImagePatter.height);
 	 	}
 
@@ -456,7 +498,7 @@
 			background.velY -= gravity;
 		}
 
-		// Move the the background
+		// Move the background
 		background.x += background.velX;
 		background.y += background.velY;
 
@@ -469,26 +511,47 @@
 			background.jumping = false;
 		}
 
-		// the player stop and not go outside of the canvas and add the last enemie
-		// plus the with images that repeat in the background
-		backgroundPlusImages = backgroundImage1.width * 5;
 
+		// the player stop and not go outside of the canvas and add the last enemie
 		if (background.x > 0) {
 
 			background.x = 0;
 			extras.x = 0;
 
-		} else if ( -(background.x) >= backgroundPlusImages - canvasWidth - 200) {
+		} else if ( -(background.x) >= backgroundImage1.width - canvasWidth + 100) {
 
-			background.x = -(backgroundPlusImages - canvasWidth - 200);
-			//extras.x = -(extrasPlusImages  - canvasWidth - 200);
+			// Stop the player
+			background.x = -(backgroundImage1.width - canvasWidth + 100);
 			extras.velX = 0;
 
+			// Draw the front of the rock
+			secondaryCtx.drawImage(extrasCave, background.x + backgroundImage1.width - extrasCave.width, background.y + 70, extrasCave.width, extrasCave.height);
+
 			// add the final enemie
-			addFinalEnemie();
+			//addFinalEnemie();
 		}
 
 		onObstacle = false;
+
+
+		var lengthEnemiesArray = enemiesArray.length,
+			// lengthobstaclesArray = obstaclesArray.length,
+			j,
+			k,
+			h;
+
+		//move the enemies
+		for (j = 0; lengthEnemiesArray > j; j += 1) {
+			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
+			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
+				enemiesArray[j].velocityX--;
+			}
+
+			enemiesArray[j].velocityX *= background.friction;
+
+			enemiesArray[j].x += enemiesArray[j].velocityX;
+		};
+
 
 		// render all the game
 		renders();
@@ -497,26 +560,107 @@
 
 	function renders () {
 		renderBackground();
+
+		renderEnemies();
 	}
 
+
 	function renderBackground () {
+
 		 if (userAgent.indexOf('iPad') > -1) {
-		 	contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		 	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y + 55, backgroundImage1.width, backgroundImage1.height + 530);
+		 	//contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		 	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - 155, backgroundImage1.width, 1270);
 
 		  } else if (userAgent.indexOf('Android') > -1) {
-		  	contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
-		  	contextBackground.drawImage(backgroundImageAndroid, background.x - 200, background.y + 205 - canvasHeight, backgroundImageAndroid.width, backgroundImageAndroid.height);
+		  	// contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
+		  	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - 355);
 
 		  } else if (userAgent.indexOf('iPhone') > -1) {
-		  	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - 90, backgroundImage1.width, backgroundImage1.height);
+		  	contextBackground.drawImage(backgroundImage1, background.x - 200, background.y - 150, backgroundImage1.width, backgroundImage1.height + 250);
 
 		  } else {
 			// Desktop
-			contextBackground.drawImage(secondaryCanvas, - 100, 50, canvasWidth + 200, canvasHeight);
+			contextBackground.drawImage(secondaryCanvas, - 100, 50, canvasWidth + 200, backgroundImage1.height);
 		 }
 	}
 
+	/**
+	 * Render all the enemies in the game
+	 * @function
+	 * @example
+	 * renderObstacles();
+	 */
+	function renderEnemies () {
+
+		var wolfImageDifference = canvasHeight - wolfImage.height,
+			lengthEnemiesArray = enemiesArray.length,
+			i;
+
+		for (i = 0; lengthEnemiesArray > i; i += 1) {
+			// contextBackground.drawImage(
+			// 			wolfImage,
+			// 			enemiesArray[i].x + background.x,
+			// 			enemiesArray[i].y + background.y,
+			// 			enemiesArray[i].width,
+			// 			enemiesArray[i].height);
+			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, 10);
+		};
+	}
+
+
+
+	////// SPRITES ENEMIES  //////////
+
+		/* Sprite animation */
+	var frameEnemies = 0,
+		deltaEnemies,
+		lastUpdateTimeEnemies = 0,
+		updateDeltaEnemies = 0,
+		msPerFrameEnemies = 10;
+
+	/**
+	 * Set the frames amount and speed.
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
+	 */
+	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, msPerFrameEnemies) {
+		deltaEnemies = Date.now() - lastUpdateTimeEnemies;
+
+		if (updateDeltaEnemies > msPerFrameEnemies) {
+			updateDeltaEnemies = 0;
+
+			contextBackground.drawImage(spriteImage, frame * 163, 0, 163, 98, (canvasWidth / 2), canvasHeight - 110, 163, 98);
+
+
+			frameEnemies += 1;
+
+			if (frameEnemies >= frameCuantity) {
+				frameEnemies = frameStartPosition;
+			}
+
+		} else {
+			updateDeltaEnemies += deltaEnemies;
+		}
+
+		lastUpdateTimeEnemies = Date.now();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	////// SPRITES PLAYER  //////////
 
 	/* Sprite animation */
 	var frame = 0,
@@ -577,43 +721,43 @@
 		switch (walkingDirection) {
             case 'walkingRight':
             	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 256, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 256, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 240, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
             break;
         }
 	}
