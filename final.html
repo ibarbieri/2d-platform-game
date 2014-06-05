@@ -283,14 +283,14 @@
 		extrasCave = new Image(),
 		wolfImage = new Image();
 
-		backgroundImage1.src = 'http://10.10.33.107/2d-platform-game/img/background-1.jpg';
-		backgroundImagePatter.src = 'http://10.10.33.107/2d-platform-game/img/background-pattern.jpg';
-		backgroundImagePatterIpad.src = 'http://10.10.33.107/2d-platform-game/img/background-pattern-ipad.jpg';
-		backgroundImageAndroid.src = 'http://10.10.33.107/2d-platform-game/img/background-android.jpg';
-		playerSpriteRight.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-right.png';
-		playerSpriteLeft.src = 'http://10.10.33.107/2d-platform-game/img/player-actions-left.png';
-		extrasCave.src = 'http://10.10.33.107/2d-platform-game/img/extrasCave.png';
-		wolfImage.src = 'http://10.10.33.107/2d-platform-game/img/wolf-animation.png';
+		backgroundImage1.src = 'http://192.168.1.33/2d-platform-game/img/background-1.jpg';
+		backgroundImagePatter.src = 'http://192.168.1.33/2d-platform-game/img/background-pattern.jpg';
+		backgroundImagePatterIpad.src = 'http://192.168.1.33/2d-platform-game/img/background-pattern-ipad.jpg';
+		backgroundImageAndroid.src = 'http://192.168.1.33/2d-platform-game/img/background-android.jpg';
+		playerSpriteRight.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-right.png';
+		playerSpriteLeft.src = 'http://192.168.1.33/2d-platform-game/img/player-actions-left.png';
+		extrasCave.src = 'http://192.168.1.33/2d-platform-game/img/extrasCave.png';
+		wolfImage.src = 'http://192.168.1.33/2d-platform-game/img/wolf-animation.png';
 
 
 	// Cache content in new canvas
@@ -308,45 +308,6 @@
 	contextPlayer.rotate(-5.3 * Math.PI / 180);
 	contextBackground.rotate(-5.3 * Math.PI / 180);
 	contextExtras.rotate(-5.3 * Math.PI / 180);
-
-
-	/**
-	 * Class constructor of enemies
-	 * @function
-	 * @params {image, x, y, width, height, velX}
-	 * @example
-	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
-	 */
-	function Enemies (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
-		this.life = life;
-		this.name = name;
-		this.image = image;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.velocityX = velocityX;
-		this.friction = friction;
-		this.speed = speed;
-		this.aggressive = aggressive;
-	}
-
-	//Array to add and remove enemies in the game
-	var enemiesArray = [];
-
-	// Push enemies into the array
-	function pushEnemies () {
-		enemiesArray.push(
-					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight -250, 160, 140, 0, 0.9, 2, 50)
-					  );
-	}
-
-	//Add random enemies
-	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
-
-	setInterval(function() {
-		pushEnemies();
-	}, randomTimeEnemies);
 
 
 	// Function update
@@ -558,6 +519,50 @@
 	}
 
 
+	/**
+	 * Class constructor of enemies
+	 * @function
+	 * @params {image, x, y, width, height, velX}
+	 * @example
+	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
+	 */
+	function Enemies (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
+		this.life = life;
+		this.name = name;
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.velocityX = velocityX;
+		this.friction = friction;
+		this.speed = speed;
+		this.aggressive = aggressive;
+	}
+
+	//Array to add and remove enemies in the game
+	var enemiesArray = [];
+
+	// Push enemies into the array
+	function pushEnemies () {
+		enemiesArray.push(
+					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 160, 140, 0, 0.9, 4, 50)
+					  );
+		console.log('agregue un enemie');
+	}
+
+	//Add random enemies
+	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
+
+	setInterval(function() {
+		pushEnemies();
+	}, randomTimeEnemies);
+
+
+
+
+
+
 	function renders () {
 		renderBackground();
 
@@ -592,31 +597,22 @@
 	 */
 	function renderEnemies () {
 
-		var wolfImageDifference = canvasHeight - wolfImage.height,
-			lengthEnemiesArray = enemiesArray.length,
-			i;
+		var i;
 
-		for (i = 0; lengthEnemiesArray > i; i += 1) {
-			// contextBackground.drawImage(
-			// 			wolfImage,
-			// 			enemiesArray[i].x + background.x,
-			// 			enemiesArray[i].y + background.y,
-			// 			enemiesArray[i].width,
-			// 			enemiesArray[i].height);
-			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, 10);
+		for (i = 0; enemiesArray.length > i; i += 1) {
+			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, 3, (enemiesArray[i].x + background.x), (enemiesArray[i].y + background.y));
 		};
 	}
 
 
 
 	////// SPRITES ENEMIES  //////////
-
-		/* Sprite animation */
+	/* Sprite animation */
 	var frameEnemies = 0,
 		deltaEnemies,
 		lastUpdateTimeEnemies = 0,
 		updateDeltaEnemies = 0,
-		msPerFrameEnemies = 10;
+		msPerFrameEnemies = 3;
 
 	/**
 	 * Set the frames amount and speed.
@@ -625,14 +621,14 @@
 	 * @example
 	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
 	 */
-	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, msPerFrameEnemies) {
+	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, msPerFrameEnemies, xPosition, yPosition) {
+
 		deltaEnemies = Date.now() - lastUpdateTimeEnemies;
 
 		if (updateDeltaEnemies > msPerFrameEnemies) {
 			updateDeltaEnemies = 0;
 
-			contextBackground.drawImage(spriteImage, frame * 163, 0, 163, 98, (canvasWidth / 2), canvasHeight - 110, 163, 98);
-
+			contextBackground.drawImage(spriteImage, frame * 163, 0, 163, 98, xPosition, yPosition, 163, 98);
 
 			frameEnemies += 1;
 
