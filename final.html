@@ -627,7 +627,7 @@
 	var fps = 60,
 		now,
 		then = Date.now(),
-		interval = 540/fps,
+		interval = 60/fps,
 		delta;
 
 	var counter = 0;
@@ -638,6 +638,9 @@
 
 				now = Date.now();
 				delta = now - then;
+
+				// el problema es el el interval dura cada vez más.
+				//console.log(interval);
 
 				if (delta > interval) {
 				    // update time stuffs
@@ -656,19 +659,23 @@
 
 				    then = now - (delta % interval);
 
-				    // ... Code for Drawing the Frame ...
-				    var time_el = (then - first) / 1000;
+				    //var time_el = (then - first) / 1000;
+
+				    var time_el = 9;
 
 					counter++;
+
+					//frameSecond = parseInt(counter/time_el);
 					frameSecond = parseInt(counter/time_el);
 
-
 					if (frameSecond >= 9) {
-						counter = 0;
-						frameSecond = frameSecond - 9;
+						counter = 1;
+						frameSecond = frameSecond - 8;
 					}
 
 				}
+
+					//console.log(frameSecond);
 
 					contextBackground.drawImage(
 						spriteImage,
@@ -681,20 +688,6 @@
 						163,
 						98
 					);
-
-
-				// contextBackground.drawImage(
-				// 	spriteImage,
-				// 	framesEnemies * 163,
-				// 	0,
-				// 	163,
-				// 	98,
-				// 	xPosition,
-				// 	yPosition,
-				// 	163,
-				// 	98
-				// );
-
 
 	}
 
