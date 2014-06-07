@@ -618,51 +618,125 @@
 
 	////// SPRITES ENEMIES  //////////
 	/* Sprite animation */
-	var framesEnemies = 0,
-		lastUpdateTimeEnemies = 0,
-		updateDeltaEnemies = 0,
-		msPerFrameEnemies = 50;
+	// var framesEnemies = 1,
+	// 	lastUpdateTimeEnemies = 0,
+	// 	updateDeltaEnemies = 0,
+	// 	msPerFrameEnemies = 100;
 
-	/**
-	 * Set the frames amount and speed.
-	 * @param {String} walkingRight,
-	 * @function
-	 * @example
-	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
-	 */
+
+	var fps = 60,
+		now,
+		then = Date.now(),
+		interval = 540/fps,
+		delta;
+
+	var counter = 0;
+	var first = then;
+	var frameSecond;
+
 	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, xPosition, yPosition) {
 
-		var deltaEnemies = Date.now() - lastUpdateTimeEnemies;
+				now = Date.now();
+				delta = now - then;
 
-		if (updateDeltaEnemies > msPerFrameEnemies) {
+				if (delta > interval) {
+				    // update time stuffs
 
-			updateDeltaEnemies = 0;
+				    // Just `then = now` is not enough.
+				    // Lets say we set fps at 10 which means
+				    // each frame must take 100ms
+				    // Now frame executes in 16ms (60fps) so
+				    // the loop iterates 7 times (16*7 = 112ms) until
+				    // delta > interval === true
+				    // Eventually this lowers down the FPS as
+				    // 112*10 = 1120ms (NOT 1000ms).
+				    // So we have to get rid of that extra 12ms
+				    // by subtracting delta (112) % interval (100).
+				    // Hope that makes sense.
 
-			contextBackground.drawImage(
-				spriteImage,
-				framesEnemies * 163,
-				0,
-				163,
-				98,
-				xPosition,
-				yPosition,
-				163,
-				98
-			);
+				    then = now - (delta % interval);
 
-			framesEnemies += 1;
+				    // ... Code for Drawing the Frame ...
+				    var time_el = (then - first) / 1000;
 
-			if (framesEnemies >= 9) {
-				framesEnemies = 0;
-			}
+					counter++;
+					frameSecond = parseInt(counter/time_el);
 
-		} else {
-			updateDeltaEnemies += deltaEnemies;
-		}
 
-		lastUpdateTimeEnemies = Date.now();
+					if (frameSecond >= 9) {
+						counter = 0;
+						frameSecond = frameSecond - 9;
+					}
+
+				}
+
+					contextBackground.drawImage(
+						spriteImage,
+						frameSecond * 163,
+						0,
+						163,
+						98,
+						xPosition,
+						yPosition,
+						163,
+						98
+					);
+
+
+				// contextBackground.drawImage(
+				// 	spriteImage,
+				// 	framesEnemies * 163,
+				// 	0,
+				// 	163,
+				// 	98,
+				// 	xPosition,
+				// 	yPosition,
+				// 	163,
+				// 	98
+				// );
+
 
 	}
+
+
+
+
+
+
+
+	// 	// hora actual - la hora cuando se completo la animacion.
+	// 	var deltaEnemies = Date.now() - lastUpdateTimeEnemies;
+
+	// 	// si updateDelta enemies es menos que msPerFrameEnemies
+	// 	if (updateDeltaEnemies > msPerFrameEnemies) {
+
+	// 		updateDeltaEnemies = 0;
+
+	// 		contextBackground.drawImage(
+	// 			spriteImage,
+	// 			framesEnemies * 163,
+	// 			0,
+	// 			163,
+	// 			98,
+	// 			xPosition,
+	// 			yPosition,
+	// 			163,
+	// 			98
+	// 		);
+
+	// 		framesEnemies += 1;
+
+	// 		if (framesEnemies > 8) {
+	// 			framesEnemies = 0;
+	// 		}
+
+	// 	} else {
+	// 		updateDeltaEnemies += deltaEnemies;
+	// 	}
+
+	// 	lastUpdateTimeEnemies = Date.now();
+
+	// }
 
 
 	// function drawEnemies (walkingDirection, spriteImage, framesEnemies, xPosition, yPosition) {
