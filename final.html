@@ -125,7 +125,7 @@
 		$('#panelStartMobile').toggleClass('display-none');
 
 		$('#starGameMobile').on('click', function () {
-			fullScreen(element);
+			//fullScreen(element);
 			$('#panelStartMobile').toggleClass('display-none');
 		});
 
@@ -318,6 +318,7 @@
 		} else if (userAgent.indexOf('Android') > -1) {
 			// do nothing
 		} else {
+			// secondaryCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 			// double buffering
 			secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y, backgroundImagePatter.width, backgroundImagePatter.height);
 	 	}
@@ -333,7 +334,7 @@
 			if (!background.jumping) {
 				background.jumping = true;
 
-				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
+				//setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
 
@@ -350,11 +351,11 @@
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 			// Function OK when the player only walk from right
-			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
+			//setFramesSpriteAnimation('crouchRight', 0, 9, 100);
 
 			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
+				//setFramesSpriteAnimation('crouchRight', 4, 1, 100);
 			}
 		}
 
@@ -382,7 +383,7 @@
 
 				walkingLeft = true;
 
-				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+				//setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
 			}
 		}
 
@@ -396,7 +397,7 @@
 
 				walkingRight = true;
 
-				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+				//setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 			}
 
 			// if (!walkingRight) {
@@ -412,14 +413,14 @@
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
 			if (crouch == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+				//setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
 		// If left arrow is drop
 		if (keys[37] == false) {
 			if (!walkingRight) {
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+				//setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
@@ -427,7 +428,7 @@
 		if (keys[39] == false) {
 
 			if (!walkingLeft) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+				//setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
@@ -546,9 +547,10 @@
 	// Push enemies into the array
 	function pushEnemies () {
 		enemiesArray.push(
-					  new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 160, 140, 0, 0.9, 4, 50)
+			new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50)
 					  );
-		console.log('agregue un enemie');
+		console.log('se agrego enemigo');
+
 	}
 
 	//Add random enemies
@@ -557,6 +559,13 @@
 	setInterval(function() {
 		pushEnemies();
 	}, randomTimeEnemies);
+
+
+
+
+	// setInterval(function() {
+	// 	renderEnemies();
+	// }, 100);
 
 
 
@@ -585,9 +594,11 @@
 
 		  } else {
 			// Desktop
+			// contextBackground.clearRect(0, 0, canvasWidth, canvasHeight);
 			contextBackground.drawImage(secondaryCanvas, - 100, 50, canvasWidth + 200, backgroundImage1.height);
 		 }
 	}
+
 
 	/**
 	 * Render all the enemies in the game
@@ -600,19 +611,17 @@
 		var i;
 
 		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, 3, (enemiesArray[i].x + background.x), (enemiesArray[i].y + background.y));
+			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 		};
 	}
 
 
-
 	////// SPRITES ENEMIES  //////////
 	/* Sprite animation */
-	var frameEnemies = 0,
-		deltaEnemies,
+	var framesEnemies = 0,
 		lastUpdateTimeEnemies = 0,
 		updateDeltaEnemies = 0,
-		msPerFrameEnemies = 3;
+		msPerFrameEnemies = 50;
 
 	/**
 	 * Set the frames amount and speed.
@@ -621,19 +630,30 @@
 	 * @example
 	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
 	 */
-	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, msPerFrameEnemies, xPosition, yPosition) {
+	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, xPosition, yPosition) {
 
-		deltaEnemies = Date.now() - lastUpdateTimeEnemies;
+		var deltaEnemies = Date.now() - lastUpdateTimeEnemies;
 
 		if (updateDeltaEnemies > msPerFrameEnemies) {
+
 			updateDeltaEnemies = 0;
 
-			contextBackground.drawImage(spriteImage, frame * 163, 0, 163, 98, xPosition, yPosition, 163, 98);
+			contextBackground.drawImage(
+				spriteImage,
+				framesEnemies * 163,
+				0,
+				163,
+				98,
+				xPosition,
+				yPosition,
+				163,
+				98
+			);
 
-			frameEnemies += 1;
+			framesEnemies += 1;
 
-			if (frameEnemies >= frameCuantity) {
-				frameEnemies = frameStartPosition;
+			if (framesEnemies >= 9) {
+				framesEnemies = 0;
 			}
 
 		} else {
@@ -641,9 +661,30 @@
 		}
 
 		lastUpdateTimeEnemies = Date.now();
+
 	}
 
 
+	// function drawEnemies (walkingDirection, spriteImage, framesEnemies, xPosition, yPosition) {
+
+	// 	switch (walkingDirection) {
+ //            case 'fromLeft':
+ //            	contextBackground.drawImage(
+	// 				spriteImage,
+	// 				framesEnemies * 163,
+	// 				0,
+	// 				163,
+	// 				98,
+	// 				xPosition,
+	// 				yPosition,
+	// 				163,
+	// 				98
+	// 			);
+ //            break;
+
+ //        }
+
+	// }
 
 
 
@@ -656,107 +697,98 @@
 
 
 
-	////// SPRITES PLAYER  //////////
+	// ////// SPRITES PLAYER  //////////
+	// /* Sprite animation */
+	// var frame = 0,
+	// 	delta,
+	// 	lastUpdateTime = 0,
+	// 	updateDelta = 0,
+	// 	msPerFrame = 100;
 
-	/* Sprite animation */
-	var frame = 0,
-		delta,
-		lastUpdateTime = 0,
-		updateDelta = 0,
-		msPerFrame = 100;
+	// /**
+	//  * Set the frames amount and speed.
+	//  * @param {String} walkingRight,
+	//  * @function
+	//  * @example
+	//  * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
+	//  */
+	// function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
+	// 	delta = Date.now() - lastUpdateTime;
 
-	/**
-	 * Set the frames amount and speed.
-	 * @param {String} walkingRight,
-	 * @function
-	 * @example
-	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
-	 */
-	function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
-		delta = Date.now() - lastUpdateTime;
+	// 	if (updateDelta > msPerFrame) {
+	// 		updateDelta = 0;
 
-		if (updateDelta > msPerFrame) {
-			updateDelta = 0;
+	// 		drawSpriteAnimation(walkingDirection);
 
-			drawSpriteAnimation(walkingDirection);
+	// 		frame += 1;
 
-			frame += 1;
+	// 		if (frame >= frameCuantity) {
+	// 			frame = frameStartPosition;
+	// 		}
 
-			if (frame >= frameCuantity) {
-				frame = frameStartPosition;
-			}
+	// 	} else {
+	// 		updateDelta += delta;
+	// 	}
 
-		} else {
-			updateDelta += delta;
-		}
+	// 	lastUpdateTime = Date.now();
 
-		lastUpdateTime = Date.now();
-	}
+	// }
 
-	/**
-	 * Draw the sprite animation depending on the direction of the arrow down
-	 * @param {String} walkingRight,
-	 * @function
-	 * @example
-	 * drawSpriteAnimation('walkingRight');
-	 */
-	function drawSpriteAnimation (walkingDirection) {
-		// 	contextPlayer.drawImage(img, sx, sy, swidth, sheight, x, y, width, height);
-		// 	img	Specifies the image, canvas, or video element to use
-		// 	sx	Optional parameter. The x coordinate where to start clipping
-		// 	sy	Optional parameter. The y coordinate where to start clipping
-		// 	swidth	Optional parameter. The width of the clipped image
-		// 	sheight	Optional parameter. The height of the clipped image
-		// 	x	The x coordinate where to place the image on the canvas
-		// 	y	The y coordinate where to place the image on the canvas
-		// 	width	Optional parameter. The width of the image to use (stretch or reduce the image)
-		// 	height	Optional parameter. The height of the image to use (stretch or reduce the image)
 
-		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
+	// /**
+	//  * Draw the sprite animation depending on the direction of the arrow down
+	//  * @param {String} walkingRight,
+	//  * @function
+	//  * @example
+	//  * drawSpriteAnimation('walkingRight');
+	//  */
+	// function drawSpriteAnimation (walkingDirection) {
+	// 	contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
 
-		switch (walkingDirection) {
-            case 'walkingRight':
-            	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+	// 	switch (walkingDirection) {
+ //            case 'walkingRight':
+ //            	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
+ //          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'walkingStopRight':
+ //            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'crouchRight':
+ //            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
-            break;
+ //            case 'jumpingRight':
+ //            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+ //            break;
 
-            case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'attackRight':
+ //            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'walkingLeft':
+ //          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'walkingStopLeft':
+ //            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
+ //            case 'crouchLeft':
+ //            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
 
-            case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
-            break;
+ //            case 'jumpingLeft':
+ //            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+ //            break;
 
-            case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
-            break;
-        }
-	}
+ //            case 'attackLeft':
+ //            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+ //            break;
+ //        }
+	// }
+
 
 	// listen when a key is pressed
 	document.body.addEventListener("keydown", function (event) {
