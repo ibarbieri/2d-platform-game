@@ -73,11 +73,14 @@
 <script type="text/javascript">
 (function (win) {
 
-	// requestAnimationFrame fallback
+	/* requestAnimationFrame fallback
+	---------------------------------------------------------------*/
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
-    // Full screen function
+
+    /* full screen function
+	---------------------------------------------------------------*/
     var element = document.documentElement;
 
     function fullScreen (element) {
@@ -95,7 +98,9 @@
 		}
 	}
 
-    // Devices adaptations
+
+    /* devices adaptations
+	---------------------------------------------------------------*/
 	var userAgent = window.navigator.userAgent,
 		canvasWidth,
     	canvasHeight;
@@ -186,7 +191,8 @@
 	}
 
 
-    // Canvas dimentions and declarations
+    /* canvas dimentions and declarations
+	---------------------------------------------------------------*/
     var canvasBackground = document.getElementById('background'),
     	contextBackground = canvasBackground.getContext('2d'),
 
@@ -206,15 +212,15 @@
 		canvasExtras.height = canvasHeight;
 
 
-
-    // Game objects declaration; Player, Background, Extras
+	/* game objects declaration; Player, Background, Extras
+	---------------------------------------------------------------*/
     var playerWidth,
     	playerHeight,
 		player = {
-			// x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
-			// y : canvasHeight - 240, // Less the height of the image player
-			// playerWidth : 90,
-			// playerHeight : 185,
+			x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
+			y : canvasHeight - 240, // Less the height of the image player
+			playerWidth : 90,
+			playerHeight : 185,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -251,7 +257,8 @@
 		gravity = 0.20;
 
 
-	// Game elements, extras and flags
+	/* game elements, extras and flags
+	---------------------------------------------------------------*/
 	var onObstacle,
 		playerOnObstacle,
 		adarhaLife = $('#adarhaLife'),
@@ -273,7 +280,8 @@
 		playAgain = $('#playAgain');
 
 
-	// Images
+	/* images
+	---------------------------------------------------------------*/
 	var backgroundImage1 = new Image(),
 		backgroundImagePatter = new Image(),
 		backgroundImagePatterIpad = new Image(),
@@ -293,7 +301,8 @@
 		wolfImage.src = 'http://192.168.1.33/2d-platform-game/img/wolf-animation.png';
 
 
-	// Cache content in new canvas
+	/* cache content in new canvas, double buffer
+	---------------------------------------------------------------*/
 	var secondaryCanvas = document.createElement('canvas');
 
 		secondaryCanvas.setAttribute('id', 'secondaryCanvas');
@@ -304,13 +313,15 @@
     var	secondaryCtx = secondaryCanvas.getContext("2d");
 
 
-    // Canvas rotation
+	/* canvas rotation
+	---------------------------------------------------------------*/
 	contextPlayer.rotate(-5.3 * Math.PI / 180);
 	contextBackground.rotate(-5.3 * Math.PI / 180);
 	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 
-	// Function update
+	/* update function
+	---------------------------------------------------------------*/
 	function update () {
 
 		if (userAgent.indexOf('iPad') > -1) {
@@ -334,7 +345,7 @@
 			if (!background.jumping) {
 				background.jumping = true;
 
-				//setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
 
 				if (frame == 6) {
 
@@ -351,11 +362,11 @@
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 			// Function OK when the player only walk from right
-			//setFramesSpriteAnimation('crouchRight', 0, 9, 100);
+			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
 
 			if (frame == 4) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				//setFramesSpriteAnimation('crouchRight', 4, 1, 100);
+				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
 			}
 		}
 
@@ -383,7 +394,7 @@
 
 				walkingLeft = true;
 
-				//setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
 			}
 		}
 
@@ -397,7 +408,7 @@
 
 				walkingRight = true;
 
-				//setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 			}
 
 			// if (!walkingRight) {
@@ -413,14 +424,14 @@
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
 			if (crouch == false) {
-				//setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
 		// If left arrow is drop
 		if (keys[37] == false) {
 			if (!walkingRight) {
-				//setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
@@ -428,16 +439,15 @@
 		if (keys[39] == false) {
 
 			if (!walkingLeft) {
-				//setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
 		// a key
 		if (keys[65] || mobileAttack) {
 			player.attack = true;
-
-			// run the sprite animation for the attack
 			setFramesSpriteAnimation('attackRight');
+			console.log('attackRight');
 			attacking = true;
 		}
 
@@ -502,7 +512,7 @@
 			k,
 			h;
 
-		//move the enemies
+		// move the enemies
 		for (j = 0; lengthEnemiesArray > j; j += 1) {
 			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
@@ -514,12 +524,126 @@
 			enemiesArray[j].x += enemiesArray[j].velocityX;
 		};
 
+		//check the collision whit the enemies and if the enemie is out the canvas
+		for (k = 0; lengthEnemiesArray > k; k += 1) {
+
+			checkCollision(player, enemiesArray[k]);
+
+			if (lengthEnemiesArray > 5) {
+				//enemiesIsOutTheCanvas(enemiesArray[k]);
+			}
+		}
+
 
 		// render all the game
 		renders();
 	}
 
 
+	/* renders
+	---------------------------------------------------------------*/
+	function renders () {
+		renderBackground();
+
+		renderEnemies();
+	}
+
+
+	/* player
+	---------------------------------------------------------------*/
+	var frame = 0,
+		delta,
+		lastUpdateTime = 0,
+		updateDelta = 0,
+		msPerFrame = 100;
+
+	/**
+	 * Set the frames amount and speed.
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
+	 */
+	function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
+		delta = Date.now() - lastUpdateTime;
+
+		if (updateDelta > msPerFrame) {
+			updateDelta = 0;
+
+			drawSpriteAnimation(walkingDirection);
+
+			frame += 1;
+
+			if (frame >= frameCuantity) {
+				frame = frameStartPosition;
+			}
+
+		} else {
+			updateDelta += delta;
+		}
+
+		lastUpdateTime = Date.now();
+
+	}
+
+	/**
+	 * Draw the sprite animation depending on the direction of the arrow down
+	 * @param {String} walkingRight,
+	 * @function
+	 * @example
+	 * drawSpriteAnimation('walkingRight');
+	 */
+	function drawSpriteAnimation (walkingDirection) {
+		contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		switch (walkingDirection) {
+            case 'walkingRight':
+            	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
+          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'walkingStopRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'crouchRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'jumpingRight':
+            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+            break;
+
+            case 'attackRight':
+            	console.log('entra acá');
+            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 1500, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'walkingLeft':
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'walkingStopLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'crouchLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+
+            case 'jumpingLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+            break;
+
+            case 'attackLeft':
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            break;
+        }
+	}
+
+
+	/* enemies
+	---------------------------------------------------------------*/
 	/**
 	 * Class constructor of enemies
 	 * @function
@@ -549,8 +673,21 @@
 		enemiesArray.push(
 			new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50)
 					  );
-		console.log('se agrego enemigo');
+	}
 
+	/**
+	 * Render all the enemies in the game
+	 * @function
+	 * @example
+	 * renderObstacles();
+	 */
+	function renderEnemies () {
+
+		var i;
+
+		for (i = 0; enemiesArray.length > i; i += 1) {
+			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+		};
 	}
 
 	//Add random enemies
@@ -560,25 +697,50 @@
 		pushEnemies();
 	}, randomTimeEnemies);
 
+	var fps = 60,
+		now,
+		then = Date.now(),
+		interval = 60/fps,
+		delta,
+		counter = 0,
+		first = then,
+		frameSecond;
 
+	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, xPosition, yPosition) {
 
+		now = Date.now();
+		delta = now - then;
 
-	// setInterval(function() {
-	// 	renderEnemies();
-	// }, 100);
+		if (delta > interval) {
+		    then = now - (delta % interval);
 
+		    var time_el = 5;
 
+			counter++;
 
+			frameSecond = parseInt(counter/time_el);
 
-
-
-	function renders () {
-		renderBackground();
-
-		renderEnemies();
+			if (frameSecond >= 9) {
+				counter = 1;
+				frameSecond = frameSecond - 8;
+			}
+		}
+		contextBackground.drawImage(
+			spriteImage,
+			frameSecond * 163,
+			0,
+			163,
+			98,
+			xPosition,
+			yPosition,
+			163,
+			98
+		);
 	}
 
 
+	/* background render
+	---------------------------------------------------------------*/
 	function renderBackground () {
 
 		 if (userAgent.indexOf('iPad') > -1) {
@@ -600,263 +762,246 @@
 	}
 
 
+	/* colitions
+	---------------------------------------------------------------*/
 	/**
-	 * Render all the enemies in the game
+	 * Check the right/left top/button collisions between the player and enemies or obstacles.
+	 * @param {object} player, {object} enemie or obstacle array position. Later i get the position of the array with indexOF
+	 * @returns {collisionDirection}
 	 * @function
 	 * @example
-	 * renderObstacles();
+	 * checkCollision(player, enemiesArray[k]);
 	 */
-	function renderEnemies () {
+	function checkCollision(player, enemieOrObstacle) {
+		// get the vectors to check against
+		// Here less the background.x to the player.x becouse the player.x is allways the same. The player isn't animated. The background is animated.
+		var distanceToCollisionX = (player.x - background.x + (player.playerWidth / 2)) - (enemieOrObstacle.x + (enemieOrObstacle.width / 2)),
+			distanceToCollisionY = (player.y - background.y + (player.playerHeight / 2)) - (enemieOrObstacle.y + (enemieOrObstacle.height / 2)),
 
-		var i;
+			// add the half widths and half heights of the objects
+			halfWidths = (player.playerWidth / 2) + (enemieOrObstacle.width / 2),
+			halfHeights = (player.playerHeight / 2) + (enemieOrObstacle.height / 2),
+			collisionDirection = null;
 
-		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(wolfImage, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
-		};
-	}
+		// if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
+		if (Math.abs(distanceToCollisionX) < halfWidths && Math.abs(distanceToCollisionY) < halfHeights) {
+			// figures out on which side we are colliding (top, bottom, left, or right)
+			var oX = halfWidths - Math.abs(distanceToCollisionX),
+				oY = halfHeights - Math.abs(distanceToCollisionY);
 
+			if (oX >= oY) {
+				if (onObstacle == false) {
+					if (distanceToCollisionY > 0) {
+						collisionDirection = "BUTTON";
+					} else {
+						// Block de background
+						collisionDirection = "TOP";
+						console.log(collisionDirection);
 
-	////// SPRITES ENEMIES  //////////
-	/* Sprite animation */
-	// var framesEnemies = 1,
-	// 	lastUpdateTimeEnemies = 0,
-	// 	updateDeltaEnemies = 0,
-	// 	msPerFrameEnemies = 100;
+						// if the collision come from wolf
+						if (enemieOrObstacle.name == 'wolf') {
 
+							background.y = 60;//enemieOrObstacle.height;
 
-	var fps = 60,
-		now,
-		then = Date.now(),
-		interval = 60/fps,
-		delta;
+						// when te collision is with obstacle
+						} else if (enemieOrObstacle.name == 'rock') {
 
-	var counter = 0;
-	var first = then;
-	var frameSecond;
-
-	function setFramesSpriteAnimationEnemies (spriteImage, frameStartPosition, frameCuantity, xPosition, yPosition) {
-
-				now = Date.now();
-				delta = now - then;
-
-				// el problema es el el interval dura cada vez más.
-				//console.log(interval);
-
-				if (delta > interval) {
-				    // update time stuffs
-
-				    // Just `then = now` is not enough.
-				    // Lets say we set fps at 10 which means
-				    // each frame must take 100ms
-				    // Now frame executes in 16ms (60fps) so
-				    // the loop iterates 7 times (16*7 = 112ms) until
-				    // delta > interval === true
-				    // Eventually this lowers down the FPS as
-				    // 112*10 = 1120ms (NOT 1000ms).
-				    // So we have to get rid of that extra 12ms
-				    // by subtracting delta (112) % interval (100).
-				    // Hope that makes sense.
-
-				    then = now - (delta % interval);
-
-				    //var time_el = (then - first) / 1000;
-
-				    var time_el = 9;
-
-					counter++;
-
-					//frameSecond = parseInt(counter/time_el);
-					frameSecond = parseInt(counter/time_el);
-
-					if (frameSecond >= 9) {
-						counter = 1;
-						frameSecond = frameSecond - 8;
+							background.y = enemieOrObstacle.height - enemieOrObstacle.differenceY;
+							onObstacle = true;
+						}
+						// } else if (enemieOrObstacle.name == 'water') {
+						// 	//console.log('estoy sobre water');
+						// 	background.velX -= 0.5;
+						// 	onObstacle = true;
+						// }
 					}
-
 				}
 
-					//console.log(frameSecond);
+			} else {
+				if (distanceToCollisionX > 0) {
+					collisionDirection = "LEFT";
 
-					contextBackground.drawImage(
-						spriteImage,
-						frameSecond * 163,
-						0,
-						163,
-						98,
-						xPosition,
-						yPosition,
-						163,
-						98
-					);
+					console.log(collisionDirection);
 
+					// Block de background
+					background.velX = 0;
+					background.velX--;
+
+					// Block de extras canvas
+					extras.velX = 0;
+					extras.velX--;
+
+					// if the collision come from wolf
+					if (enemieOrObstacle.name == 'wolf') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							// cuando el jugador esta atacando tengo que hace que no le saque vida al jugador
+							enemieOrObstacle.life -= player.aggressive;
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+					} else if (enemieOrObstacle.name == 'warlock') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+					}
+					// else if (enemieOrObstacle.name == 'water') {
+ 					// console.log('left');
+ 					// onObstacle = true;
+					// }
+
+
+				} else {
+					collisionDirection = "RIGHT";
+										console.log(collisionDirection);
+
+					// Block de background
+					background.velX = 0;
+					background.velX++;
+
+					// Block de extras canvas
+					extras.velX = 0;
+					extras.velX++;
+
+					// If the collision come from enemie remove player life
+					if (enemieOrObstacle.name == 'wolf') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+					} else if (enemieOrObstacle.name == 'warlock') {
+
+						// if the player is attacking
+						if (player.attack) {
+							//remove enemie life
+							enemieOrObstacle.life -= player.aggressive;
+						} else {
+							//remove player life
+							player.life -= enemieOrObstacle.aggressive;
+						}
+
+						// check if the player or enemie is alive
+						entityIsAlive(player, enemieOrObstacle);
+
+ 					}
+ 				// 	else if (enemieOrObstacle.name == 'water') {
+ 				// 		background.velX -= 0.5;
+ 				// 		onObstacle = true;
+					// }
+
+				}
+			}
+		}
+
+		return collisionDirection;
 	}
 
 
+	/* check the life of the entities
+	---------------------------------------------------------------*/
+	/**
+	 * Check the right/left top/button collisions between the player and enemies or obstacles.
+	 * @param {object} player, {object} enemie array
+	 * @returns {collisionDirection}
+	 * @function
+	 * @example
+	 * checkCollision(player, enemies);
+	 */
+	function entityIsAlive (player, enemies) {
+
+		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
+
+		if (player.life < 0) {
+
+			// Show the Game Over panel
+			panelGameOver.show();
+
+			// Play again. Reset all the values
+			playAgain.on('click', function () {
+				enemiesArray.length = 0;
+				obstaclesArray.length = 0;
+				background.x = 0;
+				player.life = 5100;
+				player.score = 0;
+				player.heartsDragon = 0;
+				panelGameOver.hide();
+			});
+
+		} else if (enemies.life < 0) {
+			//get the position of the enemie died;
+			var enemiesArrayPosition = enemiesArray.indexOf(enemies);
+			//remove the enemie died;
+			enemiesArray.splice(enemiesArrayPosition, 1);
+
+			// The player get 100 points becouse kill one enemie
+			playerUpdateScore(100);
+		}
+	}
 
 
+	/* player score
+	---------------------------------------------------------------*/
+	/**
+	 * Update the player score when the player kill an enemie.
+	 * @param {number} score,
+	 * @function
+	 * @example
+	 * playerUpdateScore(100);
+	 */
+	function playerUpdateScore (scoreGet) {
+		player.score += scoreGet;
+	}
 
 
-
-	// 	// hora actual - la hora cuando se completo la animacion.
-	// 	var deltaEnemies = Date.now() - lastUpdateTimeEnemies;
-
-	// 	// si updateDelta enemies es menos que msPerFrameEnemies
-	// 	if (updateDeltaEnemies > msPerFrameEnemies) {
-
-	// 		updateDeltaEnemies = 0;
-
-	// 		contextBackground.drawImage(
-	// 			spriteImage,
-	// 			framesEnemies * 163,
-	// 			0,
-	// 			163,
-	// 			98,
-	// 			xPosition,
-	// 			yPosition,
-	// 			163,
-	// 			98
-	// 		);
-
-	// 		framesEnemies += 1;
-
-	// 		if (framesEnemies > 8) {
-	// 			framesEnemies = 0;
-	// 		}
-
-	// 	} else {
-	// 		updateDeltaEnemies += deltaEnemies;
-	// 	}
-
-	// 	lastUpdateTimeEnemies = Date.now();
-
-	// }
+	/* enemie is out the canvas
+	---------------------------------------------------------------*/
+	/**
+	 * Chek if the enemie is out the canvas
+	 * @param {Array} enemiesArray[j],
+	 * @function
+	 * @example
+	 * enemiesIsOutTheCanvas(enemiesArray[j]);
+	 */
+	function enemiesIsOutTheCanvas (enemies) {
+		var positionXOfEnemie = enemiesArray[enemiesArray.indexOf(enemies)].x;
+		if (positionXOfEnemie < 100) {
+			//no me deja eliminarlo porque todavía esta chequeando si tiene colition
+			//enemiesArray.splice(enemiesArray[enemiesArray.indexOf(enemies)], 1);
+			enemiesArray.splice(enemiesArray.indexOf(enemies), 1);
+		}
+	}
 
 
-	// function drawEnemies (walkingDirection, spriteImage, framesEnemies, xPosition, yPosition) {
-
-	// 	switch (walkingDirection) {
- //            case 'fromLeft':
- //            	contextBackground.drawImage(
-	// 				spriteImage,
-	// 				framesEnemies * 163,
-	// 				0,
-	// 				163,
-	// 				98,
-	// 				xPosition,
-	// 				yPosition,
-	// 				163,
-	// 				98
-	// 			);
- //            break;
-
- //        }
-
-	// }
-
-
-
-
-
-
-
-
-
-
-
-
-	// ////// SPRITES PLAYER  //////////
-	// /* Sprite animation */
-	// var frame = 0,
-	// 	delta,
-	// 	lastUpdateTime = 0,
-	// 	updateDelta = 0,
-	// 	msPerFrame = 100;
-
-	// /**
-	//  * Set the frames amount and speed.
-	//  * @param {String} walkingRight,
-	//  * @function
-	//  * @example
-	//  * setFramesSpriteAnimation('walkingRight', 9, 0, 100);
-	//  */
-	// function setFramesSpriteAnimation (walkingDirection, frameStartPosition, frameCuantity, msPerFrame) {
-	// 	delta = Date.now() - lastUpdateTime;
-
-	// 	if (updateDelta > msPerFrame) {
-	// 		updateDelta = 0;
-
-	// 		drawSpriteAnimation(walkingDirection);
-
-	// 		frame += 1;
-
-	// 		if (frame >= frameCuantity) {
-	// 			frame = frameStartPosition;
-	// 		}
-
-	// 	} else {
-	// 		updateDelta += delta;
-	// 	}
-
-	// 	lastUpdateTime = Date.now();
-
-	// }
-
-
-	// /**
-	//  * Draw the sprite animation depending on the direction of the arrow down
-	//  * @param {String} walkingRight,
-	//  * @function
-	//  * @example
-	//  * drawSpriteAnimation('walkingRight');
-	//  */
-	// function drawSpriteAnimation (walkingDirection) {
-	// 	contextPlayer.clearRect(0, 0, canvasWidth, canvasHeight);
-
-	// 	switch (walkingDirection) {
- //            case 'walkingRight':
- //            	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
- //          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'walkingStopRight':
- //            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'crouchRight':
- //            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'jumpingRight':
- //            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
- //            break;
-
- //            case 'attackRight':
- //            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'walkingLeft':
- //          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'walkingStopLeft':
- //            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'crouchLeft':
- //            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
-
- //            case 'jumpingLeft':
- //            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
- //            break;
-
- //            case 'attackLeft':
- //            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
- //            break;
- //        }
-	// }
-
-
+	/* controls and keys. Event listeners
+	---------------------------------------------------------------*/
 	// listen when a key is pressed
 	document.body.addEventListener("keydown", function (event) {
 		keys[event.keyCode] = true;
@@ -917,7 +1062,6 @@
             break;
         }
 	});
-
 
 	//Call de update function when the page load.
 	win.addEventListener("load", function(){
