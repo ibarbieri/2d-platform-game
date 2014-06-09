@@ -34,7 +34,7 @@ body {
 #extras,
 #player,
 #background {
-	/*box-shadow: 3px 4px 29px 6px #000 inset;*/
+	box-shadow: 0 40px 29px 2px #000 inset;
 }
 
 #extras {
@@ -63,7 +63,7 @@ body {
 	margin: 0 auto;
 	right: 0;
 	left: 0;
-	border: 1px solid red;
+/*	border: 1px solid red;*/
 }
 
 #secondaryCanvas {
@@ -148,6 +148,58 @@ body {
 }
 
 
+/* Panerl Start Game */
+#panerlStarGrame {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/start-game-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+}
+
+#panerlStarGrame #buttonStartGame {
+	text-align: center;
+	color: #FFF;
+}
+
+
+/* Panerl Game over */
+#panelGameOver {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-over-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 4;
+}
+
+#panelGameOver a {
+	color: #FFF;
+	padding: 0 20px;
+}
+
+
+/* Panerl Game complete */
+#panelGameComplete {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-complete.jpg') no-repeat;
+	background-position: top center;
+	z-index: 4;
+}
+
+
 /* Panel Game */
 #panelGame {
 	position: absolute;
@@ -160,9 +212,9 @@ body {
 	background: url('../img/background-panel-game.jpg') no-repeat;
 	background-position: top center;
 	background-color: #000;
-	width: 1090px;
+	width: 950px;
 	margin: 0 auto;
-	top: 560px;
+	top: 555px;
 	right: 0;
 	left: 0;
 	z-index: 10;
@@ -203,24 +255,6 @@ body {
 
 #panelGame img {
 	padding: 0 10px;
-}
-
-
-/* Panel Game over */
-#panelGameOver {
-	position: absolute;
-	z-index: 4;
-	background-color: #000;
-	opacity: 0.6;
-	width: 100%;
-	height: 100%;
-	color: #FFF;
-	text-align: center;
-}
-
-#panelGameOver a {
-	color: #FFF;
-	padding: 0 20px;
 }
 
 
