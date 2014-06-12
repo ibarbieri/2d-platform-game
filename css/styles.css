@@ -75,22 +75,6 @@ body {
 }
 
 
-/* Panerl Start Desktop */
-
-
-
-/* Panerl Start Mobile */
-#panelStartMobile {
-	position: absolute;
-	z-index: 11;
-	background-color: #000;
-	width: 100%;
-	height: 100%;
-	color: #FFF;
-	text-align: center;
-}
-
-
 /* Player options: life, points, posims */
 #playerOptions {
 	z-index: 3;
@@ -107,8 +91,8 @@ body {
 }*/
 
 #playerOptions #adarhaLife {
-	background: url('../img/energy-adarha.png') no-repeat;
-	width: 200px;
+	background: url('../img/energy-adhara.png') no-repeat;
+	width: 270px;
 	height: 108px;
 	margin: 15px 0 0 15px;
 	text-indent: -9999px;
@@ -147,9 +131,19 @@ body {
 	left: 0;
 }
 
+/* Panerl Start Game mobile */
+#panelStartMobile {
+	position: absolute;
+	z-index: 11;
+	background-color: #000;
+	width: 100%;
+	height: 100%;
+	color: #FFF;
+	text-align: center;
+}
 
-/* Panerl Start Game */
-#panerlStarGrame {
+/* Panel Start Game desktop */
+#panelStarGrame {
 	position: absolute;
 	width: 950px;
 	height: 624px;
@@ -161,13 +155,97 @@ body {
 	z-index: 10;
 }
 
-#panerlStarGrame #buttonStartGame {
+#panelStarGrame .content {
+	margin: 220px auto 0 auto;
+	width: 410px;
 	text-align: center;
+}
+
+#panelStarGrame form {
+	text-align: center;
+	margin: 30px 0 0 0;
+	font-family: 'Mason', serif;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#panelStarGrame input {
+	width: 268px;
+	height: 26px;
+	font-family: 'Mason', serif;
+	font-size: 16px;
+	background-color: #42210B;
 	color: #FFF;
 }
 
+#panelStarGrame #buttonStartGame {
+	text-align: center;
+	color: #FFF;
+	display: block;
+	margin: 50px 0 0 0;
+}
 
-/* Panerl Game over */
+
+/* Panel choose player desktop */
+#panelChoosePlayer {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-choose-player.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+}
+
+#panelChoosePlayer .content {
+	margin: 230px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+#panelChoosePlayer a {
+	color: #FFF;
+	float: left;
+	padding: 0 20px;
+}
+
+
+/* Panel Read Instructions desktop */
+#panelReadInstructions {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-instructions-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+}
+
+#panelReadInstructions .content {
+	margin: 398px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+/* Panel pause  */
+#panelPause {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-pause-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+}
+
+
+/* Panel Game over */
 #panelGameOver {
 	position: absolute;
 	width: 950px;

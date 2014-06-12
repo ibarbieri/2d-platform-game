@@ -5,6 +5,8 @@
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
+    var cancelAnimationFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame;
+
 
     /* full screen function
 	---------------------------------------------------------------*/
@@ -54,12 +56,18 @@
 
 	} else if (userAgent.indexOf('Android') > -1) {
 
-		$('#panelStartMobile').toggleClass('display-none');
+		//$('#panelStartMobile').toggleClass('display-none');
 
-		$('#starGameMobile').on('click', function () {
-			//fullScreen(element);
-			$('#panelStartMobile').toggleClass('display-none');
-		});
+		// $('#starGameMobile').on('click', function () {
+		// 	//fullScreen(element);
+		// 	$('#panelStartMobile').toggleClass('display-none');
+		// });
+
+		// Start panel
+		$('#panelStarGrame').css('display', 'none');
+
+
+
 
 		$('#extras').css('top', 0);
 		$('#player').css('top', 0);
@@ -152,7 +160,7 @@
 			velX: 0,
 			velY: 0,
 			jumping : false,
-			life : 5100,
+			life : 4500,
 			score : 0,
 			heartsDragon : 0,
 			attack : false,
@@ -203,6 +211,7 @@
 		jump = false,
 		attacking = false,
 		extrasPlusImages,
+		warlockShooting = false,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
 
@@ -218,18 +227,32 @@
 		extrasCave = new Image(),
 		wolfImage = new Image(),
 		rockObstacle = new Image(),
-		warlock = new Image();
+		warlock = new Image(),
+		shoot1 = new Image();
 
 		backgroundImage1.src = 'img/background-1.jpg';
 		backgroundImagePatter.src = 'img/background-pattern.jpg';
 		backgroundImagePatterIpad.src = 'img/background-pattern-ipad.jpg';
 		backgroundImageAndroid.src = 'img/background-android.jpg';
-		playerSpriteRight.src = 'img/player-actions-right.png';
-		playerSpriteLeft.src = 'img/player-actions-left.png';
 		extrasCave.src = 'img/extrasCave.png';
 		wolfImage.src = 'img/wolf-animation.png';
 		rockObstacle.src = 'img/small-rock.png';
 		warlock.src = 'img/warlock.png';
+		shoot1.src = 'img/shoot-1.png';
+
+
+		if (playerSelected == 'adhara') {
+
+			playerSpriteRight.src = 'img/player-actions-right-adhara.png';
+			playerSpriteLeft.src = 'img/player-actions-left-adhara.png';
+
+		} else if (playerSelected == 'aidem') {
+
+			playerSpriteRight.src = 'img/player-actions-right-aidem.png';
+			playerSpriteLeft.src = 'img/player-actions-left-aidem.png';
+
+		}
+
 
 
 	/* cache content in new canvas, double buffer
@@ -421,17 +444,24 @@
 			background.x = 0;
 			extras.x = 0;
 
-		} else if ( -(background.x) >= backgroundImage1.width - canvasWidth + 100) {
-
-			// Stop the player
-			background.x = -(backgroundImage1.width - canvasWidth + 100);
-			extras.velX = 0;
+		} else if (-(background.x) > backgroundImage1.width - canvasWidth - 900) {
 
 			// Draw the front of the rock
 			secondaryCtx.drawImage(extrasCave, background.x + backgroundImage1.width - extrasCave.width, background.y + 70, extrasCave.width, extrasCave.height);
 
+			// stop enemies and rocks
+			//enemiesArray.length = 0;
+			warlockShooting = true;
+			obstaclesArray.length = 0;
+
 			// add the final enemie
 			addFinalEnemie();
+
+			if ( -(background.x) >= backgroundImage1.width - canvasWidth + 100) {
+				// Stop the player
+				background.x = -(backgroundImage1.width - canvasWidth + 100);
+				extras.velX = 0;
+			}
 		}
 
 
@@ -594,6 +624,7 @@
 	}
 
 
+
 	/* obstacles
 	---------------------------------------------------------------*/
 	/**
@@ -627,7 +658,7 @@
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 		);
-		console.log('se agrego obstacle');
+		//console.log('se agrego obstacle');
 	}
 
 	//Add random obstacles
@@ -642,10 +673,9 @@
 		var o;
 
 		for (o = 0; obstaclesArray.length > o; o += 1) {
-			setFramesSpriteAnimationEnemies(rockObstacle, 155, 148, 0, 9, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+			setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, 9, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
 		};
 	}
-
 
 
 
@@ -677,9 +707,14 @@
 
 	// Push enemies into the array
 	function pushEnemies () {
-		enemiesArray.push(
-			new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50)
-					  );
+		if (warlockShooting == true) {
+			console.log('push hechizo');
+			console.log(enemiesArray.length);
+			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 100));
+		} else {
+			console.log('push wolf');
+			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50));
+		}
 	}
 
 	/**
@@ -693,7 +728,7 @@
 		var i;
 
 		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(wolfImage, 163, 98, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, 163, 98, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 		};
 	}
 
@@ -711,9 +746,8 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		enemiesArray.push(
-				new Enemies(100, 'warlock', warlock, background.x + backgroundImage1.width - extrasCave.width, canvasHeight -450, 168, 250, 0, 0, 3, 50)
-				);
+		//setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 175, 226, 0, 9, background.x + backgroundImage1.width - 400, background.y + 430);
+		setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 230, 150, 226, 0, 9, background.x + backgroundImage1.width - 500, background.y + 430);
 	}
 
 	var fps = 60,
@@ -725,7 +759,7 @@
 		first = then,
 		frameSecond;
 
-	function setFramesSpriteAnimationEnemies (spriteImage, frameWidth, frameHeight, frameStartPosition, frameCuantity, xPosition, yPosition) {
+	function setFramesSpriteAnimationEnemies (context, spriteImage, yFramePosition, frameWidth, frameHeight, frameStartPosition, frameCuantity, xPosition, yPosition) {
 
 		now = Date.now();
 		delta = now - then;
@@ -744,10 +778,10 @@
 				frameSecond = frameSecond - 8;
 			}
 		}
-		contextBackground.drawImage(
+		context.drawImage(
 			spriteImage,
 			frameSecond * frameWidth,
-			0,
+			yFramePosition,
 			frameWidth,
 			frameHeight,
 			xPosition,
@@ -887,7 +921,7 @@
 
 				} else {
 					collisionDirection = "RIGHT";
-					console.log(collisionDirection);
+					//console.log(collisionDirection);
 
 					// Block de background
 					background.velX = 0;
@@ -913,7 +947,7 @@
 						// check if the player or enemie is alive
 						entityIsAlive(player, enemieOrObstacle);
 
-					} else if (enemieOrObstacle.name == 'warlock') {
+					} else if (enemieOrObstacle.name == 'shoot1') {
 
 						// if the player is attacking
 						if (player.attack) {
@@ -921,7 +955,7 @@
 							enemieOrObstacle.life -= player.aggressive;
 						} else {
 							//remove player life
-							player.life -= enemieOrObstacle.aggressive;
+							player.life -= 120; // the agresive of the warlok //enemieOrObstacle.aggressive;
 						}
 
 						// check if the player or enemie is alive
@@ -955,6 +989,42 @@
 
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
+
+		switch (player.life) {
+			case 4000:
+				$('#adarhaLife').css('background-position-x', -275);
+			break;
+
+			case 3500:
+				$('#adarhaLife').css('background-position-x', -550);
+			break;
+
+			case 3000:
+				$('#adarhaLife').css('background-position-x', -825);
+			break;
+
+			case 2500:
+				$('#adarhaLife').css('background-position-x', -1100);
+			break;
+
+			case 2000:
+				$('#adarhaLife').css('background-position-x', -1375);
+			break;
+
+			case 1500:
+				$('#adarhaLife').css('background-position-x', -1650);
+			break;
+
+			case 1000:
+				$('#adarhaLife').css('background-position-x', -1925);
+			break;
+
+			case 500:
+				$('#adarhaLife').css('background-position-x', -2200);
+			break;
+		}
+
+
 		if (player.life < 0) {
 
 			// Show the Game Over panel
@@ -965,7 +1035,7 @@
 				enemiesArray.length = 0;
 				obstaclesArray.length = 0;
 				background.x = 0;
-				player.life = 5100;
+				player.life = 4500;
 				player.score = 0;
 				player.heartsDragon = 0;
 				panelGameOver.addClass('display-none');
@@ -980,6 +1050,9 @@
 			// The player get 100 points becouse kill one enemie
 			playerUpdateScore(100);
 		}
+
+
+
 	}
 
 
@@ -1014,6 +1087,20 @@
 			enemiesArray.splice(enemiesArray.indexOf(enemies), 1);
 		}
 	}
+
+
+	/* Game pause and start
+	---------------------------------------------------------------*/
+	var pauseGame = $('#pauseGame');
+
+	pauseGame.on('click', function () {
+		console.log('denter juego');
+
+		cancelAnimationFrame(requestAnimationFrame(update));
+
+		panelPause.toggleClass('display-none');
+
+	});
 
 
 	/* controls and keys. Event listeners

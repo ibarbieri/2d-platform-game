@@ -15,13 +15,46 @@
 </head>
 
 <body>
-	<section id="panerlStarGrame">
-		<a href="#" id="buttonStartGame">Start Game</a>
+	<section id="panelStarGrame">
+		<div class="content">
+			<a href="#" id="buttonLoginFacebook">
+				<img src="img/login-with-facebook.png">
+			</a>
+
+			<form action="" method="POST">
+				<label>E-mail</label>
+				<input type="email" value="" id="emailLogin" name="emailLogin">
+
+				<a href="#" id="buttonStartGame">
+					<img src="img/button-play.png">
+				</a>
+			</form>
+		</div>
 	</section>
 
-	<section id="panelStartMobile" class="display-none">
-		<a href="#" id="starGameMobile">Start</a>
+
+	<section id="panelChoosePlayer" class="display-none">
+		<div class="content">
+			<a href="#" id="adhara"><img src="img/choose-adhara.png"></a>
+			<a href="#" id="aidem"><img src="img/choose-aidem.png"></a>
+		</div>
 	</section>
+
+	<section id="panelReadInstructions" class="display-none">
+		<div class="content">
+			<a href="#" id="buttonPlayGame"><img src="img/button-play.png"></a>
+		</div>
+	</section>
+
+	<section id="panelPause" class="display-none">
+		<a href="#" id="buttonInstructions">Instrucciones</a>
+		<a href="#" id="buttonReanudar">Reanudar</a>
+		<a href="#" id="buttonResumen">Resumen</a>
+	</section>
+
+<!-- 	<section id="panelStartMobile" class="display-none">
+		<a href="#" id="starGameMobile">Start</a>
+	</section> -->
 
 	<section id="panelGameOver" class="display-none">
 		<h2>Game Over</h2>
@@ -63,9 +96,10 @@
 		</div>
 
 		<div class="right-actions">
-			<img src="img/icon-twitter.png">
-			<img src="img/icon-facebook.png">
-			<img src="img/icon-pause.png">
+			<a href="#"><img src="img/icon-twitter.png"></a>
+			<a href="#"><img src="img/icon-facebook.png"></a>
+			<a href="#" id="pauseGame"><img src="img/icon-pause.png"></a>
+
 			<img src="img/icon-sound.png">
 		</div>
 	</section>
@@ -79,23 +113,61 @@
 
 <script type="text/javascript">
 
-var buttonStartGame = $('#buttonStartGame'),
-	panerlStarGrame = $('#panerlStarGrame'),
+var buttonLoginFacebook = $('#buttonLoginFacebook'),
+	buttonStartGame = $('#buttonStartGame'),
+	buttonPlayGame = $('#buttonPlayGame'),
+	panelStarGrame = $('#panelStarGrame'),
+	buttonInstructions = $('#buttonInstructions'),
+	buttonReanudar = $('#buttonReanudar'),
+	buttonResumen = $('#buttonResumen'),
+	panelChoosePlayer = $('#panelChoosePlayer'),
+	panelReadInstructions = $('#panelReadInstructions'),
+	panelPause = $('#panelPause'),
 	playerOptions = $('#playerOptions'),
+	playerSelected = 'adhara',
 	script;
 
+
 	buttonStartGame.click( function () {
+		choosePlayer();
+	});
 
+
+	// Choose player function
+	function choosePlayer () {
+		panelStarGrame.addClass('display-none');
+		panelChoosePlayer.toggleClass('display-none');
+	}
+
+
+	// Set the player selected
+	$('#adhara').click( function () {
+		playerSelected = 'adhara';
+		readInstructions();
+	});
+
+	$('#aidem').click( function () {
+		playerSelected = 'aidem';
+		readInstructions();
+	});
+
+
+	// Read instructions
+	function readInstructions () {
+		panelChoosePlayer.toggleClass('display-none');
+		panelReadInstructions.toggleClass('display-none');
+	}
+
+	buttonPlayGame.click( function () {
 		startGame();
-
-		panerlStarGrame.toggleClass('display-none');
-		playerOptions.toggleClass('display-none');
-
+		panelReadInstructions.toggleClass('display-none');
 	});
 
 
 	// Start game function
 	function startGame () {
+		playerOptions.toggleClass('display-none');
+
 		script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = "js/game.js";
