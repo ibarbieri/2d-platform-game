@@ -444,10 +444,12 @@
 			background.x = 0;
 			extras.x = 0;
 
-		} else if (-(background.x) > backgroundImage1.width - canvasWidth - 900) {
+		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - 900) {
 
 			// Draw the front of the rock
 			secondaryCtx.drawImage(extrasCave, background.x + backgroundImage1.width - extrasCave.width, background.y + 70, extrasCave.width, extrasCave.height);
+
+			console.log('draw final enemie');
 
 			// stop enemies and rocks
 			//enemiesArray.length = 0;
@@ -634,7 +636,7 @@
 	 * @example
 	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120 -(the height of the image plus 230 of the canvas), 150, 150);
 	 */
-	function Obstacles (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
+	function Obstacles (life, name, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
 		this.life = life;
 		this.name = name;
 		this.image = image;
@@ -642,6 +644,7 @@
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.frameCuantity = frameCuantity;
 		this.velocityX = velocityX;
 		this.friction = friction;
 		this.speed = speed;
@@ -654,7 +657,7 @@
 	// Push obstacles into the array
 	function pushObstacle () {
 		obstaclesArray.push(
-			new Obstacles(400, 'rock', rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50)
+			new Obstacles(400, 'rock', rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50)
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 		);
@@ -673,7 +676,7 @@
 		var o;
 
 		for (o = 0; obstaclesArray.length > o; o += 1) {
-			setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, 9, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+			setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
 		};
 	}
 
@@ -688,7 +691,7 @@
 	 * @example
 	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
 	 */
-	function Enemies (life, name, image, x, y, width, height, velocityX, friction, speed, aggressive) {
+	function Enemies (life, name, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
 		this.life = life;
 		this.name = name;
 		this.image = image;
@@ -696,6 +699,7 @@
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.frameCuantity = frameCuantity;
 		this.velocityX = velocityX;
 		this.friction = friction;
 		this.speed = speed;
@@ -710,10 +714,10 @@
 		if (warlockShooting == true) {
 			console.log('push hechizo');
 			console.log(enemiesArray.length);
-			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 100));
+			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, canvasWidth + (-(background.x)), canvasHeight - 110, 124, 71, 9, 0, 0.9, 3, 100));
 		} else {
 			console.log('push wolf');
-			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 0, 0.9, 3, 50));
+			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50));
 		}
 	}
 
@@ -728,7 +732,7 @@
 		var i;
 
 		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, 163, 98, 0, 9, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, 163, 98, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 		};
 	}
 
@@ -773,7 +777,7 @@
 
 			frameSecond = parseInt(counter/time_el);
 
-			if (frameSecond >= 9) {
+			if (frameSecond >= frameCuantity) {
 				counter = 1;
 				frameSecond = frameSecond - 8;
 			}
@@ -955,7 +959,7 @@
 							enemieOrObstacle.life -= player.aggressive;
 						} else {
 							//remove player life
-							player.life -= 120; // the agresive of the warlok //enemieOrObstacle.aggressive;
+							player.life -= enemieOrObstacle.aggressive; // the agresive of the warlok //enemieOrObstacle.aggressive;
 						}
 
 						// check if the player or enemie is alive
