@@ -137,6 +137,9 @@
     	canvasExtras = document.getElementById('extras'),
     	contextExtras = canvasExtras.getContext('2d');
 
+    	canvasExtrasStatic = document.getElementById('extrasStatic'),
+    	contextExtrasStatic = canvasExtrasStatic.getContext('2d');
+
     	canvasBackground.width = canvasWidth;
 		canvasBackground.height = canvasHeight;
 
@@ -145,6 +148,9 @@
 
 		canvasExtras.width = canvasWidth;
 		canvasExtras.height = canvasHeight;
+
+		canvasExtrasStatic.width = canvasWidth;
+		canvasExtrasStatic.height = canvasHeight;
 
 
 	/* game objects declaration; Player, Background, Extras
@@ -212,6 +218,7 @@
 		attacking = false,
 		extrasPlusImages,
 		warlockShooting = false,
+		warlockShootingAnimation = false,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
 
@@ -447,13 +454,12 @@
 		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - 900) {
 
 			// Draw the front of the rock
-			secondaryCtx.drawImage(extrasCave, background.x + backgroundImage1.width - extrasCave.width, background.y + 70, extrasCave.width, extrasCave.height);
-
-			console.log('draw final enemie');
+			//contextExtrasStatic.clearRect((canvasWidth / 2), 0, (canvasWidth / 2), canvasHeight);
+			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130, background.y + 100, extrasCave.width, extrasCave.height);
 
 			// stop enemies and rocks
 			//enemiesArray.length = 0;
-			warlockShooting = true;
+			//warlockShooting = true;
 			obstaclesArray.length = 0;
 
 			// add the final enemie
@@ -714,10 +720,10 @@
 		if (warlockShooting == true) {
 			console.log('push hechizo');
 			console.log(enemiesArray.length);
-			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, canvasWidth + (-(background.x)), canvasHeight - 110, 124, 71, 9, 0, 0.9, 3, 100));
+			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
 		} else {
 			console.log('push wolf');
-			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50));
+			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 0));
 		}
 	}
 
@@ -732,7 +738,7 @@
 		var i;
 
 		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, 163, 98, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 		};
 	}
 
@@ -740,8 +746,15 @@
 	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
+
 		pushEnemies();
+
+		warlockShootingAnimation = true;
+
 	}, randomTimeEnemies);
+
+
+
 
 	/**
 	 * Add the final enemie to the game.
@@ -750,8 +763,12 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		//setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 175, 226, 0, 9, background.x + backgroundImage1.width - 400, background.y + 430);
-		setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 230, 150, 226, 0, 9, background.x + backgroundImage1.width - 500, background.y + 430);
+
+		if (warlockShootingAnimation == true) {
+			setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 0, 150, 226, 0, 9, background.x + backgroundImage1.width - 450, background.y + 480);
+		} else {
+			setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 230, 150, 226, 0, 9, background.x + backgroundImage1.width - 400, background.y + 460);
+		}
 	}
 
 	var fps = 60,
@@ -761,7 +778,7 @@
 		delta,
 		counter = 0,
 		first = then,
-		frameSecond;
+		frameSecond = 0;
 
 	function setFramesSpriteAnimationEnemies (context, spriteImage, yFramePosition, frameWidth, frameHeight, frameStartPosition, frameCuantity, xPosition, yPosition) {
 
@@ -781,6 +798,17 @@
 				counter = 1;
 				frameSecond = frameSecond - 8;
 			}
+
+			if (frameSecond < 8) {
+				warlockShooting = true;
+			}
+
+			if (frameSecond >= 8) {
+				//console.log('stops shotting animation');
+				// Stop de shooting animation
+				warlockShootingAnimation = false;
+			}
+
 		}
 		context.drawImage(
 			spriteImage,

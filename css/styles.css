@@ -32,12 +32,23 @@ body {
 
 /* Canvas */
 #extras,
+#extrasStatic,
 #player,
 #background {
 	box-shadow: 0 40px 29px 2px #000 inset;
 }
 
 #extras {
+	position: absolute;
+	top: -200px;
+	margin: 0 auto;
+	right: 0;
+	left: 0;
+	z-index: 2;
+/*	border: 1px solid yellow;*/
+}
+
+#extrasStatic {
 	position: absolute;
 	top: -200px;
 	margin: 0 auto;
