@@ -459,11 +459,14 @@
 
 			// stop enemies and rocks
 			//enemiesArray.length = 0;
-			//warlockShooting = true;
+			warlockShooting = true;
 			obstaclesArray.length = 0;
 
 			// add the final enemie
 			addFinalEnemie();
+
+			// check de collitions with the final enemie
+			checkCollision(player, finalEnemieArray[0]);
 
 			if ( -(background.x) >= backgroundImage1.width - canvasWidth + 100) {
 				// Stop the player
@@ -667,7 +670,6 @@
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 		);
-		//console.log('se agrego obstacle');
 	}
 
 	//Add random obstacles
@@ -713,7 +715,10 @@
 	}
 
 	//Array to add and remove enemies in the game
-	var enemiesArray = [];
+	var enemiesArray = [],
+		finalEnemieArray = [];
+
+	finalEnemieArray.push(new Enemies(1000, 'Warlok', wolfImage, (background.x + backgroundImage1.width - 450), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 100));
 
 	// Push enemies into the array
 	function pushEnemies () {
@@ -723,7 +728,7 @@
 			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
 		} else {
 			console.log('push wolf');
-			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 0));
+			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 0));
 		}
 	}
 
@@ -736,7 +741,6 @@
 	function renderEnemies () {
 
 		var i;
-
 		for (i = 0; enemiesArray.length > i; i += 1) {
 			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 		};
@@ -763,6 +767,8 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
+
+		secondaryCtx.drawImage(wolfImage, background.x + backgroundImage1.width - 500, background.y + 100, extrasCave.width, extrasCave.height);
 
 		if (warlockShootingAnimation == true) {
 			setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 0, 150, 226, 0, 9, background.x + backgroundImage1.width - 450, background.y + 480);
@@ -799,9 +805,9 @@
 				frameSecond = frameSecond - 8;
 			}
 
-			if (frameSecond < 8) {
-				warlockShooting = true;
-			}
+			// if (frameSecond < 8) {
+			// 	warlockShooting = true;
+			// }
 
 			if (frameSecond >= 8) {
 				//console.log('stops shotting animation');
@@ -953,7 +959,7 @@
 
 				} else {
 					collisionDirection = "RIGHT";
-					//console.log(collisionDirection);
+					console.log(collisionDirection);
 
 					// Block de background
 					background.velX = 0;
