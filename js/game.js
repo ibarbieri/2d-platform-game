@@ -32,7 +32,8 @@
 	---------------------------------------------------------------*/
 	var userAgent = window.navigator.userAgent,
 		canvasWidth,
-    	canvasHeight;
+    	canvasHeight,
+    	deviceDiferenceImage = 0;
 
 	if (userAgent.indexOf('iPad') > -1) {
 
@@ -54,6 +55,8 @@
 		canvasWidth = 800;
 		canvasHeight = 410;
 
+		deviceDiferenceImage = 200;
+
 	} else if (userAgent.indexOf('Android') > -1) {
 
 		//$('#panelStartMobile').toggleClass('display-none');
@@ -66,14 +69,11 @@
 		// Start panel
 		$('#panelStarGrame').css('display', 'none');
 
-
-
-
 		$('#extras').css('top', 0);
 		$('#player').css('top', 0);
 		$('#background').css('top', 0);
 		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', win.outerWidth);
+		$('#playerOptions').css('width', win.innerWidth);
 		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
 		$('.jump-attack-controls').css('right', 10).css('float', 'none');
 
@@ -81,8 +81,10 @@
 		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
 		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
 
-		canvasWidth = win.outerWidth;
+		canvasWidth = win.innerWidth;
     	canvasHeight = win.screen.height;
+
+    	deviceDiferenceImage = 200;
 
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
@@ -118,11 +120,14 @@
     	//canvasHeight = win.screen.height;
     	canvasHeight = 320;//win.innerHeight + 100;
 
+    	deviceDiferenceImage = 200;
 
 	} else {
 		// Desktop
 		canvasWidth = 950;
 		canvasHeight = 755;
+
+		deviceDiferenceImage = 0;
 	}
 
 
@@ -188,10 +193,10 @@
 			y : 0,
 			extrasWidth : canvasWidth,
 			extrasHeight : canvasHeight,
-			speed: 6,
+			speed: 4,
 			velX: 0,
 			velY: 0,
-			friction: 0.82,
+			friction: 0.75,
 			jumping : false
 		},
 		keys = [],
@@ -217,8 +222,10 @@
 		jump = false,
 		attacking = false,
 		extrasPlusImages,
+		warlokPush = false,
 		warlockShooting = false,
 		warlockShootingAnimation = false,
+		warlokIsDraw = false,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
 
@@ -451,28 +458,27 @@
 			background.x = 0;
 			extras.x = 0;
 
-		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - 900) {
+		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - deviceDiferenceImage) {
 
 			// Draw the front of the rock
-			//contextExtrasStatic.clearRect((canvasWidth / 2), 0, (canvasWidth / 2), canvasHeight);
-			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130, background.y + 100, extrasCave.width, extrasCave.height);
+			// contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
+			// contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
 
 			// stop enemies and rocks
-			//enemiesArray.length = 0;
-			warlockShooting = true;
+			warlokPush = true;
 			obstaclesArray.length = 0;
 
 			// add the final enemie
-			addFinalEnemie();
-
-			// check de collitions with the final enemie
-			checkCollision(player, finalEnemieArray[0]);
-
-			if ( -(background.x) >= backgroundImage1.width - canvasWidth + 100) {
-				// Stop the player
-				background.x = -(backgroundImage1.width - canvasWidth + 100);
-				extras.velX = 0;
+			if (warlokIsDraw == false) {
+				addFinalEnemie();
 			}
+
+			if ( -(background.x) >= backgroundImage1.width - canvasWidth - deviceDiferenceImage) {
+				// Stop the player
+				background.x = -(backgroundImage1.width - canvasWidth - deviceDiferenceImage);
+			}
+
+
 		}
 
 
@@ -645,9 +651,10 @@
 	 * @example
 	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120 -(the height of the image plus 230 of the canvas), 150, 150);
 	 */
-	function Obstacles (life, name, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
+	function Obstacles (life, name, yFramePosition, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
 		this.life = life;
 		this.name = name;
+		this.yFramePosition = yFramePosition;
 		this.image = image;
 		this.x = x;
 		this.y = y;
@@ -666,7 +673,7 @@
 	// Push obstacles into the array
 	function pushObstacle () {
 		obstaclesArray.push(
-			new Obstacles(400, 'rock', rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50)
+			new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50)
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 		);
@@ -699,9 +706,10 @@
 	 * @example
 	 * new Enemies(100, 'wolf', wolfImage, canvasWidth, canvasHeight -80, 50, 50, 0, 0.9, 2, 50);
 	 */
-	function Enemies (life, name, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
+	function Enemies (life, name, yFramePosition, image, x, y, width, height, frameCuantity, velocityX, friction, speed, aggressive) {
 		this.life = life;
 		this.name = name;
+		this.yFramePosition = yFramePosition;
 		this.image = image;
 		this.x = x;
 		this.y = y;
@@ -715,21 +723,13 @@
 	}
 
 	//Array to add and remove enemies in the game
-	var enemiesArray = [],
-		finalEnemieArray = [];
-
-	finalEnemieArray.push(new Enemies(1000, 'Warlok', wolfImage, (background.x + backgroundImage1.width - 450), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 100));
+	var enemiesArray = [];
 
 	// Push enemies into the array
 	function pushEnemies () {
-		if (warlockShooting == true) {
-			console.log('push hechizo');
-			console.log(enemiesArray.length);
-			enemiesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
-		} else {
-			console.log('push wolf');
-			enemiesArray.push(new Enemies(400, 'wolf', wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 0));
-		}
+		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 0));
+		// console.log( (canvasWidth + (-(background.x))) ); 1793
+		// console.log(background.x);-843 esto empieza a sumar así se va moviendo para la izq.
 	}
 
 	/**
@@ -742,7 +742,41 @@
 
 		var i;
 		for (i = 0; enemiesArray.length > i; i += 1) {
-			setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+
+			if (enemiesArray[i].name == 'wolf') {
+
+				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+
+			} else if (enemiesArray[i].name == 'warlock') {
+
+
+				var positonXtoDraw = enemiesArray[i].x + extras.x;
+
+				// Stop de warlok
+				if (positonXtoDraw < 500) {
+					console.log('frenar', extras.x, extras.velX);
+
+					// extras.x = -8975;
+					// extras.velX = 0.06786370983333219;
+
+					// positonXtoDraw = canvasWidth + (-(extras.x)) + extras.x;
+				}
+
+
+
+				// move the ehemie and stop
+				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, positonXtoDraw, enemiesArray[i].y + background.y);
+
+
+
+				// // Stop the enemie
+				// extras.x = -(backgroundImage1.width - canvasWidth - deviceDiferenceImage);
+				// console.log('frenar enemigo');
+
+				// Draw the enemie static
+				//setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, (background.x + backgroundImage1.width - 500 - deviceDiferenceImage), enemiesArray[i].y + background.y);
+			}
+
 		};
 	}
 
@@ -750,13 +784,10 @@
 	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
-
-		pushEnemies();
-
-		warlockShootingAnimation = true;
-
+		if (warlokPush == false) {
+			pushEnemies();
+		}
 	}, randomTimeEnemies);
-
 
 
 
@@ -767,15 +798,18 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
+		if (warlockShooting == true) {
+			enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
+			warlokIsDraw = true;
 
-		secondaryCtx.drawImage(wolfImage, background.x + backgroundImage1.width - 500, background.y + 100, extrasCave.width, extrasCave.height);
+			//console.log(extras.x, background.x);
 
-		if (warlockShootingAnimation == true) {
-			setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 0, 150, 226, 0, 9, background.x + backgroundImage1.width - 450, background.y + 480);
 		} else {
-			setFramesSpriteAnimationEnemies(secondaryCtx, warlock, 230, 150, 226, 0, 9, background.x + backgroundImage1.width - 400, background.y + 460);
+			enemiesArray.push(new Enemies(1200, 'warlock', 230, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
+			warlokIsDraw = true;
 		}
 	}
+
 
 	var fps = 60,
 		now,
@@ -805,14 +839,12 @@
 				frameSecond = frameSecond - 8;
 			}
 
-			// if (frameSecond < 8) {
-			// 	warlockShooting = true;
-			// }
+			if (frameSecond < 8) {
+				warlockShooting = true;
+			}
 
 			if (frameSecond >= 8) {
-				//console.log('stops shotting animation');
-				// Stop de shooting animation
-				warlockShootingAnimation = false;
+				warlockShooting = false;
 			}
 
 		}
@@ -959,7 +991,6 @@
 
 				} else {
 					collisionDirection = "RIGHT";
-					console.log(collisionDirection);
 
 					// Block de background
 					background.velX = 0;
@@ -970,7 +1001,9 @@
 					extras.velX++;
 
 					// If the collision come from enemie remove player life
-					if (enemieOrObstacle.name == 'wolf') {
+					if (enemieOrObstacle.name == 'wolf' || enemieOrObstacle.name == 'warlock') {
+
+						console.log(enemieOrObstacle.name);
 
 						// if the player is attacking
 						if (player.attack) {
