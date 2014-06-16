@@ -114,19 +114,151 @@
 
 <script type="text/javascript">
 
-var buttonLoginFacebook = $('#buttonLoginFacebook'),
-	buttonStartGame = $('#buttonStartGame'),
-	buttonPlayGame = $('#buttonPlayGame'),
-	panelStarGrame = $('#panelStarGrame'),
-	buttonInstructions = $('#buttonInstructions'),
-	buttonReanudar = $('#buttonReanudar'),
-	buttonResumen = $('#buttonResumen'),
-	panelChoosePlayer = $('#panelChoosePlayer'),
-	panelReadInstructions = $('#panelReadInstructions'),
-	panelPause = $('#panelPause'),
-	playerOptions = $('#playerOptions'),
-	playerSelected = 'adhara',
-	script;
+	/* devices adaptations
+	---------------------------------------------------------------*/
+	var userAgent = window.navigator.userAgent,
+		canvasWidth,
+    	canvasHeight,
+    	deviceDiferenceImage = 0;
+
+	if (userAgent.indexOf('iPad') > -1) {
+
+		$('#extras').css('top', 90);
+		$('#player').css('top', 90);
+		$('#background').css('top', 90);
+
+		$('#playerOptions').css('width', 800).css('top', 80);
+		$('#panelGame').css('width', 800).css('top', 500);
+		$('#controls').css('display', 'block').css('bottom', 200).css('width', 800);
+
+		// $('.walk-controls').css('margin-left', 20);
+		// $('.jump-attack-controls').css('right', 30);
+
+		$('#adarhaLife').css('width', 270).css('margin-left', 30);
+		$('#adarhaPotion').css('margin-right', 10);
+		$('#adarhaHeartsDragon').css('margin-right', 10);
+
+		canvasWidth = 800;
+		canvasHeight = 410;
+
+		deviceDiferenceImage = 200;
+
+	} else if (userAgent.indexOf('Android') > -1) {
+
+		//$('#panelStartMobile').toggleClass('display-none');
+
+		// $('#starGameMobile').on('click', function () {
+		// 	//fullScreen(element);
+		// 	$('#panelStartMobile').toggleClass('display-none');
+		// });
+
+		// Start panel
+		$('#panelStarGrame').css('background-size', 700, 600);
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.innerWidth);
+		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.jump-attack-controls').css('right', 10).css('float', 'none');
+
+		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
+		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
+
+		canvasWidth = win.innerWidth;
+    	canvasHeight = win.screen.height;
+
+    	deviceDiferenceImage = 200;
+
+
+	} else if (userAgent.indexOf('iPhone') > -1) {
+
+		$('#panelStartMobile').toggleClass('display-none');
+
+		$('#starGameMobile').on('click', function () {
+			fullScreen(element);
+			$('#panelStartMobile').toggleClass('display-none');
+		});
+
+		$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+		$('#panelGame').css('display', 'none');
+		$('#playerOptions').css('width', win.innerWidth);
+
+		$('#controls').css('width', win.innerWidth).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		$('.down-arrow').css('background-size', 40);
+		$('.right-arrow').css('background-size', 40);
+		$('.left-arrow').css('background-size', 40);
+		$('.top-arrow').css('background-size', 40);
+
+		$('.jump-attack-controls').css('float', 'none');
+		$('.attack-key').css('background-size', 40);
+
+
+		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
+		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
+		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
+
+		canvasWidth = win.innerWidth;
+    	//canvasHeight = win.screen.height;
+    	canvasHeight = 320;//win.innerHeight + 100;
+
+    	deviceDiferenceImage = 200;
+
+	} else {
+		// Desktop
+		canvasWidth = 950;
+		canvasHeight = 755;
+
+		deviceDiferenceImage = 0;
+	}
+
+
+    /* canvas dimentions and declarations
+	---------------------------------------------------------------*/
+    var canvasBackground = document.getElementById('background'),
+    	contextBackground = canvasBackground.getContext('2d'),
+
+    	canvasPlayer = document.getElementById('player'),
+    	contextPlayer = canvasPlayer.getContext('2d'),
+
+    	canvasExtras = document.getElementById('extras'),
+    	contextExtras = canvasExtras.getContext('2d');
+
+    	canvasExtrasStatic = document.getElementById('extrasStatic'),
+    	contextExtrasStatic = canvasExtrasStatic.getContext('2d');
+
+    	canvasBackground.width = canvasWidth;
+		canvasBackground.height = canvasHeight;
+
+		canvasPlayer.width = canvasWidth;
+		canvasPlayer.height = canvasHeight;
+
+		canvasExtras.width = canvasWidth;
+		canvasExtras.height = canvasHeight;
+
+		canvasExtrasStatic.width = canvasWidth;
+		canvasExtrasStatic.height = canvasHeight;
+
+
+    /* Panels
+	---------------------------------------------------------------*/
+	var buttonLoginFacebook = $('#buttonLoginFacebook'),
+		buttonStartGame = $('#buttonStartGame'),
+		buttonPlayGame = $('#buttonPlayGame'),
+		panelStarGrame = $('#panelStarGrame'),
+		buttonInstructions = $('#buttonInstructions'),
+		buttonReanudar = $('#buttonReanudar'),
+		buttonResumen = $('#buttonResumen'),
+		panelChoosePlayer = $('#panelChoosePlayer'),
+		panelReadInstructions = $('#panelReadInstructions'),
+		panelPause = $('#panelPause'),
+		playerOptions = $('#playerOptions'),
+		playerSelected = 'adhara',
+		script;
 
 
 	buttonStartGame.click( function () {
@@ -174,7 +306,6 @@ var buttonLoginFacebook = $('#buttonLoginFacebook'),
 		script.src = "js/game.js";
 		document.getElementsByTagName('head')[0].appendChild(script);
 	}
-
 
 
 </script>

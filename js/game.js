@@ -28,136 +28,6 @@
 	}
 
 
-    /* devices adaptations
-	---------------------------------------------------------------*/
-	var userAgent = window.navigator.userAgent,
-		canvasWidth,
-    	canvasHeight,
-    	deviceDiferenceImage = 0;
-
-	if (userAgent.indexOf('iPad') > -1) {
-
-		$('#extras').css('top', 90);
-		$('#player').css('top', 90);
-		$('#background').css('top', 90);
-
-		$('#playerOptions').css('width', 800).css('top', 80);
-		$('#panelGame').css('width', 800).css('top', 500);
-		$('#controls').css('display', 'block').css('bottom', 200).css('width', 800);
-
-		// $('.walk-controls').css('margin-left', 20);
-		// $('.jump-attack-controls').css('right', 30);
-
-		$('#adarhaLife').css('width', 270).css('margin-left', 30);
-		$('#adarhaPotion').css('margin-right', 10);
-		$('#adarhaHeartsDragon').css('margin-right', 10);
-
-		canvasWidth = 800;
-		canvasHeight = 410;
-
-		deviceDiferenceImage = 200;
-
-	} else if (userAgent.indexOf('Android') > -1) {
-
-		//$('#panelStartMobile').toggleClass('display-none');
-
-		// $('#starGameMobile').on('click', function () {
-		// 	//fullScreen(element);
-		// 	$('#panelStartMobile').toggleClass('display-none');
-		// });
-
-		// Start panel
-		$('#panelStarGrame').css('display', 'none');
-
-		$('#extras').css('top', 0);
-		$('#player').css('top', 0);
-		$('#background').css('top', 0);
-		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', win.innerWidth);
-		$('#controls').css('width', win.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
-		$('.jump-attack-controls').css('right', 10).css('float', 'none');
-
-		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
-		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
-		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
-
-		canvasWidth = win.innerWidth;
-    	canvasHeight = win.screen.height;
-
-    	deviceDiferenceImage = 200;
-
-
-	} else if (userAgent.indexOf('iPhone') > -1) {
-
-		$('#panelStartMobile').toggleClass('display-none');
-
-		$('#starGameMobile').on('click', function () {
-			fullScreen(element);
-			$('#panelStartMobile').toggleClass('display-none');
-		});
-
-		$('#extras').css('top', 0);
-		$('#player').css('top', 0);
-		$('#background').css('top', 0);
-		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', win.innerWidth);
-
-		$('#controls').css('width', win.innerWidth).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
-		$('.down-arrow').css('background-size', 40);
-		$('.right-arrow').css('background-size', 40);
-		$('.left-arrow').css('background-size', 40);
-		$('.top-arrow').css('background-size', 40);
-
-		$('.jump-attack-controls').css('float', 'none');
-		$('.attack-key').css('background-size', 40);
-
-
-		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
-		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
-		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
-
-		canvasWidth = win.innerWidth;
-    	//canvasHeight = win.screen.height;
-    	canvasHeight = 320;//win.innerHeight + 100;
-
-    	deviceDiferenceImage = 200;
-
-	} else {
-		// Desktop
-		canvasWidth = 950;
-		canvasHeight = 755;
-
-		deviceDiferenceImage = 0;
-	}
-
-
-    /* canvas dimentions and declarations
-	---------------------------------------------------------------*/
-    var canvasBackground = document.getElementById('background'),
-    	contextBackground = canvasBackground.getContext('2d'),
-
-    	canvasPlayer = document.getElementById('player'),
-    	contextPlayer = canvasPlayer.getContext('2d'),
-
-    	canvasExtras = document.getElementById('extras'),
-    	contextExtras = canvasExtras.getContext('2d');
-
-    	canvasExtrasStatic = document.getElementById('extrasStatic'),
-    	contextExtrasStatic = canvasExtrasStatic.getContext('2d');
-
-    	canvasBackground.width = canvasWidth;
-		canvasBackground.height = canvasHeight;
-
-		canvasPlayer.width = canvasWidth;
-		canvasPlayer.height = canvasHeight;
-
-		canvasExtras.width = canvasWidth;
-		canvasExtras.height = canvasHeight;
-
-		canvasExtrasStatic.width = canvasWidth;
-		canvasExtrasStatic.height = canvasHeight;
-
-
 	/* game objects declaration; Player, Background, Extras
 	---------------------------------------------------------------*/
     var playerWidth,
@@ -461,12 +331,12 @@
 		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - deviceDiferenceImage) {
 
 			// Draw the front of the rock
-			// contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
-			// contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
+			//contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
+			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
 
 			// stop enemies and rocks
 			warlokPush = true;
-			obstaclesArray.length = 0;
+			warlockShooting = true;
 
 			// add the final enemie
 			if (warlokIsDraw == false) {
@@ -583,7 +453,6 @@
 		}
 
 		lastUpdateTime = Date.now();
-
 	}
 
 	/**
@@ -672,11 +541,15 @@
 
 	// Push obstacles into the array
 	function pushObstacle () {
-		obstaclesArray.push(
-			new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50)
+		if (warlockShooting == true) {
+			//obstaclesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
+			obstaclesArray.push(new Obstacles(400, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
+
+		} else {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
-		);
+			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50));
+		}
 	}
 
 	//Add random obstacles
@@ -691,7 +564,11 @@
 		var o;
 
 		for (o = 0; obstaclesArray.length > o; o += 1) {
-			setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+			if (obstaclesArray[o].name == 'rock') {
+				setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+			} else if (obstaclesArray[o].name == 'shoot1') {
+				setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+			}
 		};
 	}
 
@@ -749,32 +626,15 @@
 
 			} else if (enemiesArray[i].name == 'warlock') {
 
-
 				var positonXtoDraw = enemiesArray[i].x + extras.x;
 
 				// Stop de warlok
-				if (positonXtoDraw < 500) {
-					console.log('frenar', extras.x, extras.velX);
-
-					// extras.x = -8975;
-					// extras.velX = 0.06786370983333219;
-
-					// positonXtoDraw = canvasWidth + (-(extras.x)) + extras.x;
+				if (positonXtoDraw <= 550) {
+					positonXtoDraw = background.x + backgroundImage1.width - 550;
 				}
-
-
 
 				// move the ehemie and stop
 				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, positonXtoDraw, enemiesArray[i].y + background.y);
-
-
-
-				// // Stop the enemie
-				// extras.x = -(backgroundImage1.width - canvasWidth - deviceDiferenceImage);
-				// console.log('frenar enemigo');
-
-				// Draw the enemie static
-				//setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, (background.x + backgroundImage1.width - 500 - deviceDiferenceImage), enemiesArray[i].y + background.y);
 			}
 
 		};
@@ -790,7 +650,6 @@
 	}, randomTimeEnemies);
 
 
-
 	/**
 	 * Add the final enemie to the game.
 	 * @function
@@ -798,12 +657,9 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		if (warlockShooting == true) {
+		if (warlockShootingAnimation == true) {
 			enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
 			warlokIsDraw = true;
-
-			//console.log(extras.x, background.x);
-
 		} else {
 			enemiesArray.push(new Enemies(1200, 'warlock', 230, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
 			warlokIsDraw = true;
@@ -840,11 +696,11 @@
 			}
 
 			if (frameSecond < 8) {
-				warlockShooting = true;
+				warlockShootingAnimation = true;
 			}
 
 			if (frameSecond >= 8) {
-				warlockShooting = false;
+				warlockShootingAnimation = false;
 			}
 
 		}
