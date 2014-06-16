@@ -96,6 +96,7 @@
 		warlockShooting = false,
 		warlockShootingAnimation = false,
 		warlokIsDraw = false,
+		movingEnemie = true,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
 
@@ -334,6 +335,8 @@
 			//contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
 
+			obstaclesArray.length = 0;
+
 			// stop enemies and rocks
 			warlokPush = true;
 			warlockShooting = true;
@@ -365,13 +368,30 @@
 		for (j = 0; lengthEnemiesArray > j; j += 1) {
 			// Check if the velocityX is less that the speed. If this condition is true continuous substracting the velocityX.
 			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
-				enemiesArray[j].velocityX--;
+
+				if (enemiesArray[j].name == 'warlock') {
+					//enemiesArray[j].x > 8809
+
+					if (movingEnemie) {
+						enemiesArray[j].velocityX--;
+					}
+
+					// Set the 9300 for each device. It can CHANGE depense of the with of the device
+					if (enemiesArray[j].x < 9300) {
+						// Stop de final enemie
+						movingEnemie = false;
+					}
+
+				} else {
+					enemiesArray[j].velocityX--;
+				}
 			}
 
 			enemiesArray[j].velocityX *= background.friction;
 
-			enemiesArray[j].x += enemiesArray[j].velocityX;
+			enemiesArray[j].x = enemiesArray[j].x + enemiesArray[j].velocityX;
 		};
+
 
 		//check the collision whit the enemies and if the enemie is out the canvas
 		for (k = 0; lengthEnemiesArray > k; k += 1) {
@@ -382,6 +402,7 @@
 				//enemiesIsOutTheCanvas(enemiesArray[k]);
 			}
 		}
+
 
 		// move the obstacles
 		for (j = 0; lengthobstaclesArray > j; j += 1) {
@@ -626,15 +647,16 @@
 
 			} else if (enemiesArray[i].name == 'warlock') {
 
-				var positonXtoDraw = enemiesArray[i].x + extras.x;
+				//var positonXtoDraw = enemiesArray[i].x + extras.x;
 
-				// Stop de warlok
-				if (positonXtoDraw <= 550) {
-					positonXtoDraw = background.x + backgroundImage1.width - 550;
-				}
+				// // Stop de warlok
+				// if (positonXtoDraw <= 550) {
+				// 	//positonXtoDraw = background.x + backgroundImage1.width - 550;
+				// 	positonXtoDraw = extras.x + backgroundImage1.width - 550;
+				// }
 
 				// move the ehemie and stop
-				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, positonXtoDraw, enemiesArray[i].y + background.y);
+				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 			}
 
 		};
@@ -658,10 +680,10 @@
 	 */
 	function addFinalEnemie () {
 		if (warlockShootingAnimation == true) {
-			enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
+			enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
 			warlokIsDraw = true;
 		} else {
-			enemiesArray.push(new Enemies(1200, 'warlock', 230, warlock, canvasWidth + (-(extras.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 0));
+			enemiesArray.push(new Enemies(1200, 'warlock', 230, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
 			warlokIsDraw = true;
 		}
 	}
