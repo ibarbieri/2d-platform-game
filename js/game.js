@@ -335,7 +335,7 @@
 			//contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
 
-			obstaclesArray.length = 0;
+			//obstaclesArray.length = 0;
 
 			// stop enemies and rocks
 			warlokPush = true;
@@ -422,7 +422,6 @@
 				checkCollision(player, obstaclesArray[h]);
 			}
 		}
-
 
 		// render all the game
 		renders();
@@ -564,7 +563,7 @@
 	function pushObstacle () {
 		if (warlockShooting == true) {
 			//obstaclesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
-			obstaclesArray.push(new Obstacles(400, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
+			obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
 
 		} else {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
@@ -588,7 +587,16 @@
 			if (obstaclesArray[o].name == 'rock') {
 				setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
 			} else if (obstaclesArray[o].name == 'shoot1') {
-				setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+				setFramesSpriteAnimationEnemies(contextBackground,
+					shoot1,
+					0,
+					obstaclesArray[o].width,
+					obstaclesArray[o].height,
+					0,
+					obstaclesArray[o].frameCuantity,
+					obstaclesArray[o].x + background.x - 490, // -490 es al distancia en al que esta frenado el warlok desde al cueva. PUEDE VARIAR por device
+					obstaclesArray[o].y + background.y
+				);
 			}
 		};
 	}
@@ -647,15 +655,6 @@
 
 			} else if (enemiesArray[i].name == 'warlock') {
 
-				//var positonXtoDraw = enemiesArray[i].x + extras.x;
-
-				// // Stop de warlok
-				// if (positonXtoDraw <= 550) {
-				// 	//positonXtoDraw = background.x + backgroundImage1.width - 550;
-				// 	positonXtoDraw = extras.x + backgroundImage1.width - 550;
-				// }
-
-				// move the ehemie and stop
 				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
 			}
 
@@ -717,9 +716,9 @@
 				frameSecond = frameSecond - 8;
 			}
 
-			if (frameSecond < 8) {
-				warlockShootingAnimation = true;
-			}
+			// if (frameSecond < 8) {
+			// 	warlockShootingAnimation = false;
+			// }
 
 			if (frameSecond >= 8) {
 				warlockShootingAnimation = false;
