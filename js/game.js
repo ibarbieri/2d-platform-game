@@ -92,9 +92,10 @@
 		jump = false,
 		attacking = false,
 		extrasPlusImages,
-		warlokPush = false,
+		wolfPush = true,
 		warlockShooting = false,
 		warlockShootingAnimation = false,
+		shootDelay = false,
 		warlokIsDraw = false,
 		movingEnemie = true,
 		panelGameOver = $('#panelGameOver'),
@@ -336,9 +337,10 @@
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
 
 			//obstaclesArray.length = 0;
+			// Stop the wolf push
+			wolfPush = false;
 
-			// stop enemies and rocks
-			warlokPush = true;
+			// Stop the rocks and enable the shoots
 			warlockShooting = true;
 
 			// add the final enemie
@@ -370,7 +372,6 @@
 			if (enemiesArray[j].velocityX >- enemiesArray[j].speed) {
 
 				if (enemiesArray[j].name == 'warlock') {
-					//enemiesArray[j].x > 8809
 
 					if (movingEnemie) {
 						enemiesArray[j].velocityX--;
@@ -561,22 +562,35 @@
 
 	// Push obstacles into the array
 	function pushObstacle () {
-		if (warlockShooting == true) {
-			//obstaclesArray.push(new Enemies(400, 'shoot1', shoot1, (background.x + backgroundImage1.width - 450) + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 0));
-			obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
-
-		} else {
+		if (warlockShooting == false) {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
 			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50));
 		}
 	}
 
+
+	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
+	function pushObstacleEachSeconds () {
+		console.log('shoot the shoot');
+		// OK
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
+
+		//console.log( (canvasWidth + (-(background.x))) );
+
+		// La solucion esta en: desde donde se empieza a renderizar el shoot. Deberia ser desde el mismi lugar
+		// en donde frenar el warlok. De ahi en adelante que le empize a restar x.
+		//obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, 100, canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
+	}
+
+
 	//Add random obstacles
 	var randomTimeObstacles = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
+
 		pushObstacle();
+
 	}, randomTimeObstacles);
 
 
@@ -584,9 +598,13 @@
 		var o;
 
 		for (o = 0; obstaclesArray.length > o; o += 1) {
+
 			if (obstaclesArray[o].name == 'rock') {
+
 				setFramesSpriteAnimationEnemies(contextBackground, rockObstacle, 0, 155, 148, 0, obstaclesArray[o].frameCuantity, obstaclesArray[o].x + background.x, obstaclesArray[o].y + background.y);
+
 			} else if (obstaclesArray[o].name == 'shoot1') {
+
 				setFramesSpriteAnimationEnemies(contextBackground,
 					shoot1,
 					0,
@@ -594,7 +612,7 @@
 					obstaclesArray[o].height,
 					0,
 					obstaclesArray[o].frameCuantity,
-					obstaclesArray[o].x + background.x - 490, // -490 es al distancia en al que esta frenado el warlok desde al cueva. PUEDE VARIAR por device
+					obstaclesArray[o].x + background.x, // -490 es la distancia que esta frenado el warlok desde la cueva. PUEDE VARIAR por device
 					obstaclesArray[o].y + background.y
 				);
 			}
@@ -655,7 +673,11 @@
 
 			} else if (enemiesArray[i].name == 'warlock') {
 
-				setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, enemiesArray[i].yFramePosition, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+				if (warlockShootingAnimation == true) {
+					setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 0, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+				} else {
+					setFramesSpriteAnimationEnemies(contextBackground, enemiesArray[i].image, 230, enemiesArray[i].width, enemiesArray[i].height, 0, enemiesArray[i].frameCuantity, enemiesArray[i].x + background.x, enemiesArray[i].y + background.y);
+				}
 			}
 
 		};
@@ -665,10 +687,25 @@
 	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
-		if (warlokPush == false) {
+
+		if (wolfPush) {
 			pushEnemies();
 		}
+
+		// run the shotting warlok animation
+		warlockShootingAnimation = true;
+
 	}, randomTimeEnemies);
+
+
+	setInterval(function() {
+
+		// push the shoot with 1 second delay to fix with de animation.
+		if (warlockShooting == true) {
+			pushObstacleEachSeconds();
+		}
+
+	}, (randomTimeEnemies + 10));
 
 
 	/**
@@ -678,13 +715,8 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		if (warlockShootingAnimation == true) {
-			enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
-			warlokIsDraw = true;
-		} else {
-			enemiesArray.push(new Enemies(1200, 'warlock', 230, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
-			warlokIsDraw = true;
-		}
+		enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
+		warlokIsDraw = true;
 	}
 
 
@@ -715,10 +747,6 @@
 				counter = 1;
 				frameSecond = frameSecond - 8;
 			}
-
-			// if (frameSecond < 8) {
-			// 	warlockShootingAnimation = false;
-			// }
 
 			if (frameSecond >= 8) {
 				warlockShootingAnimation = false;
