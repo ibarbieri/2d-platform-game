@@ -33,14 +33,14 @@ body {
 
 
 /* Canvas */
-#extrasStatic {
-	border: 1px solid red;
-}
-
 #extras,
 #player,
 #background {
 	box-shadow: 0 40px 29px 2px #000 inset;
+}
+
+#extrasStatic {
+	border: 1px solid red;
 }
 
 #extras {
@@ -92,6 +92,10 @@ body {
 
 
 /* Player options: life, points, posims */
+.player-opacity {
+	opacity: 0.5;
+}
+
 #playerOptions {
 	z-index: 3;
 	position: absolute;
@@ -125,13 +129,15 @@ body {
 }
 
 #playerOptions #adarhaHeartsDragon {
-	background: url('../img/heart-dragon-adarha.png') no-repeat;
+	background: url('../img/heart-dragon-plus.png') no-repeat;
 	width: 132px;
 	height: 108px;
 	position: absolute;
 	right: 0;
 	top: 78px;
-	text-indent: -9999px;
+	font-family: 'Mason', serif;
+	font-size: 24px;
+	font-weight: bold;
 }
 
 

@@ -52,7 +52,7 @@
 			y : 0,
 			backgroundWidth : canvasWidth,
 			backgroundHeight : canvasHeight,
-			speed: 4,
+			speed: 3.8,
 			velX: 0,
 			velY: 0,
 			friction: 0.77,
@@ -188,15 +188,22 @@
 			onObstacle = false;
 
 			if (!background.jumping) {
+
 				background.jumping = true;
+
+				// Hacer que esta animacion arranque directamente desde el personaje saltando.
+				// Esto hacerlo en fireworks. Luego repetir algunos frames iguales en el medio para que queden 9.
+				// Con esto logro que apenas toco el boton de saltar la animacion cambie al personaje saltando.
 
 				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
 
-				if (frame == 6) {
+				background.velY =+ (background.speed * 2);
 
-					background.velY =+ (background.speed * 2);
+				// Con esto hacemos que el persoanje haga la animacion completa del salto.
+				// if (frame > 5) {
+				// 	background.velY =+ (background.speed * 2);
+				// }
 
-				}
 				// This run when the character touch the land.
 				// if (background.velY <= 0) {
 				//   	//frame = 0;
@@ -343,10 +350,15 @@
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceCaveImage, background.y, extrasCave.width, extrasCave.height);
 			//console.log('dibujar en ', (background.x + backgroundImage1.width - 130 - deviceDiferenceImage));
 
-			var patternCave = contextExtrasStatic.createPattern(extrasCave, 'no-repeat');
 
-			contextExtrasStatic.fillStyle = patternCave;
-			contextExtrasStatic.fillRect(0, 0, extrasCave.width, extrasCave.height);
+
+			// var patternCave = contextExtrasStatic.createPattern(extrasCave, 'no-repeat');
+
+			// contextExtrasStatic.fillStyle = patternCave;
+			// contextExtrasStatic.fillRect(400, 0, extrasCave.width, extrasCave.height);
+
+
+
 
 			//obstaclesArray.length = 0;
 			// Stop the wolf push
@@ -429,16 +441,26 @@
 				obstaclesArray[j].velocityX--;
 			}
 
-			obstaclesArray[j].velocityX *= background.friction;
+			if (obstaclesArray[j].name == 'rock') {
+
+				obstaclesArray[j].velocityX *= 0.85;
+
+			} else if (obstaclesArray[j].name == 'shoot1') {
+
+				obstaclesArray[j].velocityX *= 1.01;
+
+			}
+
+
 
 			obstaclesArray[j].x += obstaclesArray[j].velocityX;
 		};
 
 		//check the collision with the obstacles
 		for (h = 0; lengthobstaclesArray > h; h += 1) {
-			if (obstaclesArray[h].name == 'rock') {
+			// if (obstaclesArray[h].name == 'rock') {
 				checkCollision(player, obstaclesArray[h]);
-			}
+			// }
 		}
 
 		//check the collision with the potions
@@ -466,6 +488,8 @@
 		renderEnemies();
 
 		renderObstacles();
+
+		renderHeartDragon();
 
 		renderPotion();
 	}
@@ -596,16 +620,14 @@
 		if (warlockShooting == false) {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
-			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 3, 50));
+			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 2, 15, 50));
 		}
 	}
 
 
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
-		console.log('shoot the shoot');
-		// OK
-		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 10));
 
 		//console.log( (canvasWidth + (-(background.x))) );
 
@@ -751,7 +773,7 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		enemiesArray.push(new Enemies(1200, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.9, 100, 75));
+		enemiesArray.push(new Enemies(5000, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.7, 100, 100));
 		warlokIsDraw = true;
 	}
 
@@ -887,13 +909,12 @@
 
 	// Push heart dragon
 	function addHeartDragon () {
-		heartDragonArray.push(new HeartDragon(1000, 'heartDragon', 0, heartDragon, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9));
-
-		renderHeartDragon();
+		heartDragonArray.push(new HeartDragon(1000, 'heartDragon', 0, heartDragon, canvasWidth + (-(background.x)), canvasHeight - 300, 50, 50, 9));
 	}
 
 	// Render Heart Dragon
 	function renderHeartDragon () {
+
 		var z;
 
 		for (z = 0; heartDragonArray.length > z; z += 1) {
@@ -903,15 +924,15 @@
 
 	// Remove heart dragon
 	function removeHeartDragon () {
-		heartDragonArray.splice(heartDragonArray.length, 1);
+		heartDragonArray.splice(0, 1);
 	}
 
 	setInterval(function() {
 		// Push a heart dragon
-		if (heartDragonArray.length >= 10) {
+		if (heartDragonArray.length <= 10) {
 			addHeartDragon();
 		}
-	}, randomTimeEnemies + 7000);
+	}, randomTimeEnemies + 9000);
 
 
 
@@ -1055,9 +1076,10 @@
 					extras.velX++;
 
 					// If the collision come from enemie remove player life
-					if (enemieOrObstacle.name == 'wolf' || enemieOrObstacle.name == 'warlock') {
+					if (enemieOrObstacle.name == 'wolf' || enemieOrObstacle.name == 'warlock' || enemieOrObstacle.name == 'rock') {
 
-						console.log(enemieOrObstacle.name);
+						// Add and remove the opacity class to the player
+						$('#player').toggleClass('player-opacity');
 
 						// if the player is attacking
 						if (player.attack) {
@@ -1074,6 +1096,9 @@
 
 					} else if (enemieOrObstacle.name == 'shoot1') {
 
+						// Add and remove the opacity class to the player
+						$('#player').toggleClass('player-opacity');
+
 						// if the player is attacking
 						if (player.attack) {
 							//remove enemie life
@@ -1088,7 +1113,6 @@
 
  					} else if (enemieOrObstacle.name == 'potion') {
 
-
  						//player.life = enemieOrObstacle.energy;
  						// Uso el 3000 para que caiga justo en el swich case de 3000
  						player.life = 3000;
@@ -1099,11 +1123,12 @@
 
  					} else if (enemieOrObstacle.name == 'heartDragon') {
 
- 						//playerUpdateScore(enemieOrObstacle.score);
+ 						playerUpdateScore(enemieOrObstacle.score);
+
+ 						plusHeartsDragon(1);
 
  						removeHeartDragon();
  					}
-
 
  				// 	else if (enemieOrObstacle.name == 'water') {
  				// 		background.velX -= 0.5;
@@ -1114,7 +1139,13 @@
 			}
 		}
 
+
+		// If no hay colition
+		// Remove the opacity class to the player
+		//$('#player').removeClass('player-opacity');
+
 		return collisionDirection;
+
 	}
 
 
@@ -1217,6 +1248,23 @@
 	 */
 	function playerUpdateScore (scoreGet) {
 		player.score += scoreGet;
+	}
+
+
+
+	/* hearts dragns
+	---------------------------------------------------------------*/
+	/**
+	 * Update the player score when the player kill an enemie.
+	 * @param {number} score,
+	 * @function
+	 * @example
+	 * playerUpdateScore(100);
+	 */
+	function plusHeartsDragon (heartGet) {
+		player.heartsDragon += heartGet;
+
+		$('#adarhaHeartsDragon').html(player.heartsDragon);
 	}
 
 
