@@ -119,7 +119,8 @@
 	var userAgent = window.navigator.userAgent,
 		canvasWidth,
     	canvasHeight,
-    	deviceDiferenceImage = 0;
+    	deviceDiferenceImage = 0,
+    	deviceDiferenceCaveImage = 0;
 
 	if (userAgent.indexOf('iPad') > -1) {
 
@@ -153,7 +154,7 @@
 		// });
 
 		// Start panel
-		$('#panelStarGrame').css('background-size', 700, 600);
+		//$('#panelStarGrame').css('background-size', 700, 600);
 
 		$('#extras').css('top', 0);
 		$('#player').css('top', 0);
@@ -168,9 +169,10 @@
 		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
 
 		canvasWidth = window.innerWidth;
-    	canvasHeight = window.screen.height;
+    	canvasHeight = window.innerHeight; //window.screen.height; //
 
     	deviceDiferenceImage = 200;
+    	deviceDiferenceCaveImage = 400;
 
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
@@ -214,6 +216,7 @@
 		canvasHeight = 755;
 
 		deviceDiferenceImage = 0;
+		deviceDiferenceCaveImage = 100;
 	}
 
 

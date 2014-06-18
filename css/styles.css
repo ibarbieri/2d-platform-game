@@ -27,12 +27,17 @@ body {
 
 .display-none {
 	display: none;
+	right: 0;
+	position: absolute;
 }
 
 
 /* Canvas */
+#extrasStatic {
+	border: 1px solid red;
+}
+
 #extras,
-#extrasStatic,
 #player,
 #background {
 	box-shadow: 0 40px 29px 2px #000 inset;

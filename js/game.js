@@ -55,7 +55,7 @@
 			speed: 4,
 			velX: 0,
 			velY: 0,
-			friction: 0.75,
+			friction: 0.77,
 			jumping : false
 		},
 		extras = {
@@ -98,6 +98,7 @@
 		shootDelay = false,
 		warlokIsDraw = false,
 		movingEnemie = true,
+		removePotionElement = false,
 		panelGameOver = $('#panelGameOver'),
 		playAgain = $('#playAgain');
 
@@ -114,7 +115,9 @@
 		wolfImage = new Image(),
 		rockObstacle = new Image(),
 		warlock = new Image(),
-		shoot1 = new Image();
+		shoot1 = new Image(),
+		potion = new Image(),
+		heartDragon = new Image();
 
 		backgroundImage1.src = 'img/background-1.jpg';
 		backgroundImagePatter.src = 'img/background-pattern.jpg';
@@ -125,6 +128,8 @@
 		rockObstacle.src = 'img/small-rock.png';
 		warlock.src = 'img/warlock.png';
 		shoot1.src = 'img/shoot-1.png';
+		potion.src = 'img/potion.png';
+		heartDragon.src = 'img/heart-dragon.png';
 
 
 		if (playerSelected == 'adhara') {
@@ -323,7 +328,6 @@
 			background.jumping = false;
 		}
 
-
 		// the player stop and not go outside of the canvas and add the last enemie
 		if (background.x > 0) {
 
@@ -335,6 +339,14 @@
 			// Draw the front of the rock
 			//contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
+			//contextExtrasStatic.clearRect(0, 0, canvasExtrasStatic.width, canvasExtrasStatic.height);
+			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceCaveImage, background.y, extrasCave.width, extrasCave.height);
+			//console.log('dibujar en ', (background.x + backgroundImage1.width - 130 - deviceDiferenceImage));
+
+			var patternCave = contextExtrasStatic.createPattern(extrasCave, 'no-repeat');
+
+			contextExtrasStatic.fillStyle = patternCave;
+			contextExtrasStatic.fillRect(0, 0, extrasCave.width, extrasCave.height);
 
 			//obstaclesArray.length = 0;
 			// Stop the wolf push
@@ -362,9 +374,14 @@
 
 		var lengthEnemiesArray = enemiesArray.length,
 			lengthobstaclesArray = obstaclesArray.length,
+			lengthPotionsArray = potionsArray.length,
+			lengthHeartDragonArray = heartDragonArray.length,
 			j,
+			// g,
 			k,
-			h;
+			h,
+			p,
+			r;
 
 		// move the enemies
 		for (j = 0; lengthEnemiesArray > j; j += 1) {
@@ -388,7 +405,7 @@
 				}
 			}
 
-			enemiesArray[j].velocityX *= background.friction;
+			enemiesArray[j].velocityX *= enemiesArray[j].friction;
 
 			enemiesArray[j].x = enemiesArray[j].x + enemiesArray[j].velocityX;
 		};
@@ -424,6 +441,18 @@
 			}
 		}
 
+		//check the collision with the potions
+		for (p = 0; lengthPotionsArray > p; p += 1) {
+			checkCollision(player, potionsArray[p]);
+		}
+
+
+		//check the collision with the hearts dragon
+		for (r = 0; lengthHeartDragonArray > r; r += 1) {
+			checkCollision(player, heartDragonArray[r]);
+		}
+
+
 		// render all the game
 		renders();
 	}
@@ -437,6 +466,8 @@
 		renderEnemies();
 
 		renderObstacles();
+
+		renderPotion();
 	}
 
 
@@ -615,6 +646,11 @@
 					obstaclesArray[o].x + background.x, // -490 es la distancia que esta frenado el warlok desde la cueva. PUEDE VARIAR por device
 					obstaclesArray[o].y + background.y
 				);
+
+			//console.log((obstaclesArray[o].x)) 9878.2530623219 y empieza a descontar;
+
+			//console.log((obstaclesArray[o].x + background.x)); == 950.5617272432246 y empieza a descontar;
+
 			}
 		};
 	}
@@ -651,7 +687,7 @@
 
 	// Push enemies into the array
 	function pushEnemies () {
-		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 0.9, 100, 0));
+		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 50));
 		// console.log( (canvasWidth + (-(background.x))) ); 1793
 		// console.log(background.x);-843 esto empieza a sumar así se va moviendo para la izq.
 	}
@@ -765,6 +801,119 @@
 			frameHeight
 		);
 	}
+
+
+
+	/* pozimas y hearts dragons
+	---------------------------------------------------------------*/
+	/**
+	 * Class constructor of Potions
+	 * @function
+	 * @params {image, x, y, width, height}
+	 * @example
+	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120 -(the height of the image plus 230 of the canvas), 150, 150);
+	 */
+	function Potions (energy, name, yFramePosition, image, x, y, width, height, frameCuantity) {
+		this.energy = energy;
+		this.name = name;
+		this.yFramePosition = yFramePosition;
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.frameCuantity = frameCuantity;
+	}
+
+	// Array to add and remove potions
+	var potionsArray = [];
+
+	// Push potion
+	function addPotion () {
+		potionsArray.push(new Potions(5000, 'potion', 0, potion, canvasWidth + (-(background.x)), canvasHeight - 210, 50, 50, 9));
+		removePotionElement = true;
+	}
+
+	// Render potion
+	function renderPotion () {
+
+		var x;
+
+		for (x = 0; potionsArray.length > x; x += 1) {
+			setFramesSpriteAnimationEnemies(contextBackground, potionsArray[x].image, potionsArray[x].yFramePosition, potionsArray[x].width, potionsArray[x].height, 0, potionsArray[x].frameCuantity, potionsArray[x].x + background.x, potionsArray[x].y + background.y);
+		}
+
+	}
+
+	// Remove the potion with the collition with the player or 4 second after
+	function removePotion () {
+		potionsArray.splice(0, 1);
+	}
+
+	// Run the remove function 4 second after the push
+	setInterval(function() {
+
+		if (removePotionElement) {
+
+			removePotion();
+
+			removePotionElement = false;
+		}
+
+	}, 7000);
+
+
+	/**
+	 * Class constructor of heart's dragons
+	 * @function
+	 * @params {image, x, y, width, height}
+	 * @example
+	 * new Obstacles(rockObstacle, canvasWidth, canvasHeight -120 -(the height of the image plus 230 of the canvas), 150, 150);
+	 */
+	function HeartDragon (score, name, yFramePosition, image, x, y, width, height, frameCuantity) {
+		this.score = score;
+		this.name = name;
+		this.yFramePosition = yFramePosition;
+		this.image = image;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.frameCuantity = frameCuantity;
+	}
+
+	// Array to add and remove HeartDragon
+	var heartDragonArray = [];
+
+	// Push heart dragon
+	function addHeartDragon () {
+		heartDragonArray.push(new HeartDragon(1000, 'heartDragon', 0, heartDragon, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9));
+
+		renderHeartDragon();
+	}
+
+	// Render Heart Dragon
+	function renderHeartDragon () {
+		var z;
+
+		for (z = 0; heartDragonArray.length > z; z += 1) {
+			setFramesSpriteAnimationEnemies(contextBackground, heartDragonArray[z].image, 0, heartDragonArray[z].width, heartDragonArray[z].height, 0, heartDragonArray[z].frameCuantity, heartDragonArray[z].x + background.x, heartDragonArray[z].y + background.y);
+		}
+	}
+
+	// Remove heart dragon
+	function removeHeartDragon () {
+		heartDragonArray.splice(heartDragonArray.length, 1);
+	}
+
+	setInterval(function() {
+		// Push a heart dragon
+		if (heartDragonArray.length >= 10) {
+			addHeartDragon();
+		}
+	}, randomTimeEnemies + 7000);
+
+
 
 
 	/* background render
@@ -937,7 +1086,25 @@
 						// check if the player or enemie is alive
 						entityIsAlive(player, enemieOrObstacle);
 
+ 					} else if (enemieOrObstacle.name == 'potion') {
+
+
+ 						//player.life = enemieOrObstacle.energy;
+ 						// Uso el 3000 para que caiga justo en el swich case de 3000
+ 						player.life = 3000;
+
+ 						entityIsAlive(player, enemieOrObstacle);
+
+ 						removePotion();
+
+ 					} else if (enemieOrObstacle.name == 'heartDragon') {
+
+ 						//playerUpdateScore(enemieOrObstacle.score);
+
+ 						removeHeartDragon();
  					}
+
+
  				// 	else if (enemieOrObstacle.name == 'water') {
  				// 		background.velX -= 0.5;
  				// 		onObstacle = true;
@@ -989,6 +1156,9 @@
 
 			case 1500:
 				$('#adarhaLife').css('background-position-x', -1650);
+
+				// Add a potion
+				addPotion();
 			break;
 
 			case 1000:
@@ -997,6 +1167,9 @@
 
 			case 500:
 				$('#adarhaLife').css('background-position-x', -2200);
+
+				// Add a potion
+				addPotion();
 			break;
 		}
 
@@ -1020,6 +1193,7 @@
 		} else if (enemies.life < 0) {
 			//get the position of the enemie died;
 			var enemiesArrayPosition = enemiesArray.indexOf(enemies);
+
 			//remove the enemie died;
 			enemiesArray.splice(enemiesArrayPosition, 1);
 
@@ -1072,6 +1246,7 @@
 	pauseGame.on('click', function () {
 		console.log('denter juego');
 
+		// PROBAR ESTO DESTRO DEL LOOP. DEBERIA ANDAR DENTRO DEL requestanimationframe
 		cancelAnimationFrame(requestAnimationFrame(update));
 
 		panelPause.toggleClass('display-none');
