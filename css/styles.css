@@ -39,9 +39,9 @@ body {
 	box-shadow: 0 40px 29px 2px #000 inset;
 }
 
-#extrasStatic {
+/*#extrasStatic {
 	border: 1px solid red;
-}
+}*/
 
 #extras {
 	position: absolute;
@@ -264,6 +264,63 @@ body {
 	background: url('../img/game-pause-panel.jpg') no-repeat;
 	background-position: top center;
 	z-index: 10;
+	font-family: 'Mason', serif;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#panelPause .content {
+	margin: 224px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+#panelPause .content a {
+	display: block;
+	margin: 0px 0 80px 0;
+	color: #000;
+	text-decoration: none;
+	text-shadow: 0px 0px 14px #F7F6CB;
+}
+
+#panelPause .content a:hover {
+	color: #000;
+	text-shadow: 0px 0px 14px #000;
+}
+
+
+/* Panel win game  */
+#panelWin {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-win-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+	font-family: 'Mason', serif;
+	font-size: 20px;
+	color: #000;
+}
+
+#panelWin .content {
+	margin: 190px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+#panelWin .score {
+	font-size: 38px;
+	font-weight: bold;
+}
+
+#panelWin p {
+	line-height: 20px;
+	font-size: 18px;
+	width: 380px;
+	margin: 22px auto;
 }
 
 

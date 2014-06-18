@@ -100,7 +100,8 @@
 		movingEnemie = true,
 		removePotionElement = false,
 		panelGameOver = $('#panelGameOver'),
-		playAgain = $('#playAgain');
+		playAgain = $('#playAgain'),
+		panelWin = $('#panelWin');
 
 
 	/* images
@@ -389,7 +390,6 @@
 			lengthPotionsArray = potionsArray.length,
 			lengthHeartDragonArray = heartDragonArray.length,
 			j,
-			// g,
 			k,
 			h,
 			p,
@@ -669,10 +669,6 @@
 					obstaclesArray[o].y + background.y
 				);
 
-			//console.log((obstaclesArray[o].x)) 9878.2530623219 y empieza a descontar;
-
-			//console.log((obstaclesArray[o].x + background.x)); == 950.5617272432246 y empieza a descontar;
-
 			}
 		};
 	}
@@ -745,6 +741,9 @@
 	var randomTimeEnemies = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
+
+		// Remove the opacity of the player
+		removeOpacity();
 
 		if (wolfPush) {
 			pushEnemies();
@@ -1086,6 +1085,10 @@
 							//remove enemie life
 							enemieOrObstacle.life -= player.aggressive;
 
+							if (enemieOrObstacle.name == 'warlock' && enemieOrObstacle.life <= 0) {
+								showWinPanel();
+							};
+
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
@@ -1128,13 +1131,13 @@
  						plusHeartsDragon(1);
 
  						removeHeartDragon();
+
  					}
 
- 				// 	else if (enemieOrObstacle.name == 'water') {
- 				// 		background.velX -= 0.5;
- 				// 		onObstacle = true;
-					// }
-
+			 				// 	else if (enemieOrObstacle.name == 'water') {
+			 				// 		background.velX -= 0.5;
+			 				// 		onObstacle = true;
+								// }
 				}
 			}
 		}
@@ -1145,8 +1148,14 @@
 		//$('#player').removeClass('player-opacity');
 
 		return collisionDirection;
-
 	}
+
+
+
+	function removeOpacity () {
+		$('#player').removeClass('player-opacity');
+	}
+
 
 
 	/* check the life of the entities
@@ -1231,9 +1240,13 @@
 			// The player get 100 points becouse kill one enemie
 			playerUpdateScore(100);
 		}
+	}
 
 
 
+	function showWinPanel () {
+		// Show the Win panel
+		panelWin.removeClass('display-none');
 	}
 
 
