@@ -46,11 +46,17 @@
 		</div>
 	</section>
 
+	<section id="panelReadInstructionsPause" class="display-none">
+		<div class="content">
+			<a href="#" id="buttonBack"><img src="img/btn-back.png"></a>
+		</div>
+	</section>
+
 	<section id="panelPause" class="display-none">
 		<div class="content">
-			<a href="#" id="buttonInstructions">Instrucciones</a>
-			<a href="#" id="buttonReanudar">Reanudar</a>
-			<a href="#" id="buttonResumen">Resumen</a>
+			<a href="#" id="buttonInstructions"><img src="img/btn-read-instructions.png"></a>
+			<a href="#" id="buttonReanudar"><img src="img/btn-continue.png"></a>
+			<a href="#" id="buttonResumen"><img src="img/btn-resumen.png"></a>
 		</div>
 	</section>
 
@@ -67,19 +73,25 @@
 				<img src="img/button-shared-facebook.png">
 			</a>
 			<p>Superá tu puntaje y aparecé en el ranking de los mejores jugadores </p>
-			<a href="#" id="playAgain"><img src="img/btn-play-again.png"></a>
+			<a href="#" id="playAgainWin"><img src="img/btn-play-again.png"></a>
 		</div>
 	</section>
 
 
 	<section id="panelGameOver" class="display-none">
-		<h2>Game Over</h2>
-		<a href="#" id="playAgain">Jugar de nuevo</a>
-		<a href="#" id="postScore">Compartir puntaje</a>
-	</section>
+		<div class="content">
+			<p class="score">Puntaje <span id="getScore">11231</span></p>
 
-	<section id="panelGameComplete" class="display-none">
-		<h2>Completaste el juego</h2>
+			<a href="#" id="buttonLoginFacebook">
+				<img src="img/button-shared-facebook.png">
+			</a>
+
+			<p>¡Lo sentimos!<br>
+				Vuelve a intentarlo y supera tu marca
+			</p>
+			<a href="#" id="playAgainLoose"><img src="img/btn-play-again.png"></a>
+
+		</div>
 	</section>
 
 	<section id="playerOptions" class="display-none">
@@ -162,6 +174,13 @@
 
 	} else if (userAgent.indexOf('Android') > -1) {
 
+		canvasWidth = window.innerWidth;
+    	canvasHeight = window.innerHeight; //window.screen.height; //
+
+    	deviceDiferenceImage = 200;
+    	deviceDiferenceCaveImage = 400;
+
+
 		//$('#panelStartMobile').toggleClass('display-none');
 
 		// $('#starGameMobile').on('click', function () {
@@ -170,7 +189,7 @@
 		// });
 
 		// Start panel
-		//$('#panelStarGrame').css('background-size', 700, 600);
+		$('#panelStarGrame').css('background-size', canvasWidth, canvasHeight);
 
 		$('#extras').css('top', 0);
 		$('#player').css('top', 0);
@@ -183,12 +202,6 @@
 		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
 		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
 		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
-
-		canvasWidth = window.innerWidth;
-    	canvasHeight = window.innerHeight; //window.screen.height; //
-
-    	deviceDiferenceImage = 200;
-    	deviceDiferenceCaveImage = 400;
 
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
@@ -272,8 +285,10 @@
 		buttonInstructions = $('#buttonInstructions'),
 		buttonReanudar = $('#buttonReanudar'),
 		buttonResumen = $('#buttonResumen'),
+		buttonBack = $('#buttonBack'),
 		panelChoosePlayer = $('#panelChoosePlayer'),
 		panelReadInstructions = $('#panelReadInstructions'),
+		panelReadInstructionsPause = $('#panelReadInstructionsPause'),
 		panelPause = $('#panelPause'),
 		playerOptions = $('#playerOptions'),
 		playerSelected = 'adhara',
@@ -313,6 +328,22 @@
 	buttonPlayGame.click( function () {
 		startGame();
 		panelReadInstructions.toggleClass('display-none');
+	});
+
+
+	// Reanudar game
+	buttonReanudar.click( function () {
+		panelPause.toggleClass('display-none');
+	});
+
+	buttonInstructions.click( function () {
+		panelPause.toggleClass('display-none');
+		panelReadInstructionsPause.toggleClass('display-none');
+	});
+
+	buttonBack.click( function () {
+		panelPause.toggleClass('display-none');
+		panelReadInstructionsPause.toggleClass('display-none');
 	});
 
 

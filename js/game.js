@@ -33,10 +33,10 @@
     var playerWidth,
     	playerHeight,
 		player = {
-			x : (canvasWidth / 2) - 135, // Less the middel of the width of the image player
-			y : canvasHeight - 240, // Less the height of the image player
+			x : (canvasWidth / 2) - 84, // Less the middel of the width of the image player
+			y : canvasHeight - 190, // Less the height of the image player
 			playerWidth : 90,
-			playerHeight : 185,
+			playerHeight : 180,
 			speed: 4,
 			velX: 0,
 			velY: 0,
@@ -44,6 +44,7 @@
 			life : 4500,
 			score : 0,
 			heartsDragon : 0,
+			potions : 0,
 			attack : false,
 			aggressive : 25
 		},
@@ -100,7 +101,7 @@
 		movingEnemie = true,
 		removePotionElement = false,
 		panelGameOver = $('#panelGameOver'),
-		playAgain = $('#playAgain'),
+		playAgainLoose = $('#playAgainLoose'),
 		panelWin = $('#panelWin');
 
 
@@ -196,12 +197,12 @@
 				// Esto hacerlo en fireworks. Luego repetir algunos frames iguales en el medio para que queden 9.
 				// Con esto logro que apenas toco el boton de saltar la animacion cambie al personaje saltando.
 
-				setFramesSpriteAnimation('jumpingRight', 0, 9, 55);
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 
 				background.velY =+ (background.speed * 2);
 
 				// Con esto hacemos que el persoanje haga la animacion completa del salto.
-				// if (frame > 5) {
+				// if (frame > 4) {
 				// 	background.velY =+ (background.speed * 2);
 				// }
 
@@ -215,27 +216,14 @@
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 			// Function OK when the player only walk from right
-			setFramesSpriteAnimation('crouchRight', 0, 9, 100);
+			setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
-			if (frame == 4) {
+			if (frame >= 5) {
 				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				setFramesSpriteAnimation('crouchRight', 4, 1, 100);
+				//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+				setFramesSpriteAnimation('crouchRight', 5, 1, 50);
 			}
 		}
-
-		// If down arrow is drop
-		// if (keys[40] == false) {
-
-		// 	if (frame >= 4) {
-
-		// 		setFramesSpriteAnimation('crouch', 5, 9, 100);
-
-		// 		if (frame == 8) {
-		// 			//setFramesSpriteAnimation('crouch', 8, 1, 100);
-		// 			setFramesSpriteAnimation('walkingRight', 0, 9, 100);
-		// 		}
-		// 	}
-		// }
 
 		// left arrow
 		if (keys[37] || mobileLeft) {
@@ -247,7 +235,7 @@
 
 				walkingLeft = true;
 
-				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 90);
 			}
 		}
 
@@ -261,38 +249,42 @@
 
 				walkingRight = true;
 
-				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+				if (background.jumping == false) {
+					setFramesSpriteAnimation('walkingRight', 0, 9, 90);
+				}
 			}
-
-			// if (!walkingRight) {
-
-			// 	background.x = -3;
-			// 	walkingRight = true;
-			// }
-
-			// setFramesSpriteAnimation('walkingRight', 0, 9, 100);
-
 		}
 
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
-			if (crouch == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+			if (crouch == false && background.jumping == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
 			}
 		}
 
 		// If left arrow is drop
 		if (keys[37] == false) {
-			if (!walkingRight) {
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+			if (walkingRight == false) {
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 90);
 			}
 		}
 
 		// If right arrow is drop
 		if (keys[39] == false) {
+			if (!walkingLeft && background.jumping == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
+			}
+		}
 
-			if (!walkingLeft) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+		// If down arrow is drop
+		if (keys[40] == false) {
+
+			// Reset the player dimentions.
+			player.y = canvasHeight - 190;
+			player.playerHeight = 180;
+
+			if (walkingLeft == false && walkingRight == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
 			}
 		}
 
@@ -300,7 +292,7 @@
 		if (keys[65] || mobileAttack) {
 			player.attack = true;
 
-			setFramesSpriteAnimation('attackRight', 0, 9, 100);
+			setFramesSpriteAnimation('attackRight', 0, 9, 90);
 			attacking = true;
 		}
 
@@ -544,43 +536,46 @@
 		switch (walkingDirection) {
             case 'walkingRight':
             	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
-          		contextPlayer.drawImage(playerSpriteRight, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'crouchRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	// Con esto hago que cuando se agacha el espacio del player sea menos alto para que no le colisiones los disparos.
+	            player.y = canvasHeight - 90;
+				player.playerHeight = 90;
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 151, 778, 151, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 149, 0, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 148, 190, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 380, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 149, 570, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 226, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 151, 778, 149, 202, (canvasWidth / 2) - 135, canvasHeight - 210, 140, 240);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
             break;
         }
 	}
@@ -627,7 +622,7 @@
 
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
-		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 10));
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 100));
 
 		//console.log( (canvasWidth + (-(background.x))) );
 
@@ -1220,13 +1215,18 @@
 			panelGameOver.removeClass('display-none');
 
 			// Play again. Reset all the values
-			playAgain.on('click', function () {
+			playAgainLoose.on('click', function () {
 				enemiesArray.length = 0;
 				obstaclesArray.length = 0;
+				heartDragonArray.length = 0;
+				potionsArray.length = 0;
 				background.x = 0;
-				player.life = 4500;
+
+				player.life = 4000;
 				player.score = 0;
+				player.potions = 0;
 				player.heartsDragon = 0;
+
 				panelGameOver.addClass('display-none');
 			});
 

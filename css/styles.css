@@ -253,6 +253,27 @@ body {
 	text-align: center;
 }
 
+
+/* Panel Read Instructions PAUSE desktop */
+#panelReadInstructionsPause {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-instructions-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+}
+
+#panelReadInstructionsPause .content {
+	margin: 398px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+
 /* Panel pause  */
 #panelPause {
 	position: absolute;
@@ -270,14 +291,14 @@ body {
 }
 
 #panelPause .content {
-	margin: 224px auto 0 auto;
+	margin: 194px auto 0 auto;
 	width: 472px;
 	text-align: center;
 }
 
 #panelPause .content a {
 	display: block;
-	margin: 0px 0 80px 0;
+	margin: 0px 0 36px 0;
 	color: #000;
 	text-decoration: none;
 	text-shadow: 0px 0px 14px #F7F6CB;
@@ -334,12 +355,28 @@ body {
 	margin: 0 auto;
 	background: url('../img/game-over-panel.jpg') no-repeat;
 	background-position: top center;
-	z-index: 4;
+	z-index: 10;
+	font-family: 'Mason', serif;
+	font-size: 20px;
+	color: #000;
 }
 
-#panelGameOver a {
-	color: #FFF;
-	padding: 0 20px;
+#panelGameOver .content {
+	margin: 190px auto 0 auto;
+	width: 472px;
+	text-align: center;
+}
+
+#panelGameOver .score {
+	font-size: 38px;
+	font-weight: bold;
+}
+
+#panelGameOver p {
+	line-height: 20px;
+	font-size: 18px;
+	width: 380px;
+	margin: 30px auto;
 }
 
 
@@ -421,7 +458,7 @@ body {
 	margin: 0 auto;
 	right: 0;
 	left: 0;
-	z-index: 10;
+	z-index: 5;
 	bottom: 0;
 	padding: 0 30px;
 	display: none;
