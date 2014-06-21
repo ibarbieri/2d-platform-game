@@ -130,7 +130,7 @@ body {
 
 #playerOptions #adarhaHeartsDragon {
 	background: url('../img/heart-dragon-plus.png') no-repeat;
-	width: 132px;
+	width: 99px;
 	height: 108px;
 	position: absolute;
 	right: 0;
@@ -138,6 +138,10 @@ body {
 	font-family: 'Mason', serif;
 	font-size: 24px;
 	font-weight: bold;
+	text-align: right;
+	padding-top: 31px;
+	padding-right: 34px;
+	color: #000;
 }
 
 
@@ -374,7 +378,7 @@ body {
 
 #panelGameOver p {
 	line-height: 20px;
-	font-size: 18px;
+	font-size: 20px;
 	width: 380px;
 	margin: 30px auto;
 }

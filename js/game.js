@@ -5,7 +5,7 @@
     var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
     win.requestAnimationFrame = requestAnimationFrame;
 
-    var cancelAnimationFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame;
+    var cancelAnimationFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame || win.webkitCancelAnimationFrame;
 
 
     /* full screen function
@@ -89,6 +89,11 @@
 		mobileAttack,
 		walkingLeft = false,
 		walkingRight = false,
+		walkingStopRight = false,
+		walkingStopLeft = false,
+		stopAnimation = false,
+		stopEventLeft = false,
+		stopEventRight = false,
 		crouch = false,
 		jump = false,
 		attacking = false,
@@ -96,13 +101,16 @@
 		wolfPush = true,
 		warlockShooting = false,
 		warlockShootingAnimation = false,
+		playerWin = false,
 		shootDelay = false,
 		warlokIsDraw = false,
 		movingEnemie = true,
 		removePotionElement = false,
 		panelGameOver = $('#panelGameOver'),
 		playAgainLoose = $('#playAgainLoose'),
-		panelWin = $('#panelWin');
+		panelWin = $('#panelWin'),
+		getScoreWin = $('#getScoreWin'),
+		getScoreLoose = $('#getScoreLoose');
 
 
 	/* images
@@ -189,17 +197,26 @@
 
 			onObstacle = false;
 
-			if (!background.jumping) {
+			if (background.jumping == false) {
 
-				background.jumping = true;
+				if (walkingRight == true) {
+					setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 
-				// Hacer que esta animacion arranque directamente desde el personaje saltando.
-				// Esto hacerlo en fireworks. Luego repetir algunos frames iguales en el medio para que queden 9.
-				// Con esto logro que apenas toco el boton de saltar la animacion cambie al personaje saltando.
+				} else if (walkingLeft == true) {
+					setFramesSpriteAnimation('jumpingLeft', 0, 9, 30);
 
-				setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
+				} else if (walkingStopRight == true) {
+					stopAnimation = true;
+					setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 
+				} else if (walkingStopLeft == true) {
+					stopAnimation = true;
+					setFramesSpriteAnimation('jumpingLeft', 0, 9, 30);
+				}
+
+				//setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 				background.velY =+ (background.speed * 2);
+				background.jumping = true;
 
 				// Con esto hacemos que el persoanje haga la animacion completa del salto.
 				// if (frame > 4) {
@@ -215,13 +232,26 @@
 
 		// down arrow
 		if (keys[40] || mobileCrouch) {
-			// Function OK when the player only walk from right
-			setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
-			if (frame >= 5) {
-				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-				setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+			if (walkingRight == true || walkingStopRight == true) {
+				// Function OK when the player only walk from right
+				setFramesSpriteAnimation('crouchRight', 0, 9, 50);
+
+				if (frame >= 5) {
+					// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+					//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+					setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+				}
+
+			} else if (walkingLeft == true || walkingStopLeft == true) {
+				// Function OK when the player only walk from right
+				setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
+
+				if (frame >= 5) {
+					// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+					//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+					setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
+				}
 			}
 		}
 
@@ -235,7 +265,21 @@
 
 				walkingLeft = true;
 
-				setFramesSpriteAnimation('walkingLeft', 0, 9, 90);
+				if (background.jumping == false) {
+
+					setFramesSpriteAnimation('walkingLeft', 0, 9, 90);
+				}
+			}
+		}
+
+		// If left arrow is drop
+		if (keys[37] == false) {
+
+			walkingLeft = false;
+
+			if (background.jumping == false && stopAnimation == false) {
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 70);
+				walkingStopLeft = true;
 			}
 		}
 
@@ -250,28 +294,38 @@
 				walkingRight = true;
 
 				if (background.jumping == false) {
+
 					setFramesSpriteAnimation('walkingRight', 0, 9, 90);
 				}
 			}
 		}
 
+		// If right arrow is drop
+		if (keys[39] == false) {
+
+			walkingRight = false;
+
+
+			if (background.jumping == false && stopAnimation == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 70);
+				walkingStopRight = true;
+			}
+		}
+
+
+		// a key
+		if (keys[65] || mobileAttack) {
+
+			player.attack = true;
+
+			setFramesSpriteAnimation('attackRight', 0, 9, 65);
+
+			attacking = true;
+		}
+
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
 			if (crouch == false && background.jumping == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
-			}
-		}
-
-		// If left arrow is drop
-		if (keys[37] == false) {
-			if (walkingRight == false) {
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 90);
-			}
-		}
-
-		// If right arrow is drop
-		if (keys[39] == false) {
-			if (!walkingLeft && background.jumping == false) {
 				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
 			}
 		}
@@ -286,14 +340,6 @@
 			if (walkingLeft == false && walkingRight == false) {
 				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
 			}
-		}
-
-		// a key
-		if (keys[65] || mobileAttack) {
-			player.attack = true;
-
-			setFramesSpriteAnimation('attackRight', 0, 9, 90);
-			attacking = true;
 		}
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
@@ -467,6 +513,8 @@
 		}
 
 
+		console.log(player.score);
+
 		// render all the game
 		renders();
 	}
@@ -536,46 +584,46 @@
 		switch (walkingDirection) {
             case 'walkingRight':
             	// En -135 estoy restando: los 90 del ancho del personaje + 45 de la mitad del ancho del personaje para que quede perfectamente en la mitad.
-          		contextPlayer.drawImage(playerSpriteRight, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+          		contextPlayer.drawImage(playerSpriteRight, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'walkingStopRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'crouchRight':
             	// Con esto hago que cuando se agacha el espacio del player sea menos alto para que no le colisiones los disparos.
 	            player.y = canvasHeight - 90;
 				player.playerHeight = 90;
-            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'jumpingRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'attackRight':
-            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteRight, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 169, 196);
             break;
 
             case 'walkingLeft':
-          		contextPlayer.drawImage(playerSpriteLeft, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+          		contextPlayer.drawImage(playerSpriteLeft, frame * 167, 0, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'walkingStopLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 192, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'crouchLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 384, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'jumpingLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 576, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 172, 196);
             break;
 
             case 'attackLeft':
-            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 167, 191);
+            	contextPlayer.drawImage(playerSpriteLeft, frame * 167, 769, 167, 191, (canvasWidth / 2) - 84, canvasHeight - 210, 170, 196);
             break;
         }
 	}
@@ -622,7 +670,7 @@
 
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
-		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 100));
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 150));
 
 		//console.log( (canvasWidth + (-(background.x))) );
 
@@ -637,7 +685,10 @@
 
 	setInterval(function() {
 
-		pushObstacle();
+		if (playerWin == false) {
+			pushObstacle();
+		}
+
 
 	}, randomTimeObstacles);
 
@@ -753,7 +804,7 @@
 	setInterval(function() {
 
 		// push the shoot with 1 second delay to fix with de animation.
-		if (warlockShooting == true) {
+		if (warlockShooting == true && playerWin == false) {
 			pushObstacleEachSeconds();
 		}
 
@@ -767,7 +818,7 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		enemiesArray.push(new Enemies(5000, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.7, 100, 100));
+		enemiesArray.push(new Enemies(4000, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.7, 100, 100));
 		warlokIsDraw = true;
 	}
 
@@ -1087,6 +1138,7 @@
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
+							playerUpdateScore(enemieOrObstacle.aggressive);
 						}
 
 						// check if the player or enemie is alive
@@ -1104,6 +1156,8 @@
 						} else {
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive; // the agresive of the warlok //enemieOrObstacle.aggressive;
+
+							playerUpdateScore(-25);
 						}
 
 						// check if the player or enemie is alive
@@ -1117,6 +1171,10 @@
 
  						entityIsAlive(player, enemieOrObstacle);
 
+ 						movePotionImage(1);
+
+ 						playerUpdateScore(15);
+
  						removePotion();
 
  					} else if (enemieOrObstacle.name == 'heartDragon') {
@@ -1125,14 +1183,10 @@
 
  						plusHeartsDragon(1);
 
+ 						playerUpdateScore(75);
+
  						removeHeartDragon();
-
  					}
-
-			 				// 	else if (enemieOrObstacle.name == 'water') {
-			 				// 		background.velX -= 0.5;
-			 				// 		onObstacle = true;
-								// }
 				}
 			}
 		}
@@ -1144,7 +1198,6 @@
 
 		return collisionDirection;
 	}
-
 
 
 	function removeOpacity () {
@@ -1213,6 +1266,15 @@
 
 			// Show the Game Over panel
 			panelGameOver.removeClass('display-none');
+			getScoreLoose.html(player.score);
+
+			enemiesArray.length = 0;
+			obstaclesArray.length = 0;
+			heartDragonArray.length = 0;
+			potionsArray.length = 0;
+			warlockShooting = false;
+			playerWin = true;
+			wolfPush = false;
 
 			// Play again. Reset all the values
 			playAgainLoose.on('click', function () {
@@ -1243,10 +1305,60 @@
 	}
 
 
+	function movePotionImage (playerPotions) {
+
+		player.potions += playerPotions;
+
+		switch (player.potions) {
+			case 1:
+				$('#adarhaPotion').css('background-position-x', -180);
+			break;
+
+			case 2:
+				$('#adarhaPotion').css('background-position-x', -360);
+			break;
+
+			case 3:
+				$('#adarhaPotion').css('background-position-x', -540);
+			break;
+
+			case 4:
+				$('#adarhaPotion').css('background-position-x', -720);
+			break;
+		}
+
+	}
+
+
+
+	/* Game pause and start
+	---------------------------------------------------------------*/
+	var pauseGame = $('#pauseGame');
+
+	pauseGame.on('click', function () {
+		console.log('denter juego');
+
+		// PROBAR ESTO DESTRO DEL LOOP. DEBERIA ANDAR DENTRO DEL requestanimationframe
+		cancelAnimationFrame(requestAnimationFrame(update));
+
+		//panelPause.toggleClass('display-none');
+
+	});
+
+
 
 	function showWinPanel () {
 		// Show the Win panel
 		panelWin.removeClass('display-none');
+		getScoreWin.html(player.score);
+
+		enemiesArray.length = 0;
+		obstaclesArray.length = 0;
+		heartDragonArray.length = 0;
+		potionsArray.length = 0;
+		warlockShooting = false;
+		playerWin = true;
+
 	}
 
 
@@ -1300,19 +1412,6 @@
 	}
 
 
-	/* Game pause and start
-	---------------------------------------------------------------*/
-	var pauseGame = $('#pauseGame');
-
-	pauseGame.on('click', function () {
-		console.log('denter juego');
-
-		// PROBAR ESTO DESTRO DEL LOOP. DEBERIA ANDAR DENTRO DEL requestanimationframe
-		cancelAnimationFrame(requestAnimationFrame(update));
-
-		panelPause.toggleClass('display-none');
-
-	});
 
 
 	/* controls and keys. Event listeners
