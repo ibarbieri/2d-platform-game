@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<section id="panelStarGrame">
+	<section id="panelStartGame">
 		<div class="content">
 			<a href="#" id="buttonLoginFacebook">
 				<img src="img/login-with-facebook.png">
@@ -25,7 +25,11 @@
 				<label>E-mail</label>
 				<input type="email" value="" id="emailLogin" name="emailLogin">
 
-				<a href="#" id="buttonStartGame">
+				<a href="#" id="buttonStartGame" class="visibility-hidden">
+					<img src="img/button-play.png">
+				</a>
+
+				<a href="#" id="startGameMobile" class="display-none visibility-hidden">
 					<img src="img/button-play.png">
 				</a>
 			</form>
@@ -60,9 +64,6 @@
 		</div>
 	</section>
 
-<!-- 	<section id="panelStartMobile" class="display-none">
-		<a href="#" id="starGameMobile">Start</a>
-	</section> -->
 
 	<section id="panelWin" class="display-none">
 		<div class="content">
@@ -86,7 +87,7 @@
 				<img src="img/button-shared-facebook.png">
 			</a>
 
-			<p>¡Lo sentimos!<br>
+			<p class="play-again-p">¡Lo sentimos!<br>
 				Vuelve a intentarlo y supera tu marca
 			</p>
 			<a href="#" id="playAgainLoose"><img src="img/btn-play-again.png"></a>
@@ -142,6 +143,46 @@
 
 <script type="text/javascript">
 
+	var buttonLoginFacebook = $('#buttonLoginFacebook'),
+		buttonStartGame = $('#buttonStartGame'),
+		startGameMobile = $('#startGameMobile'),
+		buttonPlayGame = $('#buttonPlayGame'),
+		panelStartGame = $('#panelStartGame'),
+		buttonInstructions = $('#buttonInstructions'),
+		buttonReanudar = $('#buttonReanudar'),
+		buttonResumen = $('#buttonResumen'),
+		buttonBack = $('#buttonBack'),
+		panelChoosePlayer = $('#panelChoosePlayer'),
+		panelReadInstructions = $('#panelReadInstructions'),
+		panelReadInstructionsPause = $('#panelReadInstructionsPause'),
+		panelPause = $('#panelPause'),
+		playerOptions = $('#playerOptions'),
+		playerSelected = 'adhara',
+		script,
+		widthOfSpriteEnergy,
+		widthOfSpritePotion;
+
+
+    /* full screen function
+	---------------------------------------------------------------*/
+    var element = document.documentElement;
+
+    function fullScreen (element) {
+		if (element.requestFullscreen) {
+			element.requestFullscreen();
+
+		} else if (element.msRequestFullscreen) {
+			element.msRequestFullscreen();
+
+		} else if (element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+
+		} else if (element.webkitRequestFullscreen) {
+			element.webkitRequestFullscreen();
+		}
+	}
+
+
 	/* devices adaptations
 	---------------------------------------------------------------*/
 	var userAgent = window.navigator.userAgent,
@@ -152,100 +193,200 @@
 
 	if (userAgent.indexOf('iPad') > -1) {
 
+		// Canvas dimentions
+		canvasWidth = 800;
+		canvasHeight = 410;
+
+
+		// Canvas positions
 		$('#extras').css('top', 90);
 		$('#player').css('top', 90);
 		$('#background').css('top', 90);
 
-		$('#playerOptions').css('width', 800).css('top', 80);
-		$('#panelGame').css('width', 800).css('top', 500);
-		$('#controls').css('display', 'block').css('bottom', 200).css('width', 800);
 
-		// $('.walk-controls').css('margin-left', 20);
-		// $('.jump-attack-controls').css('right', 30);
-
-		$('#adarhaLife').css('width', 270).css('margin-left', 30);
-		$('#adarhaPotion').css('margin-right', 10);
-		$('#adarhaHeartsDragon').css('margin-right', 10);
-
-		canvasWidth = 800;
-		canvasHeight = 410;
-
+		// Set images diferences
 		deviceDiferenceImage = 200;
+		widthOfSpriteEnergy = 275;
+		widthOfSpritePotion = 180;
+
+
+		// Show / hide elements
+		buttonStartGame.toggleClass('visibility-hidden');
+
+
+		// Start panel
+		panelStartGame.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
+		$('#panelStartGame .content').css('margin-top', 160);
+
+
+		// Choose player panels
+		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);;
+		$('#panelChoosePlayer .content').css('margin-top', 190);
+		$('#panelChoosePlayer .content img').css('width', 160);
+
+
+		// Read instructions panel
+		panelReadInstructions.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
+		$('#panelReadInstructions .content').css('margin-top', 320);
+
+
+		// Game panels and player options
+		$('#playerOptions').css('width', canvasWidth).css('top', 80);
+		$('#panelGame').css('width', canvasWidth).css('top', 500);
+		$('#controls').css('display', 'block').css('bottom', 180).css('width', canvasWidth);
+
+		$('.walk-controls').css('margin-left', 20);
+		$('.jump-attack-controls').css('right', 30);
+
+		$('#adarhaLife').css('width', 270).css('margin-left', 10);
+		$('#adarhaPotion').css('margin-right', -10);
+		$('#adarhaHeartsDragon').css('margin-right', -10);
+
+
 
 	} else if (userAgent.indexOf('Android') > -1) {
-
+		// Canvas dimentions
 		canvasWidth = window.innerWidth;
-    	canvasHeight = window.innerHeight; //window.screen.height; //
+    	canvasHeight = 370;//screen.height;
 
+    	// Canvas positions
+    	$('#extras').css('top', 0);
+		$('#player').css('top', 0);
+		$('#background').css('top', 0);
+
+    	// Set diferences images devices
     	deviceDiferenceImage = 200;
     	deviceDiferenceCaveImage = 400;
 
+    	// Hide / show elements
+    	startGameMobile.toggleClass('display-none').toggleClass('visibility-hidden');
+    	$('#panelGame').css('display', 'none');
 
-		//$('#panelStartMobile').toggleClass('display-none');
-
-		// $('#starGameMobile').on('click', function () {
-		// 	//fullScreen(element);
-		// 	$('#panelStartMobile').toggleClass('display-none');
-		// });
+    	// Full screen and choose player
+		$('#startGameMobile').on('click', function () {
+			// Show choose player panel
+			choosePlayer();
+			//fullScreen(element);
+		});
 
 		// Start panel
-		$('#panelStarGrame').css('background-size', canvasWidth, canvasHeight);
+		panelStartGame.css('width', canvasWidth).css('height', canvasHeight);
+		panelStartGame.css('background-size', canvasWidth, canvasHeight);
+		$('#panelStartGame .content').css('margin-top', 130);
+		$('#panelStartGame #startGameMobile').css('margin-top', -60);
+		$('#emailLogin').css('width', 200);
 
-		$('#extras').css('top', 0);
-		$('#player').css('top', 0);
-		$('#background').css('top', 0);
-		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', window.innerWidth);
-		$('#controls').css('width', window.innerWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
+		// Choose player panel
+		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight);
+		panelChoosePlayer.css('background-size', canvasWidth, canvasHeight);
+		$('#panelChoosePlayer .content').css('margin-top', 160);
+		$('#panelChoosePlayer .content img').css('width', 130);
+
+		// Read instructions panel
+		panelReadInstructions.css('width', canvasWidth).css('height', canvasHeight);
+		panelReadInstructions.css('background-size', canvasWidth, canvasHeight);
+		$('#panelReadInstructions .content').css('margin-top', 260);
+
+		// Game panels and player options
+		$('#playerOptions').css('width', canvasWidth);
+		$('#controls').css('width', canvasWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
 		$('.jump-attack-controls').css('right', 10).css('float', 'none');
 
-		$('#adarhaLife').css('background-size', '180px', '100px').css('margin-top', 10);
-		$('#adarhaPotion').css('background-size', '110px', '100px').css('top', 8).css('width', 115);
-		$('#adarhaHeartsDragon').css('background-size', '75px', '90px').css('top', 50).css('width', 84);
+		$('#adarhaLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
+		$('#adarhaPotion').css('background-size', 500, 50).css('top', 5).css('width', 115);
+		$('#adarhaHeartsDragon').css('background-size', 110, 50).css('top', 50).css('width', 28).css('padding-top', 17).css('padding-left', 35);
+
+		widthOfSpriteEnergy = 160;
+		widthOfSpritePotion = 125;
 
 
 	} else if (userAgent.indexOf('iPhone') > -1) {
 
-		$('#panelStartMobile').toggleClass('display-none');
+		// Canvas dimentionss
+		canvasWidth = window.innerWidth;
+    	canvasHeight = 320; //320;
 
-		$('#starGameMobile').on('click', function () {
-			fullScreen(element);
-			$('#panelStartMobile').toggleClass('display-none');
-		});
 
+    	// Canvas position
 		$('#extras').css('top', 0);
 		$('#player').css('top', 0);
 		$('#background').css('top', 0);
-		$('#panelGame').css('display', 'none');
-		$('#playerOptions').css('width', window.innerWidth);
-
-		$('#controls').css('width', window.innerWidth).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
-		$('.down-arrow').css('background-size', 40);
-		$('.right-arrow').css('background-size', 40);
-		$('.left-arrow').css('background-size', 40);
-		$('.top-arrow').css('background-size', 40);
-
-		$('.jump-attack-controls').css('float', 'none');
-		$('.attack-key').css('background-size', 40);
 
 
-		$('#adarhaLife').css('background-size', '130px', '100px').css('margin-top', 10);
-		$('#adarhaPotion').css('background-size', '80px', '100px').css('top', 8).css('width', 85);
-		$('#adarhaHeartsDragon').css('background-size', '50px', '90px').css('top', 35).css('width', 56);
-
-		canvasWidth = window.innerWidth;
-    	//canvasHeight = win.screen.height;
-    	canvasHeight = 320;//win.innerHeight + 100;
-
+		// Set diferences images devices
     	deviceDiferenceImage = 200;
+    	widthOfSpriteEnergy = 160;
+		widthOfSpritePotion = 125;
+
+
+		// Hide / show elements
+    	startGameMobile.toggleClass('display-none').toggleClass('visibility-hidden');
+    	$('#panelGame').css('display', 'none');
+
+
+    	// Full screen and choose player
+		$('#startGameMobile').on('click', function () {
+			// Show choose player panel
+			fullScreen(element);
+			choosePlayer();
+		});
+
+
+		// Start panel
+		panelStartGame.css('width', canvasWidth).css('height', canvasHeight);
+		panelStartGame.css('background-size', canvasWidth, canvasHeight);
+		$('#panelStartGame .content').css('margin-top', 100);
+		$('#panelStartGame #startGameMobile').css('margin-top', -60);
+		$('#buttonLoginFacebook img').css('width', 160);
+		$('#emailLogin').css('width', 100);
+		$('#panelStartGame form').css('margin-top', 20);
+
+
+		// Choose player panel
+		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight);
+		panelChoosePlayer.css('background-size', canvasWidth, canvasHeight);
+		$('#panelChoosePlayer .content').css('margin-top', 110);
+		$('#panelChoosePlayer .content img').css('width', 130);
+
+
+		// Read instructions panel
+		panelReadInstructions.css('width', canvasWidth).css('height', canvasHeight);
+		panelReadInstructions.css('background-size', canvasWidth, canvasHeight);
+		$('#panelReadInstructions .content').css('margin-top', 200);
+
+
+		// Game panels and player options
+		$('#playerOptions').css('width', canvasWidth);
+
+		$('#controls').css('width', canvasWidth).css('display', 'block').css('bottom', -70);
+		//$('.jump-attack-controls').css('right', 10).css('float', 'none');
+		$('.left-arrow').css('background-size', 35);
+		$('.down-arrow').css('background-size', 35);
+		$('.right-arrow').css('background-size', 35);
+		$('.top-arrow').css('background-size', 35);
+		$('.attack-key').css('background-size', 35);
+
+		$('#adarhaLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
+		$('#adarhaPotion').css('background-size', 500, 50).css('top', 5).css('width', 115);
+		$('#adarhaHeartsDragon').css('background-size', 110, 50).css('top', 50).css('width', 28).css('padding-top', 17).css('padding-left', 35);
+
 
 	} else {
+
 		// Desktop
 		canvasWidth = 950;
 		canvasHeight = 755;
 
+
+		// Diferences in devices
 		deviceDiferenceImage = 0;
 		deviceDiferenceCaveImage = 100;
+		widthOfSpriteEnergy = 275;
+		widthOfSpritePotion = 180;
+
+
+		// Show / hide elements
+		buttonStartGame.toggleClass('visibility-hidden');
 	}
 
 
@@ -278,23 +419,6 @@
 
     /* Panels
 	---------------------------------------------------------------*/
-	var buttonLoginFacebook = $('#buttonLoginFacebook'),
-		buttonStartGame = $('#buttonStartGame'),
-		buttonPlayGame = $('#buttonPlayGame'),
-		panelStarGrame = $('#panelStarGrame'),
-		buttonInstructions = $('#buttonInstructions'),
-		buttonReanudar = $('#buttonReanudar'),
-		buttonResumen = $('#buttonResumen'),
-		buttonBack = $('#buttonBack'),
-		panelChoosePlayer = $('#panelChoosePlayer'),
-		panelReadInstructions = $('#panelReadInstructions'),
-		panelReadInstructionsPause = $('#panelReadInstructionsPause'),
-		panelPause = $('#panelPause'),
-		playerOptions = $('#playerOptions'),
-		playerSelected = 'adhara',
-		script;
-
-
 	buttonStartGame.click( function () {
 		choosePlayer();
 	});
@@ -302,7 +426,7 @@
 
 	// Choose player function
 	function choosePlayer () {
-		panelStarGrame.addClass('display-none');
+		panelStartGame.addClass('display-none');
 		panelChoosePlayer.toggleClass('display-none');
 	}
 
@@ -345,6 +469,7 @@
 		panelPause.toggleClass('display-none');
 		panelReadInstructionsPause.toggleClass('display-none');
 	});
+
 
 
 	// Start game function

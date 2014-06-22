@@ -8,26 +8,6 @@
     var cancelAnimationFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame || win.webkitCancelAnimationFrame;
 
 
-    /* full screen function
-	---------------------------------------------------------------*/
-    var element = document.documentElement;
-
-    function fullScreen (element) {
-		if (element.requestFullscreen) {
-			element.requestFullscreen();
-
-		} else if (element.msRequestFullscreen) {
-			element.msRequestFullscreen();
-
-		} else if (element.mozRequestFullScreen) {
-			element.mozRequestFullScreen();
-
-		} else if (element.webkitRequestFullscreen) {
-			element.webkitRequestFullscreen();
-		}
-	}
-
-
 	/* game objects declaration; Player, Background, Extras
 	---------------------------------------------------------------*/
     var playerWidth,
@@ -154,6 +134,46 @@
 
 		}
 
+
+   	/* Panel device adaptations
+	---------------------------------------------------------------*/
+    if (userAgent.indexOf('Android') > -1) {
+
+    	// Game over panel
+    	panelGameOver.css('width', canvasWidth).css('height', canvasHeight);
+		panelGameOver.css('background-size', canvasWidth, canvasHeight);
+		$('#panelGameOver .content').css('margin-top', 120);
+
+	    // Win panel
+    	panelWin.css('width', canvasWidth).css('height', canvasHeight);
+		panelWin.css('background-size', canvasWidth, canvasHeight);
+		$('#panelWin .content').css('margin-top', 130);
+
+
+    } else if (userAgent.indexOf('iPad') > -1) {
+
+    	// Game over panel
+    	panelGameOver.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
+		$('#panelGameOver .content').css('margin-top', 120);
+
+	    // Win panel
+    	panelWin.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
+		$('#panelWin .content').css('margin-top', 130);
+
+
+    } else if (userAgent.indexOf('iPhone') > -1) {
+
+    	// Game over panel
+    	panelGameOver.css('width', canvasWidth).css('height', canvasHeight);
+		panelGameOver.css('background-size', canvasWidth, canvasHeight);
+		$('#panelGameOver .content').css('margin-top', 120);
+
+	    // Win panel
+    	panelWin.css('width', canvasWidth).css('height', canvasHeight);
+		panelWin.css('background-size', canvasWidth, canvasHeight);
+		$('#panelWin .content').css('margin-top', 130);
+
+    }
 
 
 	/* cache content in new canvas, double buffer
@@ -1223,38 +1243,38 @@
 
 		switch (player.life) {
 			case 4000:
-				$('#adarhaLife').css('background-position-x', -275);
+				$('#adarhaLife').css('background-position-x', -widthOfSpriteEnergy);
 			break;
 
 			case 3500:
-				$('#adarhaLife').css('background-position-x', -550);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 2));
 			break;
 
 			case 3000:
-				$('#adarhaLife').css('background-position-x', -825);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 3));
 			break;
 
 			case 2500:
-				$('#adarhaLife').css('background-position-x', -1100);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 4));
 			break;
 
 			case 2000:
-				$('#adarhaLife').css('background-position-x', -1375);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 5));
 			break;
 
 			case 1500:
-				$('#adarhaLife').css('background-position-x', -1650);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 6));
 
 				// Add a potion
 				addPotion();
 			break;
 
 			case 1000:
-				$('#adarhaLife').css('background-position-x', -1925);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 7));
 			break;
 
 			case 500:
-				$('#adarhaLife').css('background-position-x', -2200);
+				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 8));
 
 				// Add a potion
 				addPotion();
@@ -1311,19 +1331,19 @@
 
 		switch (player.potions) {
 			case 1:
-				$('#adarhaPotion').css('background-position-x', -180);
+				$('#adarhaPotion').css('background-position-x', -widthOfSpritePotion);
 			break;
 
 			case 2:
-				$('#adarhaPotion').css('background-position-x', -360);
+				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 2));
 			break;
 
 			case 3:
-				$('#adarhaPotion').css('background-position-x', -540);
+				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 3));
 			break;
 
 			case 4:
-				$('#adarhaPotion').css('background-position-x', -720);
+				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 4));
 			break;
 		}
 
