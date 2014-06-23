@@ -54,7 +54,7 @@
 		gravity = 0.20;
 
 
-	/* game elements, extras and flags
+	/* game elements, sounds, extras and flags
 	---------------------------------------------------------------*/
 	var onObstacle,
 		playerOnObstacle,
@@ -82,6 +82,7 @@
 		warlockShooting = false,
 		warlockShootingAnimation = false,
 		playerWin = false,
+		playerLoose = false,
 		shootDelay = false,
 		warlokIsDraw = false,
 		movingEnemie = true,
@@ -133,6 +134,23 @@
 			playerSpriteLeft.src = 'img/player-actions-left-aidem.png';
 
 		}
+
+
+	/* sounds: .wav or .ogg
+	---------------------------------------------------------------*/
+	var backgroundSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/loop.ogg"),
+		finalSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/loop_boss.ogg'),
+		winSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/_/win.ogg"),
+		looseSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/_/lose.ogg"),
+		getHeartSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_health.ogg"),
+		getPotionSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/dwarf_badge_2.ogg'),
+		playerSufferAttackSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_hurt.ogg"),
+		playerAttackSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_stone.ogg'),//new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_slash.ogg"),
+		playerJumpSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_jump.ogg'),
+		warlockShootSound = new Audio('sounds/warlok-shoot.ogg');
+
+		//To the final enemie
+		//http://spidersofmirkwood.thehobbit.com/media/sounds/loop_boss.ogg
 
 
    	/* Panel device adaptations
@@ -195,10 +213,30 @@
 	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 
+
+
 	/* update function
 	---------------------------------------------------------------*/
 	function update () {
 
+		// run through the loop again to refresh the game all time
+		requestAnimationFrame(update);
+
+
+		// Add background sound
+		backgroundSound.play();
+
+		if (playerLoose) {
+			backgroundSound.pause();
+			looseSound.play();
+
+		} else if (playerWin) {
+			backgroundSound.pause();
+			winSound.play();
+		}
+
+
+		// Render the background
 		if (userAgent.indexOf('iPad') > -1) {
 			// do nothing
 		} else if (userAgent.indexOf('Android') > -1) {
@@ -209,71 +247,59 @@
 			secondaryCtx.drawImage(backgroundImagePatter, background.x, background.y, backgroundImagePatter.width, backgroundImagePatter.height);
 	 	}
 
-		// run through the loop again to refresh the game all time
-		requestAnimationFrame(update);
 
 		// up arrow or space
 		if (keys[38] || keys[32] || mobileJump) {
 
 			onObstacle = false;
 
-			if (background.jumping == false) {
+			if (!background.jumping) {
 
-				if (walkingRight == true) {
-					setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
-
-				} else if (walkingLeft == true) {
-					setFramesSpriteAnimation('jumpingLeft', 0, 9, 30);
-
-				} else if (walkingStopRight == true) {
-					stopAnimation = true;
-					setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
-
-				} else if (walkingStopLeft == true) {
-					stopAnimation = true;
-					setFramesSpriteAnimation('jumpingLeft', 0, 9, 30);
-				}
-
-				//setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
-				background.velY =+ (background.speed * 2);
 				background.jumping = true;
 
-				// Con esto hacemos que el persoanje haga la animacion completa del salto.
-				// if (frame > 4) {
-				// 	background.velY =+ (background.speed * 2);
-				// }
+				setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 
-				// This run when the character touch the land.
-				// if (background.velY <= 0) {
-				//   	//frame = 0;
-				// }
+				background.velY =+ (background.speed * 2);
+
+				playerJumpSound.play();
 			}
 		}
 
 		// down arrow
 		if (keys[40] || mobileCrouch) {
 
-			if (walkingRight == true || walkingStopRight == true) {
-				// Function OK when the player only walk from right
-				setFramesSpriteAnimation('crouchRight', 0, 9, 50);
+			// Function OK when the player only walk from right
+			setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
-				if (frame >= 5) {
-					// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-					//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-					setFramesSpriteAnimation('crouchRight', 5, 1, 50);
-				}
-
-			} else if (walkingLeft == true || walkingStopLeft == true) {
-				// Function OK when the player only walk from right
-				setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
-
-				if (frame >= 5) {
-					// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-					//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-					setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
-				}
+			if (frame >= 5) {
+				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+				//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+				setFramesSpriteAnimation('crouchRight', 5, 1, 50);
 			}
+
+
+			// if (walkingRight == true || walkingStopRight == true) {
+			// 	// Function OK when the player only walk from right
+			// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
+
+			// 	if (frame >= 5) {
+			// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+			// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+			// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+			// 	}
+
+			// } else if (walkingLeft == true || walkingStopLeft == true) {
+			// 	// Function OK when the player only walk from right
+			// 	setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
+
+			// 	if (frame >= 5) {
+			// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+			// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+			// 		setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
+			// 	}
+			// }
 		}
+
 
 		// left arrow
 		if (keys[37] || mobileLeft) {
@@ -285,23 +311,18 @@
 
 				walkingLeft = true;
 
-				if (background.jumping == false) {
-
-					setFramesSpriteAnimation('walkingLeft', 0, 9, 90);
-				}
+				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
 			}
 		}
 
-		// If left arrow is drop
-		if (keys[37] == false) {
 
-			walkingLeft = false;
-
-			if (background.jumping == false && stopAnimation == false) {
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 70);
-				walkingStopLeft = true;
+		// If right arrow is drop
+		if (keys[39] == false) {
+			if (!walkingLeft) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
+
 
 		// right arrow
 		if (keys[39] || mobileRight) {
@@ -313,22 +334,15 @@
 
 				walkingRight = true;
 
-				if (background.jumping == false) {
-
-					setFramesSpriteAnimation('walkingRight', 0, 9, 90);
-				}
+				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
 			}
 		}
 
-		// If right arrow is drop
-		if (keys[39] == false) {
 
-			walkingRight = false;
-
-
-			if (background.jumping == false && stopAnimation == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 70);
-				walkingStopRight = true;
+		// If left arrow is drop
+		if (keys[37] == false) {
+			if (!walkingRight) {
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
 			}
 		}
 
@@ -341,12 +355,14 @@
 			setFramesSpriteAnimation('attackRight', 0, 9, 65);
 
 			attacking = true;
+
+			playerAttackSound.play();
 		}
 
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
-			if (crouch == false && background.jumping == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
+			if (crouch == false) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 			}
 		}
 
@@ -357,9 +373,9 @@
 			player.y = canvasHeight - 190;
 			player.playerHeight = 180;
 
-			if (walkingLeft == false && walkingRight == false) {
+			// if (walkingLeft == false && walkingRight == false) {
 				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
-			}
+			// }
 		}
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
@@ -408,15 +424,16 @@
 			//contextExtrasStatic.clearRect(0, 0, canvasExtrasStatic.width, canvasExtrasStatic.height);
 			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceCaveImage, background.y, extrasCave.width, extrasCave.height);
 			//console.log('dibujar en ', (background.x + backgroundImage1.width - 130 - deviceDiferenceImage));
-
-
-
 			// var patternCave = contextExtrasStatic.createPattern(extrasCave, 'no-repeat');
 
 			// contextExtrasStatic.fillStyle = patternCave;
 			// contextExtrasStatic.fillRect(400, 0, extrasCave.width, extrasCave.height);
 
 
+			// Add the final sound. Hacer que este sonido empieza antes igual que los disparos del warloc.
+			// Para eso hay que hacer que la condicion de arriba se de antes.
+			backgroundSound.pause();
+			finalSound.play();
 
 
 			//obstaclesArray.length = 0;
@@ -532,8 +549,6 @@
 			checkCollision(player, heartDragonArray[r]);
 		}
 
-
-		console.log(player.score);
 
 		// render all the game
 		renders();
@@ -691,6 +706,8 @@
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
 		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 150));
+
+		warlockShootSound.play();
 
 		//console.log( (canvasWidth + (-(background.x))) );
 
@@ -1143,9 +1160,6 @@
 					// If the collision come from enemie remove player life
 					if (enemieOrObstacle.name == 'wolf' || enemieOrObstacle.name == 'warlock' || enemieOrObstacle.name == 'rock') {
 
-						// Add and remove the opacity class to the player
-						$('#player').toggleClass('player-opacity');
-
 						// if the player is attacking
 						if (player.attack) {
 							//remove enemie life
@@ -1156,6 +1170,12 @@
 							};
 
 						} else {
+							// Add and remove the opacity class to the player
+							$('#player').toggleClass('player-opacity');
+
+							// Enemie attack sound
+							playerSufferAttackSound.play();
+
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
 							playerUpdateScore(enemieOrObstacle.aggressive);
@@ -1166,14 +1186,17 @@
 
 					} else if (enemieOrObstacle.name == 'shoot1') {
 
-						// Add and remove the opacity class to the player
-						$('#player').toggleClass('player-opacity');
-
 						// if the player is attacking
 						if (player.attack) {
 							//remove enemie life
 							enemieOrObstacle.life -= player.aggressive;
 						} else {
+							// Add and remove the opacity class to the player
+							$('#player').toggleClass('player-opacity');
+
+							// Enemie attack sound
+							playerSufferAttackSound.play();
+
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive; // the agresive of the warlok //enemieOrObstacle.aggressive;
 
@@ -1191,6 +1214,8 @@
 
  						entityIsAlive(player, enemieOrObstacle);
 
+ 						getPotionSound.play();
+
  						movePotionImage(1);
 
  						playerUpdateScore(15);
@@ -1200,6 +1225,8 @@
  					} else if (enemieOrObstacle.name == 'heartDragon') {
 
  						playerUpdateScore(enemieOrObstacle.score);
+
+ 						getHeartSound.play();
 
  						plusHeartsDragon(1);
 
@@ -1295,6 +1322,9 @@
 			warlockShooting = false;
 			playerWin = true;
 			wolfPush = false;
+			playerLoose = true;
+
+			//looseSound.play();
 
 			// Play again. Reset all the values
 			playAgainLoose.on('click', function () {
@@ -1356,7 +1386,6 @@
 	var pauseGame = $('#pauseGame');
 
 	pauseGame.on('click', function () {
-		console.log('denter juego');
 
 		// PROBAR ESTO DESTRO DEL LOOP. DEBERIA ANDAR DENTRO DEL requestanimationframe
 		cancelAnimationFrame(requestAnimationFrame(update));
@@ -1371,6 +1400,8 @@
 		// Show the Win panel
 		panelWin.removeClass('display-none');
 		getScoreWin.html(player.score);
+
+		winSound.play();
 
 		enemiesArray.length = 0;
 		obstaclesArray.length = 0;
