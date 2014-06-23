@@ -69,8 +69,12 @@
 		mobileAttack,
 		walkingLeft = false,
 		walkingRight = false,
-		walkingStopRight = false,
-		walkingStopLeft = false,
+		walkingRightDirection = false,
+		walkingLeftDirection = false,
+		playerAttackRight = false,
+		playerAttackLeft = false,
+		playerCrouchRight = false,
+		playerCrouchLeft = false,
 		stopAnimation = false,
 		stopEventLeft = false,
 		stopEventRight = false,
@@ -248,116 +252,130 @@
 	 	}
 
 
-		// up arrow or space
-		if (keys[38] || keys[32] || mobileJump) {
+		// // up arrow or space
+		// if (keys[38] || keys[32] || mobileJump) {
 
-			onObstacle = false;
+		// 	onObstacle = false;
 
-			if (!background.jumping) {
+		// 	if (!background.jumping) {
 
-				background.jumping = true;
+		// 		background.jumping = true;
 
-				setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
+		// 		setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
 
-				background.velY =+ (background.speed * 2);
+		// 		background.velY =+ (background.speed * 2);
 
-				playerJumpSound.play();
-			}
-		}
+		// 		playerJumpSound.play();
+		// 	}
+		// }
 
-		// down arrow
-		if (keys[40] || mobileCrouch) {
+		// // down arrow
+		// if (keys[40] || mobileCrouch) {
 
-			// Function OK when the player only walk from right
-			setFramesSpriteAnimation('crouchRight', 0, 9, 50);
+		// 	// Function OK when the player only walk from right
+		// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
-			if (frame >= 5) {
-				// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-				//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-				setFramesSpriteAnimation('crouchRight', 5, 1, 50);
-			}
-
-
-			// if (walkingRight == true || walkingStopRight == true) {
-			// 	// Function OK when the player only walk from right
-			// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
-
-			// 	if (frame >= 5) {
-			// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-			// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-			// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
-			// 	}
-
-			// } else if (walkingLeft == true || walkingStopLeft == true) {
-			// 	// Function OK when the player only walk from right
-			// 	setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
-
-			// 	if (frame >= 5) {
-			// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-			// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-			// 		setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
-			// 	}
-			// }
-		}
+		// 	if (frame >= 5) {
+		// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+		// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+		// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+		// 	}
 
 
-		// left arrow
-		if (keys[37] || mobileLeft) {
-			if (background.velX < background.speed  ||  extras.velX < extras.speed) {
+		// 	// if (walkingRight == true || walkingStopRight == true) {
+		// 	// 	// Function OK when the player only walk from right
+		// 	// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
-				background.velX++;
+		// 	// 	if (frame >= 5) {
+		// 	// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+		// 	// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+		// 	// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+		// 	// 	}
 
-				extras.velX++;
+		// 	// } else if (walkingLeft == true || walkingStopLeft == true) {
+		// 	// 	// Function OK when the player only walk from right
+		// 	// 	setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
 
-				walkingLeft = true;
-
-				setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
-			}
-		}
-
-
-		// If right arrow is drop
-		if (keys[39] == false) {
-			if (!walkingLeft) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
-			}
-		}
-
-
-		// right arrow
-		if (keys[39] || mobileRight) {
-			if (background.velX >- background.speed && extras.velX >- extras.speed) {
-
-				background.velX--;
-
-				extras.velX--;
-
-				walkingRight = true;
-
-				setFramesSpriteAnimation('walkingRight', 0, 9, 100);
-			}
-		}
+		// 	// 	if (frame >= 5) {
+		// 	// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
+		// 	// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
+		// 	// 		setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
+		// 	// 	}
+		// 	// }
+		// }
 
 
-		// If left arrow is drop
-		if (keys[37] == false) {
-			if (!walkingRight) {
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
-			}
-		}
+		// // left arrow
+		// if (keys[37] || mobileLeft) {
+		// 	if (background.velX < background.speed  ||  extras.velX < extras.speed) {
+
+		// 		background.velX++;
+
+		// 		extras.velX++;
+
+		// 		walkingLeft = true;
+
+		// 		setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+		// 	}
+		// }
 
 
-		// a key
-		if (keys[65] || mobileAttack) {
+		// // If right arrow is drop
+		// if (keys[39] == false) {
+		// 	if (!walkingLeft) {
+		// 		setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
+		// 	}
+		// }
 
-			player.attack = true;
 
-			setFramesSpriteAnimation('attackRight', 0, 9, 65);
+		// // right arrow
+		// if (keys[39] || mobileRight) {
+		// 	if (background.velX >- background.speed && extras.velX >- extras.speed) {
 
-			attacking = true;
+		// 		background.velX--;
 
-			playerAttackSound.play();
-		}
+		// 		extras.velX--;
+
+		// 		walkingRight = true;
+
+		// 		setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+		// 	}
+		// }
+
+
+		// // If left arrow is drop
+		// if (keys[37] == false) {
+		// 	if (!walkingRight) {
+		// 		setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
+		// 	}
+		// }
+
+
+		// // a key
+		// if (keys[65] || mobileAttack) {
+
+		// 	player.attack = true;
+
+		// 	setFramesSpriteAnimation('attackRight', 0, 9, 65);
+
+		// 	attacking = true;
+
+		// 	playerAttackSound.play();
+		// }
+
+		// // If down arrow is drop
+		// if (keys[40] == false) {
+
+		// 	// Reset the player dimentions.
+		// 	player.y = canvasHeight - 190;
+		// 	player.playerHeight = 180;
+
+		// 	// if (walkingLeft == false && walkingRight == false) {
+		// 		setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
+		// 	// }
+		// }
+		//
+
 
 		// If the player is on the start position
 		if (walkingLeft == false && walkingRight == false) {
@@ -366,17 +384,153 @@
 			}
 		}
 
-		// If down arrow is drop
-		if (keys[40] == false) {
-
-			// Reset the player dimentions.
-			player.y = canvasHeight - 190;
-			player.playerHeight = 180;
-
-			// if (walkingLeft == false && walkingRight == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
-			// }
+		// right arrow
+		if (keys[39] || mobileRight) {
+			walkingRightDirection = true;
+			walkingLeftDirection = false;
 		}
+
+
+		// left arrow
+		if (keys[37] || mobileLeft) {
+			walkingRightDirection = false;
+			walkingLeftDirection = true;
+		}
+
+		// RIGHT ACTIONS
+		if (walkingRightDirection) {
+
+			// Walking right
+			if (keys[39] || mobileRight) {
+				if (background.velX >- background.speed && extras.velX >- extras.speed) {
+
+					background.velX--;
+
+					extras.velX--;
+
+					setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+
+					walkingRight = true;
+				}
+			}
+
+			// jumping right
+			if (keys[38] || keys[32] || mobileJump) {
+
+				onObstacle = false;
+
+				if (!background.jumping) {
+
+					background.jumping = true;
+
+					setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
+
+					background.velY =+ (background.speed * 2);
+
+					playerJumpSound.play();
+				}
+			}
+
+			// crouch right
+			if (keys[40] || mobileCrouch) {
+
+				playerCrouchRight = true;
+
+				setFramesSpriteAnimation('crouchRight', 0, 9, 50);
+
+				if (frame >= 5) {
+					setFramesSpriteAnimation('crouchRight', 5, 1, 50);
+				}
+			}
+
+			// If down arrow is drop
+			if (keys[40] == false) {
+				// Reset the player dimentions.
+				player.y = canvasHeight - 190;
+				player.playerHeight = 180;
+			}
+
+			// a key
+			if (keys[65] || mobileAttack) {
+
+				playerAttackRight = true;
+				player.attack = true;
+				attacking = true;
+
+				setFramesSpriteAnimation('attackRight', 0, 9, 65);
+
+				playerAttackSound.play();
+			}
+
+			if (!walkingRight && !background.jumping && !playerCrouchRight && !playerAttackRight) {
+				setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
+			}
+
+			walkingRight = false;
+			playerCrouchRight = false;
+			playerAttackRight = false;
+
+
+		} else if (walkingLeftDirection) {
+
+			// Walking left
+			if (keys[37] || mobileLeft) {
+				if (background.velX < background.speed  ||  extras.velX < extras.speed) {
+
+					background.velX++;
+					extras.velX++;
+					walkingLeft = true;
+
+					setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+				}
+			}
+
+			// jumping left
+			if (keys[38] || keys[32] || mobileJump) {
+
+				onObstacle = false;
+
+				if (!background.jumping) {
+
+					background.jumping = true;
+					setFramesSpriteAnimation('jumpingLeft', 0, 9, 30);
+					background.velY =+ (background.speed * 2);
+
+					playerJumpSound.play();
+				}
+			}
+
+			// crouch left
+			if (keys[40] || mobileCrouch) {
+				setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
+
+				if (frame >= 5) {
+					setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
+				}
+			}
+
+			// If down arrow is drop
+			if (keys[40] == false) {
+				// Reset the player dimentions.
+				player.y = canvasHeight - 190;
+				player.playerHeight = 180;
+
+				// Tengo que hacer que esto se ejecute pero cuando
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 90);
+			}
+
+			// a key
+			if (keys[65] || mobileAttack) {
+
+				player.attack = true;
+				setFramesSpriteAnimation('attackLeft', 0, 9, 65);
+				attacking = true;
+
+				playerAttackSound.play();
+			}
+
+		}
+
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
 		if (keys[65] == false || mobileAttack == false) {
