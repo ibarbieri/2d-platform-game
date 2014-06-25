@@ -51,6 +51,12 @@
 			</div>
 		</section>
 
+		<section id="panelLoadImages" class="display-none">
+			<div class="content">
+				<img src="img/loading.gif" width="60" height="60">
+			</div>
+		</section>
+
 		<section id="panelReadInstructionsPause" class="display-none">
 			<div class="content">
 				<a href="#" id="buttonBack"><img src="img/btn-back.png"></a>
@@ -62,6 +68,15 @@
 				<a href="#" id="buttonInstructions"><img src="img/btn-read-instructions.png"></a>
 				<a href="#" id="buttonReanudar"><img src="img/btn-continue.png"></a>
 				<a href="#" id="buttonResumen"><img src="img/btn-resumen.png"></a>
+			</div>
+		</section>
+
+		<section id="panelPlayAgain" class="display-none">
+			<div class="content">
+				<h2>¿Estas seguro en reanudar esta partida?</h2>
+
+				<a href="#" id="buttonPlayAgain"><img src="img/btn-si.png"></a>
+				<a href="#" id="buttonBackResumen"><img src="img/btn-no.png"></a>
 			</div>
 		</section>
 
@@ -127,8 +142,8 @@
 			</div>
 
 			<div class="right-actions">
-				<a href="#"><img src="img/icon-twitter.png"></a>
-				<a href="#"><img src="img/icon-facebook.png"></a>
+				<a href="https://twitter.com/TCalligaris" target="_blank"><img src="img/icon-twitter.png"></a>
+				<a href="https://www.facebook.com/TiffanyCalligaris" target="_blank"><img src="img/icon-facebook.png"></a>
 				<a href="#" id="pauseGame"><img src="img/icon-pause.png"></a>
 				<a href="#" id="mute"><img src="img/icon-sound.png"></a>
 				<a href="#" id="noMute" class="display-none"><img src="img/icon-sound-mute.png"></a>
@@ -143,6 +158,8 @@
 	</div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/asset-manager.js"></script>
+
 <!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script> -->
 
 <script type="text/javascript">
@@ -156,10 +173,14 @@
 		buttonReanudar = $('#buttonReanudar'),
 		buttonResumen = $('#buttonResumen'),
 		buttonBack = $('#buttonBack'),
+		buttonPlayAgain = $('#buttonPlayAgain'),
+		buttonBackResumen = $('#buttonBackResumen'),
 		panelChoosePlayer = $('#panelChoosePlayer'),
 		panelReadInstructions = $('#panelReadInstructions'),
 		panelReadInstructionsPause = $('#panelReadInstructionsPause'),
+		panelLoadImages = $('#panelLoadImages'),
 		panelPause = $('#panelPause'),
+		panelPlayAgain = $('#panelPlayAgain'),
 		playerOptions = $('#playerOptions'),
 		playerSelected = 'adhara',
 		script,
@@ -461,13 +482,76 @@
 	}
 
 	buttonPlayGame.click( function () {
-		startGame();
 		panelReadInstructions.toggleClass('display-none');
+		panelLoadImages.toggleClass('display-none');
+
+		loadingImages();
 	});
+
+
+	// Load and cache images
+	var urlBackgroundImage1,
+		urlBackgroundImagePatter,
+		urlBackgroundImageAndroid,
+		urlExtrasCave,
+		urlWolfImage,
+		urlRockObstacle,
+		urlWarlock,
+		urlShoot1,
+		urlPotion,
+		urlHeartDragon,
+		playerSpriteRightAdhara,
+		playerSpriteLeftAdhara,
+		playerSpriteRightAiden,
+		playerSpriteLeftAiden;
+
+
+	function loadingImages () {
+
+		var ASSET_MANAGER = new AssetManager();
+
+		ASSET_MANAGER.queueDownload('img/background-1.jpg');
+		ASSET_MANAGER.queueDownload('img/background-pattern.jpg');
+		ASSET_MANAGER.queueDownload('img/background-android.jpg');
+		ASSET_MANAGER.queueDownload('img/extrasCave.png');
+		ASSET_MANAGER.queueDownload('img/wolf-animation.png');
+		ASSET_MANAGER.queueDownload('img/small-rock.png');
+		ASSET_MANAGER.queueDownload('img/warlock.png');
+		ASSET_MANAGER.queueDownload('img/shoot-1.png');
+		ASSET_MANAGER.queueDownload('img/potion.png');
+		ASSET_MANAGER.queueDownload('img/heart-dragon.png');
+
+		ASSET_MANAGER.queueDownload('img/player-actions-rigth-adhara.png');
+		ASSET_MANAGER.queueDownload('img/player-actions-left-adhara.png');
+
+		ASSET_MANAGER.queueDownload('img/player-actions-rigth-aidem.png');
+		ASSET_MANAGER.queueDownload('img/player-actions-left-aidem.png');
+
+
+		ASSET_MANAGER.downloadAll( function() {
+
+			urlBackgroundImage1 = ASSET_MANAGER.getAsset('img/background-1.jpg');
+			urlBackgroundImagePatter = ASSET_MANAGER.getAsset('img/background-pattern.jpg');
+			urlBackgroundImageAndroid = ASSET_MANAGER.getAsset('img/background-android.jpg');
+			urlExtrasCave = ASSET_MANAGER.getAsset('img/extrasCave.png');
+			urlWolfImage = ASSET_MANAGER.getAsset('img/wolf-animation.png');
+			urlRockObstacle = ASSET_MANAGER.getAsset('img/small-rock.png');
+			urlWarlock = ASSET_MANAGER.getAsset('img/warlock.png');
+			urlShoot1 = ASSET_MANAGER.getAsset('img/shoot-1.png');
+			urlPotion = ASSET_MANAGER.getAsset('img/potion.png');
+			urlHeartDragon = ASSET_MANAGER.getAsset('img/heart-dragon.png');
+			playerSpriteRightAdhara = ASSET_MANAGER.getAsset('img/player-actions-rigth-adhara.png');
+			playerSpriteLeftAdhara = ASSET_MANAGER.getAsset('img/player-actions-left-adhara.png');
+
+			playerSpriteRightAiden = ASSET_MANAGER.getAsset('img/player-actions-rigth-aidem.png');
+			playerSpriteLeftAiden = ASSET_MANAGER.getAsset('img/player-actions-left-aidem.png');
+		});
+	}
 
 
 	// Start game function
 	function startGame () {
+		panelLoadImages.toggleClass('display-none');
 		playerOptions.toggleClass('display-none');
 
 		script = document.createElement("script");

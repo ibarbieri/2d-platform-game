@@ -81,6 +81,7 @@
 		crouchKeyDropLeft = false,
 		jump = false,
 		attacking = false,
+		attackRightSprite = false,
 		extrasPlusImages,
 		wolfPush = true,
 		warlockShooting = false,
@@ -107,7 +108,6 @@
 	---------------------------------------------------------------*/
 	var backgroundImage1 = new Image(),
 		backgroundImagePatter = new Image(),
-		backgroundImagePatterIpad = new Image(),
 		backgroundImageAndroid = new Image(),
 		playerSpriteRight = new Image(),
 		playerSpriteLeft = new Image(),
@@ -119,17 +119,16 @@
 		potion = new Image(),
 		heartDragon = new Image();
 
-		backgroundImage1.src = 'img/background-1.jpg';
-		backgroundImagePatter.src = 'img/background-pattern.jpg';
-		backgroundImagePatterIpad.src = 'img/background-pattern-ipad.jpg';
-		backgroundImageAndroid.src = 'img/background-android.jpg';
-		extrasCave.src = 'img/extrasCave.png';
-		wolfImage.src = 'img/wolf-animation.png';
-		rockObstacle.src = 'img/small-rock.png';
-		warlock.src = 'img/warlock.png';
-		shoot1.src = 'img/shoot-1.png';
-		potion.src = 'img/potion.png';
-		heartDragon.src = 'img/heart-dragon.png';
+		backgroundImage1.src = urlBackgroundImage1.src;
+		backgroundImagePatter.src = urlBackgroundImagePatter.src;
+		backgroundImageAndroid.src = urlBackgroundImageAndroid.src;
+		extrasCave.src = urlExtrasCave.src;
+		wolfImage.src = urlWolfImage.src;
+		rockObstacle.src = urlRockObstacle.src;
+		warlock.src = urlWarlock.src;
+		shoot1.src = urlShoot1.src;
+		potion.src = urlPotion.src;
+		heartDragon.src = urlHeartDragon.src;
 
 
 		if (playerSelected == 'adhara') {
@@ -137,16 +136,16 @@
 			playerSelectedLife = $('#adarhaLife');
 			playerSelectedLife.toggleClass('display-none');
 
-			playerSpriteRight.src = 'img/player-actions-rigth-adhara.png';
-			playerSpriteLeft.src = 'img/player-actions-left-adhara.png';
+			playerSpriteRight.src = playerSpriteRightAdhara.src;
+			playerSpriteLeft.src = playerSpriteLeftAdhara.src;
 
 		} else if (playerSelected == 'aidem') {
 
 			playerSelectedLife = $('#aidenLife')
 			playerSelectedLife.toggleClass('display-none');
 
-			playerSpriteRight.src = 'img/player-actions-rigth-aidem.png';
-			playerSpriteLeft.src = 'img/player-actions-left-aidem.png';
+			playerSpriteRight.src = playerSpriteRightAiden.src;
+			playerSpriteLeft.src = playerSpriteLeftAiden.src;
 
 		}
 
@@ -347,6 +346,7 @@
 				playerAttackRight = true;
 				player.attack = true;
 				attacking = true;
+				// attackRightSprite = true;
 
 				setFramesSpriteAnimation('attackRight', 0, 9, 65);
 
@@ -631,6 +631,23 @@
 
 		renderPotion();
 	}
+
+
+
+	// /* Animation Sprite
+	// ---------------------------------------------------------------*/
+	// function animationSprite () {
+
+	// 	requestAnimationFrame(animationSprite);
+
+	// 	if (attackRightSprite) {
+	// 		setFramesSpriteAnimation('attackRight', 0, 9, 65);
+	// 	}
+
+
+	// }
+
+
 
 
 	/* player
@@ -1470,6 +1487,39 @@
 		// Show the panel pause
 		panelPause.toggleClass('display-none');
 		stopEnemiesAndObstacles = true;
+	});
+
+	// Play again or resmen
+	buttonResumen.on('click', function () {
+		// Show the play again panel
+		panelPause.toggleClass('display-none');
+		panelPlayAgain.toggleClass('display-none');
+	});
+
+	buttonPlayAgain.on('click', function () {
+		enemiesArray.length = 0;
+		obstaclesArray.length = 0;
+		heartDragonArray.length = 0;
+		potionsArray.length = 0;
+		background.x = 0;
+		player.life = 4500;
+		playerLoose = false;
+		playerWin = false;
+		wolfPush = true;
+		player.score = 0;
+		player.potions = 0;
+		player.heartsDragon = 0;
+		stopEnemiesAndObstacles = false;
+
+		playerSelectedLife.css('background-position-x', 0);
+
+		panelPlayAgain.toggleClass('display-none');
+	});
+
+
+	buttonBackResumen.on('click', function () {
+		panelPause.toggleClass('display-none');
+		panelPlayAgain.toggleClass('display-none');
 	});
 
 
