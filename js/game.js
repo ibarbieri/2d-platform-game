@@ -59,6 +59,7 @@
 	var onObstacle,
 		playerOnObstacle,
 		adarhaLife = $('#adarhaLife'),
+		playerSelectedLife,
 		adarhaScore = $('#adarhaScore'),
 		adarhaHeartsDragon = $('#adarhaHeartsDragon'),
 		controls = document.getElementById('controls'),
@@ -75,10 +76,9 @@
 		playerAttackLeft = false,
 		playerCrouchRight = false,
 		playerCrouchLeft = false,
-		stopAnimation = false,
-		stopEventLeft = false,
-		stopEventRight = false,
 		crouch = false,
+		crouchKeyDropRight = false,
+		crouchKeyDropLeft = false,
 		jump = false,
 		attacking = false,
 		extrasPlusImages,
@@ -95,7 +95,12 @@
 		playAgainLoose = $('#playAgainLoose'),
 		panelWin = $('#panelWin'),
 		getScoreWin = $('#getScoreWin'),
-		getScoreLoose = $('#getScoreLoose');
+		getScoreLoose = $('#getScoreLoose'),
+		stopEnemiesAndObstacles = false;
+		mute = $('#mute'),
+		noMute = $('#noMute'),
+		backgroundSoundEnable = true,
+		pauseGame = $('#pauseGame');
 
 
 	/* images
@@ -129,12 +134,18 @@
 
 		if (playerSelected == 'adhara') {
 
-			playerSpriteRight.src = 'img/player-actions-right-adhara.png';
+			playerSelectedLife = $('#adarhaLife');
+			playerSelectedLife.toggleClass('display-none');
+
+			playerSpriteRight.src = 'img/player-actions-rigth-adhara.png';
 			playerSpriteLeft.src = 'img/player-actions-left-adhara.png';
 
 		} else if (playerSelected == 'aidem') {
 
-			playerSpriteRight.src = 'img/player-actions-right-aidem.png';
+			playerSelectedLife = $('#aidenLife')
+			playerSelectedLife.toggleClass('display-none');
+
+			playerSpriteRight.src = 'img/player-actions-rigth-aidem.png';
 			playerSpriteLeft.src = 'img/player-actions-left-aidem.png';
 
 		}
@@ -226,9 +237,10 @@
 		// run through the loop again to refresh the game all time
 		requestAnimationFrame(update);
 
-
 		// Add background sound
-		backgroundSound.play();
+		if (backgroundSoundEnable) {
+			backgroundSound.play();
+		}
 
 		if (playerLoose) {
 			backgroundSound.pause();
@@ -252,136 +264,9 @@
 	 	}
 
 
-		// // up arrow or space
-		// if (keys[38] || keys[32] || mobileJump) {
-
-		// 	onObstacle = false;
-
-		// 	if (!background.jumping) {
-
-		// 		background.jumping = true;
-
-		// 		setFramesSpriteAnimation('jumpingRight', 0, 9, 30);
-
-		// 		background.velY =+ (background.speed * 2);
-
-		// 		playerJumpSound.play();
-		// 	}
-		// }
-
-		// // down arrow
-		// if (keys[40] || mobileCrouch) {
-
-		// 	// Function OK when the player only walk from right
-		// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
-
-		// 	if (frame >= 5) {
-		// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-		// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-		// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
-		// 	}
-
-
-		// 	// if (walkingRight == true || walkingStopRight == true) {
-		// 	// 	// Function OK when the player only walk from right
-		// 	// 	setFramesSpriteAnimation('crouchRight', 0, 9, 50);
-
-		// 	// 	if (frame >= 5) {
-		// 	// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-		// 	// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-		// 	// 		setFramesSpriteAnimation('crouchRight', 5, 1, 50);
-		// 	// 	}
-
-		// 	// } else if (walkingLeft == true || walkingStopLeft == true) {
-		// 	// 	// Function OK when the player only walk from right
-		// 	// 	setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
-
-		// 	// 	if (frame >= 5) {
-		// 	// 		// Only show the 6 frame becouse my animation start in 6 and have 1 frame of lenght
-		// 	// 		//setFramesSpriteAnimation(animation, frameStartPosition, frameCuantity, msPerFrame)
-		// 	// 		setFramesSpriteAnimation('crouchLeft', 5, 1, 50);
-		// 	// 	}
-		// 	// }
-		// }
-
-
-		// // left arrow
-		// if (keys[37] || mobileLeft) {
-		// 	if (background.velX < background.speed  ||  extras.velX < extras.speed) {
-
-		// 		background.velX++;
-
-		// 		extras.velX++;
-
-		// 		walkingLeft = true;
-
-		// 		setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
-		// 	}
-		// }
-
-
-		// // If right arrow is drop
-		// if (keys[39] == false) {
-		// 	if (!walkingLeft) {
-		// 		setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
-		// 	}
-		// }
-
-
-		// // right arrow
-		// if (keys[39] || mobileRight) {
-		// 	if (background.velX >- background.speed && extras.velX >- extras.speed) {
-
-		// 		background.velX--;
-
-		// 		extras.velX--;
-
-		// 		walkingRight = true;
-
-		// 		setFramesSpriteAnimation('walkingRight', 0, 9, 100);
-		// 	}
-		// }
-
-
-		// // If left arrow is drop
-		// if (keys[37] == false) {
-		// 	if (!walkingRight) {
-		// 		setFramesSpriteAnimation('walkingStopLeft', 0, 9, 100);
-		// 	}
-		// }
-
-
-		// // a key
-		// if (keys[65] || mobileAttack) {
-
-		// 	player.attack = true;
-
-		// 	setFramesSpriteAnimation('attackRight', 0, 9, 65);
-
-		// 	attacking = true;
-
-		// 	playerAttackSound.play();
-		// }
-
-		// // If down arrow is drop
-		// if (keys[40] == false) {
-
-		// 	// Reset the player dimentions.
-		// 	player.y = canvasHeight - 190;
-		// 	player.playerHeight = 180;
-
-		// 	// if (walkingLeft == false && walkingRight == false) {
-		// 		setFramesSpriteAnimation('walkingStopRight', 0, 9, 90);
-		// 	// }
-		// }
-		//
-
-
 		// If the player is on the start position
-		if (walkingLeft == false && walkingRight == false) {
-			if (crouch == false) {
-				setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
-			}
+		if (!walkingLeftDirection && !walkingRightDirection) {
+			setFramesSpriteAnimation('walkingStopRight', 0, 9, 100);
 		}
 
 		// right arrow
@@ -408,7 +293,9 @@
 
 					extras.velX--;
 
-					setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+					if (!background.jumping) {
+						setFramesSpriteAnimation('walkingRight', 0, 9, 100);
+					}
 
 					walkingRight = true;
 				}
@@ -434,7 +321,7 @@
 			// crouch right
 			if (keys[40] || mobileCrouch) {
 
-				playerCrouchRight = true;
+				crouchKeyDropRight = false;
 
 				setFramesSpriteAnimation('crouchRight', 0, 9, 50);
 
@@ -444,10 +331,14 @@
 			}
 
 			// If down arrow is drop
-			if (keys[40] == false) {
-				// Reset the player dimentions.
-				player.y = canvasHeight - 190;
-				player.playerHeight = 180;
+			if (!crouchKeyDropRight) {
+				if (keys[40] == false) {
+					// Reset the player dimentions.
+					player.y = canvasHeight - 190;
+					player.playerHeight = 180;
+
+					crouchKeyDropRight = true;
+				}
 			}
 
 			// a key
@@ -481,7 +372,10 @@
 					extras.velX++;
 					walkingLeft = true;
 
-					setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+					if (!background.jumping) {
+						setFramesSpriteAnimation('walkingLeft', 0, 9, 100);
+					}
+
 				}
 			}
 
@@ -502,6 +396,9 @@
 
 			// crouch left
 			if (keys[40] || mobileCrouch) {
+
+				crouchKeyDropLeft = false;
+
 				setFramesSpriteAnimation('crouchLeft', 0, 9, 50);
 
 				if (frame >= 5) {
@@ -510,18 +407,20 @@
 			}
 
 			// If down arrow is drop
-			if (keys[40] == false) {
-				// Reset the player dimentions.
-				player.y = canvasHeight - 190;
-				player.playerHeight = 180;
+			if (!crouchKeyDropLeft) {
+				if (keys[40] == false) {
+					// Reset the player dimentions.
+					player.y = canvasHeight - 190;
+					player.playerHeight = 180;
 
-				// Tengo que hacer que esto se ejecute pero cuando
-				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 90);
+					crouchKeyDropLeft = true;
+				}
 			}
 
 			// a key
 			if (keys[65] || mobileAttack) {
 
+				playerAttackLeft = true;
 				player.attack = true;
 				setFramesSpriteAnimation('attackLeft', 0, 9, 65);
 				attacking = true;
@@ -529,14 +428,21 @@
 				playerAttackSound.play();
 			}
 
-		}
+			if (!walkingLeft && !background.jumping && !playerCrouchLeft && !playerAttackLeft) {
+				setFramesSpriteAnimation('walkingStopLeft', 0, 9, 90);
+			}
 
+			walkingLeft = false;
+			playerCrouchLeft = false;
+			playerAttackLeft = false;
+
+
+		}
 
 		// reset the player attack to false when the user drop the key a or the mobile button attack
 		if (keys[65] == false || mobileAttack == false) {
 			player.attack = false;
 		}
-
 
 		// apply friction to the horizontal movement of the background
 		background.velX *= background.friction;
@@ -680,8 +586,6 @@
 
 			}
 
-
-
 			obstaclesArray[j].x += obstaclesArray[j].velocityX;
 		};
 
@@ -703,6 +607,11 @@
 			checkCollision(player, heartDragonArray[r]);
 		}
 
+		// Game pause
+		if (stopEnemiesAndObstacles) {
+			enemiesArray.length = 0;
+			obstaclesArray.length = 0;
+		}
 
 		// render all the game
 		renders();
@@ -759,6 +668,7 @@
 
 		lastUpdateTime = Date.now();
 	}
+
 
 	/**
 	 * Draw the sprite animation depending on the direction of the arrow down
@@ -852,14 +762,14 @@
 		if (warlockShooting == false) {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
-			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 2, 15, 50));
+			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 2, 15, 100));
 		}
 	}
 
 
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
-		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 150));
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 200));
 
 		warlockShootSound.play();
 
@@ -875,12 +785,9 @@
 	var randomTimeObstacles = Math.floor(Math.random() * (7000 - 4000 + 1)) + 4000;
 
 	setInterval(function() {
-
 		if (playerWin == false) {
 			pushObstacle();
 		}
-
-
 	}, randomTimeObstacles);
 
 
@@ -942,7 +849,7 @@
 
 	// Push enemies into the array
 	function pushEnemies () {
-		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 50));
+		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 100));
 		// console.log( (canvasWidth + (-(background.x))) ); 1793
 		// console.log(background.x);-843 esto empieza a sumar así se va moviendo para la izq.
 	}
@@ -1088,7 +995,7 @@
 
 	// Push potion
 	function addPotion () {
-		potionsArray.push(new Potions(5000, 'potion', 0, potion, canvasWidth + (-(background.x)), canvasHeight - 210, 50, 50, 9));
+		potionsArray.push(new Potions(5000, 'potion', 0, potion, canvasWidth + (-(background.x)), canvasHeight - 65, 50, 50, 9));
 		removePotionElement = true;
 	}
 
@@ -1424,38 +1331,38 @@
 
 		switch (player.life) {
 			case 4000:
-				$('#adarhaLife').css('background-position-x', -widthOfSpriteEnergy);
+				playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
 			break;
 
 			case 3500:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 2));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
 			break;
 
 			case 3000:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 3));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
 			break;
 
 			case 2500:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 4));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
 			break;
 
 			case 2000:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 5));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
 			break;
 
 			case 1500:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 6));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
 
 				// Add a potion
 				addPotion();
 			break;
 
 			case 1000:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 7));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
 			break;
 
 			case 500:
-				$('#adarhaLife').css('background-position-x', -(widthOfSpriteEnergy * 8));
+				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
 
 				// Add a potion
 				addPotion();
@@ -1482,13 +1389,16 @@
 
 			// Play again. Reset all the values
 			playAgainLoose.on('click', function () {
-				enemiesArray.length = 0;
-				obstaclesArray.length = 0;
 				heartDragonArray.length = 0;
 				potionsArray.length = 0;
 				background.x = 0;
+				player.life = 4500;
+				playerLoose = false;
+				playerWin = false;
+				wolfPush = true;
 
-				player.life = 4000;
+				playerSelectedLife.css('background-position-x', 0);
+
 				player.score = 0;
 				player.potions = 0;
 				player.heartsDragon = 0;
@@ -1535,21 +1445,53 @@
 
 
 
-	/* Game pause and start
+	/* Game actions
 	---------------------------------------------------------------*/
-	var pauseGame = $('#pauseGame');
 
-	pauseGame.on('click', function () {
+	// Game continue
+	buttonReanudar.click( function () {
+		panelPause.toggleClass('display-none');
+		stopEnemiesAndObstacles = false;
+	});
 
-		// PROBAR ESTO DESTRO DEL LOOP. DEBERIA ANDAR DENTRO DEL requestanimationframe
-		cancelAnimationFrame(requestAnimationFrame(update));
+	buttonInstructions.click( function () {
+		panelPause.toggleClass('display-none');
+		panelReadInstructionsPause.toggleClass('display-none');
+	});
 
-		//panelPause.toggleClass('display-none');
-
+	buttonBack.click( function () {
+		panelPause.toggleClass('display-none');
+		panelReadInstructionsPause.toggleClass('display-none');
 	});
 
 
+	// Game pause
+	pauseGame.on('click', function () {
+		// Show the panel pause
+		panelPause.toggleClass('display-none');
+		stopEnemiesAndObstacles = true;
+	});
 
+
+	//Game mute
+	mute.on('click', function () {
+		backgroundSoundEnable = false;
+		backgroundSound.pause();
+
+		mute.toggleClass('display-none');
+		noMute.toggleClass('display-none');
+	});
+
+	noMute.on('click', function () {
+		backgroundSound.play();
+
+		noMute.toggleClass('display-none');
+		mute.toggleClass('display-none');
+	});
+
+
+	/* Show win panel
+	---------------------------------------------------------------*/
 	function showWinPanel () {
 		// Show the Win panel
 		panelWin.removeClass('display-none');
@@ -1632,6 +1574,13 @@
 
 	});
 
+
+	// Prevent the scroll in the page
+	$('body').on('touchmove', function (event) {
+		event.preventDefault();
+	});
+
+
 	// listen when a mobile button is pressed
 	controls.addEventListener("touchstart", function (event) {
 		switch (event.target.className) {
@@ -1657,7 +1606,33 @@
         }
 	});
 
-	// listen when a mobile button is pressed
+
+	controls.addEventListener("touchEvent.targetTouches", function (event) {
+		switch (event.target.className) {
+            case 'top-arrow':
+          		mobileJump = true;
+            break;
+
+            case 'down-arrow':
+          		mobileCrouch = true;
+            break;
+
+            case 'left-arrow':
+            	mobileLeft = true;
+            break;
+
+            case 'right-arrow':
+            	mobileRight = true;
+            break;
+
+            case 'attack-key':
+            	mobileAttack = true;
+            break;
+        }
+	});
+
+
+	// listen when a mobile button is dropped
 	controls.addEventListener("touchend", function (event) {
 		switch (event.target.className) {
             case 'top-arrow':
@@ -1681,6 +1656,7 @@
             break;
         }
 	});
+
 
 	//Call de update function when the page load.
 	// win.addEventListener("load", function(){

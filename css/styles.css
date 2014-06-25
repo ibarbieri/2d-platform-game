@@ -111,8 +111,13 @@ body {
 	right: 0;
 }
 
-/*#playerOptions #adarhaScore {
-}*/
+#playerOptions #aidenLife {
+	background: url('../img/energy-aiden.png') no-repeat;
+	width: 270px;
+	height: 108px;
+	margin: 8px 0 0 15px;
+	text-indent: -9999px;
+}
 
 #playerOptions #adarhaLife {
 	background: url('../img/energy-adhara.png') no-repeat;
@@ -231,20 +236,39 @@ body {
 }
 
 #panelChoosePlayer .content {
-	margin: 230px auto 0 auto;
-/*	width: 472px;*/
+	margin: 235px auto 0 auto;
+	width: 480px;
 	text-align: center;
 }
 
-#panelChoosePlayer .content img {
-	max-width: 100%;
-	max-height: 100%;
-}
-
-#panelChoosePlayer a {
+#panelChoosePlayer .content div {
 	color: #FFF;
 	text-align: center;
-	padding: 0 20px;
+	margin: 0 20px;
+}
+
+#panelChoosePlayer #adhara {
+	background: url('../img/choose-adhara.png') no-repeat;
+	width: 200px;
+	height: 118px;
+	cursor: pointer;
+	float: left;
+}
+
+#panelChoosePlayer #adhara:hover {
+	background-position-x: -200px;
+}
+
+#panelChoosePlayer #aidem {
+	background: url('../img/choose-aidem.png') no-repeat;
+	width: 200px;
+	height: 118px;
+	cursor: pointer;
+	float: left;
+}
+
+#panelChoosePlayer #aidem:hover {
+	background-position-x: -200px;
 }
 
 
