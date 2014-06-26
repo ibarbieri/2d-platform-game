@@ -166,6 +166,59 @@ body {
 	left: 0;
 }
 
+
+/* Ranking */
+#ranking {
+	position: absolute;
+	width: 950px;
+	height: 624px;
+	right: 0;
+	left: 0;
+	margin: 0 auto;
+	background: url('../img/game-ranking-panel.jpg') no-repeat;
+	background-position: top center;
+	z-index: 10;
+	color: #333;
+	font-family: 'Mason', serif;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+#ranking h2 {
+	color: #FFF;
+}
+
+#ranking .content {
+	margin: 50px auto 0 auto;
+	text-align: center;
+}
+
+#ranking .content table {
+	width: 650px;
+	margin: 50px auto 0 auto;
+	background-color: #fff;
+	border: 3px solid #FFF;
+	border-radius: 6px;
+}
+
+#ranking .content table .tr-head {
+	background: url('../img/header-ranking-table.png') repeat-x;
+	background-position: top center;
+	height: 49px;
+	color: #333;
+}
+
+#ranking .content table tbody tr {
+	height: 50px;
+}
+
+#ranking .content table a {
+	color: #333;
+	text-decoration: none;
+}
+
+
+
 /* Panerl Start Game mobile */
 #panelStartMobile {
 	position: absolute;

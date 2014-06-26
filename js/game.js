@@ -2,10 +2,29 @@
 
 	/* requestAnimationFrame fallback
 	---------------------------------------------------------------*/
-    var requestAnimationFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.webkitRequestAnimationFrame || win.msRequestAnimationFrame;
-    win.requestAnimationFrame = requestAnimationFrame;
+	var lastTime = 0,
+		vendors = ['webkit', 'moz'];
 
-    var cancelAnimationFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame || win.webkitCancelAnimationFrame;
+	for(var x = 0; x < vendors.length && !win.requestAnimationFrame; ++x) {
+		win.requestAnimationFrame = win[vendors[x]+'RequestAnimationFrame'];
+		win.cancelAnimationFrame =
+		win[vendors[x]+'CancelAnimationFrame'] || win[vendors[x]+'CancelRequestAnimationFrame'];
+	}
+
+	if (!win.requestAnimationFrame)
+	    win.requestAnimationFrame = function(callback, element) {
+	        var currTime = new Date().getTime();
+	        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+	        var id = win.setTimeout(function() { callback(currTime + timeToCall); },
+	          timeToCall);
+	        lastTime = currTime + timeToCall;
+	        return id;
+	    };
+
+	if (!win.cancelAnimationFrame)
+	    win.cancelAnimationFrame = function(id) {
+	        clearTimeout(id);
+	    };
 
 
 	/* game objects declaration; Player, Background, Extras
@@ -26,7 +45,7 @@
 			heartsDragon : 0,
 			potions : 0,
 			attack : false,
-			aggressive : 25
+			aggressive : 50
 		},
 		background = {
 			x : 0,
@@ -82,6 +101,7 @@
 		jump = false,
 		attacking = false,
 		attackRightSprite = false,
+		attackLeftSprite = false,
 		extrasPlusImages,
 		wolfPush = true,
 		warlockShooting = false,
@@ -227,14 +247,14 @@
 	contextExtras.rotate(-5.3 * Math.PI / 180);
 
 
-
-
 	/* update function
 	---------------------------------------------------------------*/
 	function update () {
 
+		//alert(requestAnimationFrame);
+
 		// run through the loop again to refresh the game all time
-		requestAnimationFrame(update);
+		win.requestAnimationFrame(update);
 
 		// Add background sound
 		if (backgroundSoundEnable) {
@@ -346,9 +366,10 @@
 				playerAttackRight = true;
 				player.attack = true;
 				attacking = true;
-				// attackRightSprite = true;
+				attackRightSprite = true;
 
-				setFramesSpriteAnimation('attackRight', 0, 9, 65);
+				//setFramesSpriteAnimation('attackRight', 0, 9, 65);
+				animationSprite();
 
 				playerAttackSound.play();
 			}
@@ -422,8 +443,11 @@
 
 				playerAttackLeft = true;
 				player.attack = true;
-				setFramesSpriteAnimation('attackLeft', 0, 9, 65);
 				attacking = true;
+				attackLeftSprite = true;
+
+				//setFramesSpriteAnimation('attackLeft', 0, 9, 65);
+				animationSprite();
 
 				playerAttackSound.play();
 			}
@@ -634,19 +658,33 @@
 
 
 
-	// /* Animation Sprite
-	// ---------------------------------------------------------------*/
-	// function animationSprite () {
+	/* Animation Sprite
+	---------------------------------------------------------------*/
+	function animationSprite () {
 
-	// 	requestAnimationFrame(animationSprite);
+		requestAnimationFrame(animationSprite);
 
-	// 	if (attackRightSprite) {
-	// 		setFramesSpriteAnimation('attackRight', 0, 9, 65);
-	// 	}
+		if (attackRightSprite) {
 
+			player.attack = true;
+			setFramesSpriteAnimation('attackRight', 0, 9, 65);
 
-	// }
+		} else if (attackLeftSprite) {
 
+			player.attack = true;
+			setFramesSpriteAnimation('attackLeft', 0, 9, 65);
+
+		}
+
+		if (frame >= 8) {
+			if (attackRightSprite) {
+				attackRightSprite = false;
+			} else if (attackLeftSprite) {
+				attackLeftSprite = false;
+			}
+		}
+
+	}
 
 
 
@@ -1370,8 +1408,10 @@
 			case 1500:
 				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
 
-				// Add a potion
-				addPotion();
+				if (potionsArray.length <= 3) {
+					addPotion();
+				}
+
 			break;
 
 			case 1000:
@@ -1381,8 +1421,10 @@
 			case 500:
 				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
 
-				// Add a potion
-				addPotion();
+				if (potionsArray.length <= 3) {
+					addPotion();
+				}
+
 			break;
 		}
 

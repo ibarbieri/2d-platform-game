@@ -15,147 +15,145 @@
 </head>
 
 <body>
-	<div id="content">
-		<section id="panelStartGame">
-			<div class="content">
-				<a href="#" id="buttonLoginFacebook">
-					<img src="img/login-with-facebook.png">
+	<section id="panelStartGame">
+		<div class="content">
+			<a href="#" id="buttonLoginFacebook">
+				<img src="img/login-with-facebook.png">
+			</a>
+
+			<form action="" method="POST">
+				<label>E-mail</label>
+				<input type="email" value="" id="emailLogin" name="emailLogin">
+
+				<a href="#" id="buttonStartGame" class="visibility-hidden">
+					<img src="img/button-play.png">
 				</a>
 
-				<form action="" method="POST">
-					<label>E-mail</label>
-					<input type="email" value="" id="emailLogin" name="emailLogin">
-
-					<a href="#" id="buttonStartGame" class="visibility-hidden">
-						<img src="img/button-play.png">
-					</a>
-
-					<a href="#" id="startGameMobile" class="display-none visibility-hidden">
-						<img src="img/button-play.png">
-					</a>
-				</form>
-			</div>
-		</section>
-
-
-		<section id="panelChoosePlayer" class="display-none">
-			<div class="content">
-				<div id="adhara"></div>
-				<div id="aidem"></div>
-			</div>
-		</section>
-
-		<section id="panelReadInstructions" class="display-none">
-			<div class="content">
-				<a href="#" id="buttonPlayGame"><img src="img/button-play.png"></a>
-			</div>
-		</section>
-
-		<section id="panelLoadImages" class="display-none">
-			<div class="content">
-				<img src="img/loading.gif" width="60" height="60">
-			</div>
-		</section>
-
-		<section id="panelReadInstructionsPause" class="display-none">
-			<div class="content">
-				<a href="#" id="buttonBack"><img src="img/btn-back.png"></a>
-			</div>
-		</section>
-
-		<section id="panelPause" class="display-none">
-			<div class="content">
-				<a href="#" id="buttonInstructions"><img src="img/btn-read-instructions.png"></a>
-				<a href="#" id="buttonReanudar"><img src="img/btn-continue.png"></a>
-				<a href="#" id="buttonResumen"><img src="img/btn-resumen.png"></a>
-			</div>
-		</section>
-
-		<section id="panelPlayAgain" class="display-none">
-			<div class="content">
-				<h2>¿Estas seguro en reanudar esta partida?</h2>
-
-				<a href="#" id="buttonPlayAgain"><img src="img/btn-si.png"></a>
-				<a href="#" id="buttonBackResumen"><img src="img/btn-no.png"></a>
-			</div>
-		</section>
-
-
-		<section id="panelWin" class="display-none">
-			<div class="content">
-				<h2>Completaste el juego</h2>
-				<p class="score">Puntaje <span id="getScoreWin">11231</span></p>
-
-				<a href="#" id="buttonLoginFacebook">
-					<img src="img/button-shared-facebook.png">
+				<a href="#" id="startGameMobile" class="display-none visibility-hidden">
+					<img src="img/button-play.png">
 				</a>
-				<p>Superá tu puntaje y aparecé en el ranking de los mejores jugadores </p>
-				<a href="#" id="playAgainWin"><img src="img/btn-play-again.png"></a>
-			</div>
-		</section>
+			</form>
+		</div>
+	</section>
 
 
-		<section id="panelGameOver" class="display-none">
-			<div class="content">
-				<p class="score">Puntaje <span id="getScoreLoose">11231</span></p>
+	<section id="panelChoosePlayer" class="display-none">
+		<div class="content">
+			<div id="adhara"></div>
+			<div id="aidem"></div>
+		</div>
+	</section>
 
-				<a href="#" id="buttonLoginFacebook">
-					<img src="img/button-shared-facebook.png">
-				</a>
+	<section id="panelReadInstructions" class="display-none">
+		<div class="content">
+			<a href="#" id="buttonPlayGame"><img src="img/button-play.png"></a>
+		</div>
+	</section>
 
-				<p class="play-again-p">¡Lo sentimos!<br>
-					Vuelve a intentarlo y supera tu marca
-				</p>
-				<a href="#" id="playAgainLoose"><img src="img/btn-play-again.png"></a>
+	<section id="panelLoadImages" class="display-none">
+		<div class="content">
+			<img src="img/loading.gif" width="60" height="60">
+		</div>
+	</section>
 
-			</div>
-		</section>
+	<section id="panelReadInstructionsPause" class="display-none">
+		<div class="content">
+			<a href="#" id="buttonBack"><img src="img/btn-back.png"></a>
+		</div>
+	</section>
 
-		<section id="playerOptions" class="display-none">
-			<div id="adarhaLife" class="display-none"></div>
-			<div id="aidenLife" class="display-none"></div>
-			<div id="adarhaPotion"></div>
-			<div id="adarhaHeartsDragon"> 0 </div>
-			<div id="adarhaScore"></div>
-		</section>
+	<section id="panelPause" class="display-none">
+		<div class="content">
+			<a href="#" id="buttonInstructions"><img src="img/btn-read-instructions.png"></a>
+			<a href="#" id="buttonReanudar"><img src="img/btn-continue.png"></a>
+			<a href="#" id="buttonResumen"><img src="img/btn-resumen.png"></a>
+		</div>
+	</section>
 
-		<div id="controls">
-			<div class="walk-controls">
-				<input type="button" value="" class="left-arrow">
-				<input type="button" value="" class="down-arrow">
-				<input type="button" value="" class="right-arrow">
-			</div>
-			<div class="jump-attack-controls">
-				<input type="button" value="" class="top-arrow">
-				<input type="button" value="" class="attack-key">
-			</div>
+	<section id="panelPlayAgain" class="display-none">
+		<div class="content">
+			<h2>¿Estas seguro en reanudar esta partida?</h2>
+
+			<a href="#" id="buttonPlayAgain"><img src="img/btn-si.png"></a>
+			<a href="#" id="buttonBackResumen"><img src="img/btn-no.png"></a>
+		</div>
+	</section>
+
+
+	<section id="panelWin" class="display-none">
+		<div class="content">
+			<h2>Completaste el juego</h2>
+			<p class="score">Puntaje <span id="getScoreWin">11231</span></p>
+
+			<a href="#" id="buttonLoginFacebook">
+				<img src="img/button-shared-facebook.png">
+			</a>
+			<p>Superá tu puntaje y aparecé en el ranking de los mejores jugadores </p>
+			<a href="#" id="playAgainWin"><img src="img/btn-play-again.png"></a>
+		</div>
+	</section>
+
+
+	<section id="panelGameOver" class="display-none">
+		<div class="content">
+			<p class="score">Puntaje <span id="getScoreLoose">11231</span></p>
+
+			<a href="#" id="buttonLoginFacebook">
+				<img src="img/button-shared-facebook.png">
+			</a>
+
+			<p class="play-again-p">¡Lo sentimos!<br>
+				Vuelve a intentarlo y supera tu marca
+			</p>
+			<a href="#" id="playAgainLoose"><img src="img/btn-play-again.png"></a>
+
+		</div>
+	</section>
+
+	<section id="playerOptions" class="display-none">
+		<div id="adarhaLife" class="display-none"></div>
+		<div id="aidenLife" class="display-none"></div>
+		<div id="adarhaPotion"></div>
+		<div id="adarhaHeartsDragon"> 0 </div>
+		<div id="adarhaScore"></div>
+	</section>
+
+	<div id="controls">
+		<div class="walk-controls">
+			<input type="button" value="" class="left-arrow">
+			<input type="button" value="" class="down-arrow">
+			<input type="button" value="" class="right-arrow">
+		</div>
+		<div class="jump-attack-controls">
+			<input type="button" value="" class="top-arrow">
+			<input type="button" value="" class="attack-key">
+		</div>
+	</div>
+
+	<section id="panelGame">
+		<div class="left-actions">
+			<a href="www.lesath.com.ar">Ver ranking</a> |
+			<a href="www.lesath.com.ar">Compartir</a>
 		</div>
 
-		<section id="panelGame">
-			<div class="left-actions">
-				<a href="www.lesath.com.ar">Creditos</a> |
-				<a href="www.lesath.com.ar">Compartir</a>
-			</div>
+		<div class="brand-lesath">
+			<img src="img/brand-lesath.png">
+		</div>
 
-			<div class="brand-lesath">
-				<img src="img/brand-lesath.png">
-			</div>
+		<div class="right-actions">
+			<a href="https://twitter.com/TCalligaris" target="_blank"><img src="img/icon-twitter.png"></a>
+			<a href="https://www.facebook.com/TiffanyCalligaris" target="_blank"><img src="img/icon-facebook.png"></a>
+			<a href="#" id="pauseGame"><img src="img/icon-pause.png"></a>
+			<a href="#" id="mute"><img src="img/icon-sound.png"></a>
+			<a href="#" id="noMute" class="display-none"><img src="img/icon-sound-mute.png"></a>
+		</div>
+	</section>
 
-			<div class="right-actions">
-				<a href="https://twitter.com/TCalligaris" target="_blank"><img src="img/icon-twitter.png"></a>
-				<a href="https://www.facebook.com/TiffanyCalligaris" target="_blank"><img src="img/icon-facebook.png"></a>
-				<a href="#" id="pauseGame"><img src="img/icon-pause.png"></a>
-				<a href="#" id="mute"><img src="img/icon-sound.png"></a>
-				<a href="#" id="noMute" class="display-none"><img src="img/icon-sound-mute.png"></a>
-			</div>
-		</section>
+	<canvas id="extras"></canvas>
+	<canvas id="extrasStatic"></canvas>
+	<canvas id="player"></canvas>
+	<canvas id="background"></canvas>
 
-		<canvas id="extras"></canvas>
-		<canvas id="extrasStatic"></canvas>
-		<canvas id="player"></canvas>
-		<canvas id="background"></canvas>
-
-	</div>
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/asset-manager.js"></script>
@@ -256,6 +254,11 @@
 		$('#panelReadInstructions .content').css('margin-top', 320);
 
 
+		// Loading panel
+		panelLoadImages.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight);
+		$('#panelLoadImages .content').css('margin-top', 320);
+
+
 		// Game panels and player options
 		$('#playerOptions').css('width', canvasWidth).css('top', 80);
 		$('#panelGame').css('width', canvasWidth).css('top', 500);
@@ -319,12 +322,19 @@
 		panelReadInstructions.css('background-size', canvasWidth, canvasHeight);
 		$('#panelReadInstructions .content').css('margin-top', 260);
 
+
+		// Loading panel
+		panelLoadImages.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight);
+		$('#panelLoadImages .content').css('margin-top', 120);
+
+
 		// Game panels and player options
 		$('#playerOptions').css('width', canvasWidth);
 		$('#controls').css('width', canvasWidth -20).css('display', 'block').css('padding-left', 15).css('padding-right', 5).css('padding-bottom', 0);
 		$('.jump-attack-controls').css('right', 10).css('float', 'none');
 
 		$('#adarhaLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
+		$('#aidenLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
 		$('#adarhaPotion').css('background-size', 500, 50).css('top', 5).css('width', 115);
 		$('#adarhaHeartsDragon').css('background-size', 110, 50).css('top', 50).css('width', 28).css('padding-top', 17).css('padding-left', 35);
 
@@ -387,6 +397,11 @@
 		$('#panelReadInstructions .content').css('margin-top', 200);
 
 
+		// Loading panel
+		panelLoadImages.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight);
+		$('#panelLoadImages .content').css('margin-top', 90);
+
+
 		// Game panels and player options
 		$('#playerOptions').css('width', canvasWidth);
 
@@ -399,6 +414,7 @@
 		$('.attack-key').css('background-size', 35);
 
 		$('#adarhaLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
+		$('#aidenLife').css('background-size', 1440, 30).css('margin-top', 5).css('width', 160);
 		$('#adarhaPotion').css('background-size', 500, 50).css('top', 5).css('width', 115);
 		$('#adarhaHeartsDragon').css('background-size', 110, 50).css('top', 50).css('width', 28).css('padding-top', 17).css('padding-left', 35);
 
