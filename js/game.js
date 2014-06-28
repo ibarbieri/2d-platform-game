@@ -505,18 +505,6 @@
 
 		} else if (-(background.x) > 850 && -(background.x) >= backgroundImage1.width - canvasWidth - deviceDiferenceImage) {
 
-			// Draw the front of the rock
-			//contextExtrasStatic.clearRect(0, 0, canvasWidth, canvasHeight);
-			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceImage, background.y + 100, extrasCave.width, extrasCave.height);
-			//contextExtrasStatic.clearRect(0, 0, canvasExtrasStatic.width, canvasExtrasStatic.height);
-			//contextExtrasStatic.drawImage(extrasCave, background.x + backgroundImage1.width - 130 - deviceDiferenceCaveImage, background.y, extrasCave.width, extrasCave.height);
-			//console.log('dibujar en ', (background.x + backgroundImage1.width - 130 - deviceDiferenceImage));
-			// var patternCave = contextExtrasStatic.createPattern(extrasCave, 'no-repeat');
-
-			// contextExtrasStatic.fillStyle = patternCave;
-			// contextExtrasStatic.fillRect(400, 0, extrasCave.width, extrasCave.height);
-
-
 			// Add the final sound. Hacer que este sonido empieza antes igual que los disparos del warloc.
 			// Para eso hay que hacer que la condicion de arriba se de antes.
 			backgroundSound.pause();
@@ -820,22 +808,16 @@
 		if (warlockShooting == false) {
 			// new Obstacles('rock', bigRockObstacle, canvasWidth + 1100, canvasHeight - 302, 247, 194, 92),
 			// new Obstacles('water', waterObstacle, canvasWidth + 1500, canvasHeight - 220, 222, 70, 70)
-			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 2, 15, 100));
+			obstaclesArray.push(new Obstacles(400, 'rock', 0, rockObstacle, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 0, 2, 15, 50));
 		}
 	}
 
 
 	// Push obstacles shoot into the array each x seconds que vienen del set interval que dispara la animacion shooting del warlok
 	function pushObstacleEachSeconds () {
-		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, canvasWidth + (-(background.x)), canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 200));
+		obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, warlokShootPosition, canvasHeight - 200, 142, 71, 9, 0, 0.9, 3, 150));
 
 		warlockShootSound.play();
-
-		//console.log( (canvasWidth + (-(background.x))) );
-
-		// La solucion esta en: desde donde se empieza a renderizar el shoot. Deberia ser desde el mismi lugar
-		// en donde frenar el warlok. De ahi en adelante que le empize a restar x.
-		//obstaclesArray.push(new Obstacles(600, 'shoot1', 0, shoot1, 100, canvasHeight - 180, 142, 71, 9, 0, 0.9, 3, 50));
 	}
 
 
@@ -867,7 +849,7 @@
 					obstaclesArray[o].height,
 					0,
 					obstaclesArray[o].frameCuantity,
-					obstaclesArray[o].x + background.x, // -490 es la distancia que esta frenado el warlok desde la cueva. PUEDE VARIAR por device
+					obstaclesArray[o].x + background.x,
 					obstaclesArray[o].y + background.y
 				);
 
@@ -907,9 +889,7 @@
 
 	// Push enemies into the array
 	function pushEnemies () {
-		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 100));
-		// console.log( (canvasWidth + (-(background.x))) ); 1793
-		// console.log(background.x);-843 esto empieza a sumar así se va moviendo para la izq.
+		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 75));
 	}
 
 	/**
@@ -974,7 +954,7 @@
 	 * addFinalEnemie();
 	 */
 	function addFinalEnemie () {
-		enemiesArray.push(new Enemies(4000, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.7, 100, 100));
+		enemiesArray.push(new Enemies(4000, 'warlock', 0, warlock, canvasWidth + (-(background.x)), canvasHeight - 210, 150, 226, 9, 0, 0.7, 100, 200));
 		warlokIsDraw = true;
 	}
 
@@ -1329,7 +1309,7 @@
 
  						//player.life = enemieOrObstacle.energy;
  						// Uso el 3000 para que caiga justo en el swich case de 3000
- 						player.life = 3000;
+ 						player.life = 3500;
 
  						entityIsAlive(player, enemieOrObstacle);
 
@@ -1386,6 +1366,50 @@
 
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
+		console.log(player.life);
+
+
+		// if (player.life <= 4000 && player.life > 3501) {
+		// 	playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
+
+
+		// } else if (player.life <= 3500 && player) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
+
+
+		// } else if (player.life <= 3000) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
+
+
+		// } else if (player.life <= 2500) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
+
+
+		// } else if (player.life <= 2000) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
+
+
+		// } else if (player.life <= 1500) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
+
+		// 	if (player.potions <= 2) {
+
+		// 		console.log(player.potions);
+		// 		addPotion();
+		// 	}
+
+
+		// } else if (player.life <= 1000) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
+
+
+		// } else if (player.life <= 500) {
+		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
+
+		// 	if (player.potions <= 2) {
+		// 		addPotion();
+		// 	}
+		// }
 
 		switch (player.life) {
 			case 4000:
