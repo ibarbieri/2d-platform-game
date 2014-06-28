@@ -254,6 +254,9 @@
 		//alert(requestAnimationFrame);
 
 		// run through the loop again to refresh the game all time
+		// VER SI ESTO ME ESTA BAANDO LA PERFORMANCE. QUE TODO EL TIEMPO VAYA A WIN.
+		// LO HICE ASI PORQUE EN SAFARI ES LA UNICA FORMA QUE ANDE.
+		// PARA EL RESTO ANDA SIN WIN. PERO ARRIBA LE DECLARO UNA VARIABLE QUE SEA IGUAL A WIN.REQUES...
 		win.requestAnimationFrame(update);
 
 		// Add background sound
@@ -1408,7 +1411,9 @@
 			case 1500:
 				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
 
-				if (potionsArray.length <= 3) {
+				if (player.potions <= 2) {
+
+					console.log(player.potions);
 					addPotion();
 				}
 
@@ -1421,7 +1426,7 @@
 			case 500:
 				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
 
-				if (potionsArray.length <= 3) {
+				if (player.potions <= 2) {
 					addPotion();
 				}
 
@@ -1461,6 +1466,7 @@
 				player.score = 0;
 				player.potions = 0;
 				player.heartsDragon = 0;
+				plusHeartsDragon(0);
 
 				panelGameOver.addClass('display-none');
 			});
@@ -1478,25 +1484,25 @@
 	}
 
 
-	function movePotionImage (playerPotions) {
+	function movePotionImage (playerGetPotion) {
 
-		player.potions += playerPotions;
+		player.potions += playerGetPotion;
 
 		switch (player.potions) {
 			case 1:
-				$('#adarhaPotion').css('background-position-x', -widthOfSpritePotion);
+				playerSelectedLife.css('background-position-x', -widthOfSpritePotion);
 			break;
 
 			case 2:
-				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 2));
+				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 2));
 			break;
 
 			case 3:
-				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 3));
+				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 3));
 			break;
 
 			case 4:
-				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 4));
+				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 4));
 			break;
 		}
 
@@ -1551,6 +1557,7 @@
 		player.score = 0;
 		player.potions = 0;
 		player.heartsDragon = 0;
+		plusHeartsDragon(0);
 		stopEnemiesAndObstacles = false;
 
 		playerSelectedLife.css('background-position-x', 0);
@@ -1597,6 +1604,25 @@
 		potionsArray.length = 0;
 		warlockShooting = false;
 		playerWin = true;
+
+		$('#playAgainWin').on('click', function () {
+			heartDragonArray.length = 0;
+			potionsArray.length = 0;
+			background.x = 0;
+			player.life = 4500;
+			playerLoose = false;
+			playerWin = false;
+			wolfPush = true;
+
+			playerSelectedLife.css('background-position-x', 0);
+
+			player.score = 0;
+			player.potions = 0;
+			player.heartsDragon = 0;
+			plusHeartsDragon(0);
+
+			panelWin.toggleClass('display-none');
+		});
 
 	}
 
@@ -1690,6 +1716,7 @@
 
             case 'right-arrow':
             	mobileRight = true;
+
             break;
 
             case 'attack-key':

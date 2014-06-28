@@ -132,7 +132,7 @@
 
 	<section id="panelGame">
 		<div class="left-actions">
-			<a href="www.lesath.com.ar">Ver ranking</a> |
+			<a href="ranking.html">Ver ranking</a> |
 			<a href="www.lesath.com.ar">Compartir</a>
 		</div>
 
@@ -291,12 +291,13 @@
     	startGameMobile.toggleClass('display-none').toggleClass('visibility-hidden');
     	$('#panelGame').css('display', 'none');
 
-    	// Full screen and choose player
-		window.document.body.scrollTop = 100;
 
 		$('#startGameMobile').on('click', function () {
 
-			window.document.body.scrollTop = 0;
+			// setTimeout(function () {
+			//   window.scrollTo(0, 1);
+			// }, 500);
+
 
 			// Show choose player panel
 			choosePlayer();
@@ -474,6 +475,11 @@
 
 	// Choose player function
 	function choosePlayer () {
+
+		// setTimeout(function () {
+		// 	window.scrollTo(0, 150)
+		// }, 500);
+
 		panelStartGame.addClass('display-none');
 		panelChoosePlayer.toggleClass('display-none');
 	}
