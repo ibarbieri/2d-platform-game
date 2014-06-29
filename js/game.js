@@ -81,6 +81,7 @@
 		playerSelectedLife,
 		adarhaScore = $('#adarhaScore'),
 		adarhaHeartsDragon = $('#adarhaHeartsDragon'),
+		potionWasAdded = false,
 		controls = document.getElementById('controls'),
 		mobileJump,
 		mobileCrouch,
@@ -1033,8 +1034,10 @@
 
 	// Push potion
 	function addPotion () {
-		potionsArray.push(new Potions(5000, 'potion', 0, potion, canvasWidth + (-(background.x)), canvasHeight - 65, 50, 50, 9));
-		removePotionElement = true;
+		if (player.potions <= 2) {
+			potionsArray.push(new Potions(5000, 'potion', 0, potion, canvasWidth + (-(background.x)), canvasHeight - 65, 50, 50, 9));
+			removePotionElement = true;
+		}
 	}
 
 	// Render potion
@@ -1315,11 +1318,12 @@
 
  						getPotionSound.play();
 
- 						movePotionImage(1);
-
- 						playerUpdateScore(15);
+ 						potionWasAdded = false;
+ 						movePotionImage();
 
  						removePotion();
+
+ 						playerUpdateScore(15);
 
  					} else if (enemieOrObstacle.name == 'heartDragon') {
 
@@ -1366,96 +1370,47 @@
 
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
-		console.log(player.life);
+		if (player.life <= 4000 && player.life > 3501) {
+			playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
 
 
-		// if (player.life <= 4000 && player.life > 3501) {
-		// 	playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
+		} else if (player.life <= 3500 && player.life > 3001) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
 
 
-		// } else if (player.life <= 3500 && player) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
+		} else if (player.life <= 3000 && player.life > 2501) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
 
 
-		// } else if (player.life <= 3000) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
+		} else if (player.life <= 2500 && player.life > 2001) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
 
 
-		// } else if (player.life <= 2500) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
+		} else if (player.life <= 2000 && player.life > 1501) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
 
 
-		// } else if (player.life <= 2000) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
+		} else if (player.life <= 1500 && player.life > 1001) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
+
+			if (!potionWasAdded) {
+				addPotion();
+				potionWasAdded = true;
+			}
+
+		} else if (player.life <= 1000 && player.life > 501) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
 
 
-		// } else if (player.life <= 1500) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
+		} else if (player.life <= 500) {
+			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
 
-		// 	if (player.potions <= 2) {
-
-		// 		console.log(player.potions);
-		// 		addPotion();
-		// 	}
-
-
-		// } else if (player.life <= 1000) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
-
-
-		// } else if (player.life <= 500) {
-		// 	playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
-
-		// 	if (player.potions <= 2) {
-		// 		addPotion();
-		// 	}
-		// }
-
-		switch (player.life) {
-			case 4000:
-				playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
-			break;
-
-			case 3500:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
-			break;
-
-			case 3000:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
-			break;
-
-			case 2500:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
-			break;
-
-			case 2000:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
-			break;
-
-			case 1500:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
-
-				if (player.potions <= 2) {
-
-					console.log(player.potions);
-					addPotion();
-				}
-
-			break;
-
-			case 1000:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
-			break;
-
-			case 500:
-				playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
-
-				if (player.potions <= 2) {
-					addPotion();
-				}
-
-			break;
+			if (!potionWasAdded) {
+				addPotion();
+				potionWasAdded = true;
+			}
 		}
+
 
 
 		if (player.life < 0) {
@@ -1510,23 +1465,21 @@
 
 	function movePotionImage (playerGetPotion) {
 
-		player.potions += playerGetPotion;
+		player.potions += 1;
+
+		console.log(player.potions);
 
 		switch (player.potions) {
 			case 1:
-				playerSelectedLife.css('background-position-x', -widthOfSpritePotion);
+				$('#adarhaPotion').css('background-position-x', -widthOfSpritePotion);
 			break;
 
 			case 2:
-				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 2));
+				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 2));
 			break;
 
 			case 3:
-				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 3));
-			break;
-
-			case 4:
-				playerSelectedLife.css('background-position-x', -(widthOfSpritePotion * 4));
+				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 3));
 			break;
 		}
 
