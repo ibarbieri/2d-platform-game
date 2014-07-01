@@ -15,6 +15,13 @@
 </head>
 
 <body>
+
+<!-- <form action="" method="POST" id="ss-form" target="no-target">
+
+	<input type="text" name="entry.224083731" value="" class="ss-q-short" id="entry_224083731" dir="auto" aria-label="E-mail  " title="">
+	<button type="submit" name="submit" value="Enviar" id="ss-submit">enviar</button>
+
+</form>-->
 	<section id="panelStartGame">
 		<div class="content">
 			<a href="#" id="buttonLoginFacebook">
@@ -98,7 +105,7 @@
 		<div class="content">
 			<p class="score">Puntaje <span id="getScoreLoose">11231</span></p>
 
-			<a href="#" id="buttonLoginFacebook">
+			<a href="#" id="buttonShareScore">
 				<img src="img/button-shared-facebook.png">
 			</a>
 
@@ -206,6 +213,74 @@
 			element.webkitRequestFullscreen();
 		}
 	}
+
+
+
+	/* emails form
+	---------------------------------------------------------------*/
+	// $('#ss-form').one('submit',function () {
+	// 	var emailAddress = encodeURIComponent($('#entry.224083731').val());
+	// 	var baseURL = 'https://docs.google.com/forms/d/1aFmNkkViJJzTIGcSM0f7mnQDyjvltnc_FvMWzMLzdGM/formResponse?';
+	// 	var submitRef = '&submit=submit';
+
+	// 	var submitURL = (baseURL + emailAddress + submitRef);
+
+	// 	$(this)[0].action = submitURL;
+	// });
+
+
+
+	/* facebook login and score
+	---------------------------------------------------------------*/
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId      : '803341606365697',
+			cookie     : true,  // enable cookies to allow the server to access
+			                // the session
+			xfbml      : true,  // parse social plugins on this page
+			version    : 'v2.0' // use version 2.0
+		});
+	};
+
+
+
+	// Load the SDK asynchronously
+	(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "http://connect.facebook.net/en_US/sdk.js";
+	fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+
+
+	// Facebook user id CROSS GAME
+	var fbUserId;
+
+	buttonLoginFacebook.on('click', function () {
+
+		FB.login(function(response) {
+
+	        if (response.authResponse) {
+	            //console.log(response); // dump complete info
+	            access_token = response.authResponse.accessToken; //get access token
+	            fbUserId = response.authResponse.userID; // get the facebook user id
+
+	            FB.api('/me', function(response) {
+	                user_email = response.email; //get user email
+	          // you can store this data into your database
+	            });
+
+	        } else {
+	            //user hit cancel button
+	        }
+	    }, {
+	        scope: 'public_profile,email,publish_actions,friends_games_activity,user_games_activity'
+	    });
+	});
+
+
+
 
 
 	/* devices adaptations
@@ -433,13 +508,11 @@
 		canvasHeight = 755;
 		warlokShootPosition = 9300;
 
-
 		// Diferences in devices
 		deviceDiferenceImage = 0;
 		deviceDiferenceCaveImage = 100;
 		widthOfSpriteEnergy = 275;
 		widthOfSpritePotion = 180;
-
 
 		// Show / hide elements
 		buttonStartGame.toggleClass('visibility-hidden');
@@ -482,11 +555,6 @@
 
 	// Choose player function
 	function choosePlayer () {
-
-		// setTimeout(function () {
-		// 	window.scrollTo(0, 150)
-		// }, 500);
-
 		panelStartGame.addClass('display-none');
 		panelChoosePlayer.toggleClass('display-none');
 	}

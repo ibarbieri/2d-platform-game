@@ -1319,6 +1319,7 @@
  						getPotionSound.play();
 
  						potionWasAdded = false;
+
  						movePotionImage();
 
  						removePotion();
@@ -1415,6 +1416,11 @@
 
 		if (player.life < 0) {
 
+			// Post score
+			$('#buttonShareScore').on('click', function () {
+				postScore(player.score);
+			});
+
 			// Show the Game Over panel
 			panelGameOver.removeClass('display-none');
 			getScoreLoose.html(player.score);
@@ -1432,6 +1438,8 @@
 
 			// Play again. Reset all the values
 			playAgainLoose.on('click', function () {
+				enemiesArray.length = 0;
+				obstaclesArray.length = 0;
 				heartDragonArray.length = 0;
 				potionsArray.length = 0;
 				background.x = 0;
@@ -1439,13 +1447,15 @@
 				playerLoose = false;
 				playerWin = false;
 				wolfPush = true;
-
-				playerSelectedLife.css('background-position-x', 0);
-
 				player.score = 0;
 				player.potions = 0;
 				player.heartsDragon = 0;
 				plusHeartsDragon(0);
+				stopEnemiesAndObstacles = false;
+
+				playerSelectedLife.css('background-position-x', 0);
+				$('#adarhaPotion').css('background-position-x', 0);
+				potionWasAdded = false;
 
 				panelGameOver.addClass('display-none');
 			});
@@ -1466,8 +1476,6 @@
 	function movePotionImage (playerGetPotion) {
 
 		player.potions += 1;
-
-		console.log(player.potions);
 
 		switch (player.potions) {
 			case 1:
@@ -1538,6 +1546,8 @@
 		stopEnemiesAndObstacles = false;
 
 		playerSelectedLife.css('background-position-x', 0);
+		$('#adarhaPotion').css('background-position-x', 0);
+		potionWasAdded = false;
 
 		panelPlayAgain.toggleClass('display-none');
 	});
@@ -1592,6 +1602,9 @@
 			wolfPush = true;
 
 			playerSelectedLife.css('background-position-x', 0);
+			$('#adarhaPotion').css('background-position-x', 0);
+
+			potionWasAdded = false;
 
 			player.score = 0;
 			player.potions = 0;
@@ -1652,6 +1665,59 @@
 			enemiesArray.splice(enemiesArray.indexOf(enemies), 1);
 		}
 	}
+
+
+
+	/* post the score
+	---------------------------------------------------------------*/
+	function postScore (score) {
+
+		/* make the API call */
+	    FB.api(
+	        "/" + fbUserId + "/scores",
+	        "POST",
+	        {
+	            "score": score
+
+	        },
+
+	        function (response) {
+	          if (response && !response.error) {
+	            /* handle the result */
+	            console.log(response);
+
+				FB.ui({
+		            method:             'stream.publish',
+		            message:            'yo hice '+score+' en este juego!',
+		            attachment: {
+		                name:           'Lesath Game',
+		                caption:        'Supera la marca de tus amigos',
+		                description:    'Yo hice '+score+' puntos!!!',
+		                media: 			[{'type':'image', 'src': 'http://www.lesathtrilogy.com/game/img/attack-key.png', 'href':'http://www.lesathtrilogy.com/game/index.html'}],
+		                href:           'http://www.lesathtrilogy.com/game/index.html'
+		            },
+		            action_links: [
+		                { text: 'Juga Lesath', href: 'http://www.lesathtrilogy.com/game/index.html' }
+		            ],
+		            user_message_prompt:    'Tell your friends about Game'
+		        },
+		        function(response) {
+		            if ( response && response.post_id ) {
+		                //alert( 'Post was published.' );
+		            } else {
+		                //alert( 'Post wasn\'t published.' );
+		            }
+		        });
+
+
+	          }
+	        }
+
+	    ); // end FB.api
+
+
+	}
+
 
 
 
