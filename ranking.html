@@ -16,29 +16,26 @@
 
 	<section id="ranking">
 		<div class="content">
-			<h2>Tabla de posiciones</h2>
+			<h2 class="h2-table display-none">Tabla de posiciones</h2>
 
-			<table id="playersScores">
+			<div class="login-content">
+				<h2>Para ver el ranking</h2>
+				<a href="#" id="buttonLoginFacebookRanking">
+					<img src="img/login-with-facebook.png">
+				</a>
+			</div>
+
+			<table id="playersScores" border="0" cellpadding="0" cellspacing="0" class="display-none">
 				<thead>
 					<tr class="tr-head">
-						<th>Posición</th>
+						<th class="position-player">Posición</th>
 						<th>Jugador</th>
 						<th>Puntos</th>
 					</tr>
 				</thead>
-
 				<tbody>
-<!-- 					<tr>
-						<td>1</td>
-						<td>
-							<img src="img/facebook-icon-profile.png">
-							<a href="linkamifacebook.com">Ignacio Barbieri</a>
-						</td>
-						<td>16.440</td>
-					</tr> -->
 				</tbody>
 			</table>
-
 		</div>
 	</section>
 
@@ -67,7 +64,7 @@
 	---------------------------------------------------------------*/
 	window.fbAsyncInit = function() {
 		FB.init({
-			appId      : '803341606365697',
+			appId      : '799970880036103',
 			cookie     : true,  // enable cookies to allow the server to access
 			                // the session
 			xfbml      : true,  // parse social plugins on this page
@@ -79,9 +76,9 @@
 
 	    	if (response.status === 'connected') {
 
-
 			    FB.api(
-				    "/803341606365697/scores",
+				    // "/me/friends",
+				    "/799970880036103/scores",
 				    "GET",
 				    function (response) {
 				      if (response && !response.error) {
@@ -92,20 +89,22 @@
 				       	var playerPosition = 1;
 
 				        for (var i in data) {
-
 				        	var playerName = data[i].user.name;
 				        	var playerScore = data[i].score;
 				        	var playerImage = "http://graph.facebook.com/" + data[i].user.id + "/picture"
 
-							console.log(playerName);
-							console.log(playerScore);
-							console.log(playerImage);
-
-							$('#playersScores tbody:last').append('<tr><td>'+ playerPosition +'</td><td><img src='+ playerImage +'> '+ playerName +' </td><td>' + playerScore +'</td></tr>');
+							$('#playersScores tbody:last').append("<tr><td class='position-player'>"+ playerPosition +"</td><td class='td-align'><img class='player-image' src="+ playerImage +"><span class='player-name'><a href='#'>"+ playerName +"</a></span></td><td>"+ playerScore +"</td></tr>");
 
 							playerPosition++;
 
 				        }
+
+				        // Show the table and hide the login button
+				        $('#playersScores').removeClass('display-none');
+				        $('.h2-table').removeClass('display-none');
+
+				        $('.login-content').addClass('display-none');
+
 				      } else {
 
 				      	console.error(response.error);
@@ -113,20 +112,33 @@
 				      }
 				    }
 				);
-
-
-
 	    	}
+	    });
+	};
+
+
+	$('#buttonLoginFacebookRanking').on('click', function () {
+
+		FB.login(function(response) {
+
+	        if (response.authResponse) {
+	            access_token = response.authResponse.accessToken;
+	            fbUserId = response.authResponse.userID;
+
+	            FB.api('/me', function(response) {
+	                user_email = response.email;
+	            });
+
+	            window.location.reload(true);
+
+	        } else {
+	            //user hit cancel button
+	        }
+	    }, {
+	        scope: 'public_profile,email,publish_actions,friends_games_activity,user_games_activity,user_friends'
 
 	    });
-
-
-
-
-
-
-
-	};
+	});
 
 
 
@@ -138,6 +150,21 @@
 	js.src = "http://connect.facebook.net/en_US/sdk.js";
 	fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));
+
+
+
+	// Device adaptation
+	var userAgent = window.navigator.userAgent;
+
+	if (userAgent.indexOf('iPad') > -1) {
+
+		//Panel game
+		$('#panelGame').css('width', 800);
+
+		// Ranking
+		$('#ranking').css('width', 800);
+	}
+
 
 
 </script>

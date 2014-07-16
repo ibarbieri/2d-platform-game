@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1"/>
 
 	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="icon" type="image/x-icon" href="img/favicon.ico" />
 
 	<meta charset="utf-8"/>
 	<title>Game</title>
@@ -16,33 +17,31 @@
 
 <body>
 
-<!-- <form action="" method="POST" id="ss-form" target="no-target">
+	<iframe name="hidden_iframe" id="hidden_iframe" class="display-none visibility-hidden"></iframe>
 
-	<input type="text" name="entry.224083731" value="" class="ss-q-short" id="entry_224083731" dir="auto" aria-label="E-mail  " title="">
-	<button type="submit" name="submit" value="Enviar" id="ss-submit">enviar</button>
-
-</form>-->
 	<section id="panelStartGame">
 		<div class="content">
 			<a href="#" id="buttonLoginFacebook">
 				<img src="img/login-with-facebook.png">
 			</a>
 
-			<form action="" method="POST">
+			<form action="" method="POST" target="hidden_iframe" id="emailLoginForm">
 				<label>E-mail</label>
-				<input type="email" value="" id="emailLogin" name="emailLogin">
+
+				<input type="email" name="entry.224083731" id="entry_224083731" class="emailLogin">
 
 				<a href="#" id="buttonStartGame" class="visibility-hidden">
-					<img src="img/button-play.png">
+					<button type="submit" name="ss-submit" id="ss-submit"><img src="img/button-play.png"></button>
 				</a>
 
 				<a href="#" id="startGameMobile" class="display-none visibility-hidden">
-					<img src="img/button-play.png">
+					<button type="submit" name="ss-submit" id="ss-submit">
+						<img src="img/button-play.png">
+					</button>
 				</a>
 			</form>
 		</div>
 	</section>
-
 
 	<section id="panelChoosePlayer" class="display-none">
 		<div class="content">
@@ -92,7 +91,7 @@
 			<h2>Completaste el juego</h2>
 			<p class="score">Puntaje <span id="getScoreWin">11231</span></p>
 
-			<a href="#" id="buttonLoginFacebook">
+			<a href="#" class="buttonShareScore">
 				<img src="img/button-shared-facebook.png">
 			</a>
 			<p>Superá tu puntaje y aparecé en el ranking de los mejores jugadores </p>
@@ -105,7 +104,7 @@
 		<div class="content">
 			<p class="score">Puntaje <span id="getScoreLoose">11231</span></p>
 
-			<a href="#" id="buttonShareScore">
+			<a href="#" class="buttonShareScore">
 				<img src="img/button-shared-facebook.png">
 			</a>
 
@@ -139,7 +138,7 @@
 
 	<section id="panelGame">
 		<div class="left-actions">
-			<a href="ranking.html">Ver ranking</a> |
+			<a href="ranking.html">Ranking</a> |
 			<a href="www.lesath.com.ar">Compartir</a>
 		</div>
 
@@ -218,23 +217,48 @@
 
 	/* emails form
 	---------------------------------------------------------------*/
-	// $('#ss-form').one('submit',function () {
-	// 	var emailAddress = encodeURIComponent($('#entry.224083731').val());
-	// 	var baseURL = 'https://docs.google.com/forms/d/1aFmNkkViJJzTIGcSM0f7mnQDyjvltnc_FvMWzMLzdGM/formResponse?';
-	// 	var submitRef = '&submit=submit';
+	var submitted = false;
 
-	// 	var submitURL = (baseURL + emailAddress + submitRef);
+	$('#emailLoginForm').on('submit', function (event) {
 
-	// 	$(this)[0].action = submitURL;
-	// });
+		if ($('.emailLogin').val() == "") {
 
+			alert('Ingresar un e-mail');
+
+		} else {
+
+			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+			if (re.test($('.emailLogin').val()) == true) {
+
+				var emailAddress = encodeURIComponent($('#entry_224083731').val());
+				var baseURL = 'https://docs.google.com/forms/d/1aFmNkkViJJzTIGcSM0f7mnQDyjvltnc_FvMWzMLzdGM/formResponse?';
+				var submitRef = 'submit=submit';
+
+				var submitURL = (baseURL + emailAddress + submitRef);
+
+				$(this)[0].action = submitURL;
+
+				submitted = true;
+
+				// Show the choose player panel
+				panelStartGame.addClass('display-none');
+				panelChoosePlayer.toggleClass('display-none');
+
+			} else {
+				alert('Ingresar un e-mail válido');
+
+			}
+		}
+
+	});
 
 
 	/* facebook login and score
 	---------------------------------------------------------------*/
 	window.fbAsyncInit = function() {
 		FB.init({
-			appId      : '803341606365697',
+			appId      : '799970880036103',
 			cookie     : true,  // enable cookies to allow the server to access
 			                // the session
 			xfbml      : true,  // parse social plugins on this page
@@ -262,20 +286,22 @@
 		FB.login(function(response) {
 
 	        if (response.authResponse) {
-	            //console.log(response); // dump complete info
-	            access_token = response.authResponse.accessToken; //get access token
-	            fbUserId = response.authResponse.userID; // get the facebook user id
+	            access_token = response.authResponse.accessToken;
+	            fbUserId = response.authResponse.userID;
+
+				// Show the choose player panel
+				panelStartGame.addClass('display-none');
+				panelChoosePlayer.toggleClass('display-none');
 
 	            FB.api('/me', function(response) {
-	                user_email = response.email; //get user email
-	          // you can store this data into your database
+	                user_email = response.email;
 	            });
 
 	        } else {
 	            //user hit cancel button
 	        }
 	    }, {
-	        scope: 'public_profile,email,publish_actions,friends_games_activity,user_games_activity'
+	        scope: 'public_profile,email,publish_actions,friends_games_activity,user_games_activity,user_friends'
 	    });
 	});
 
@@ -321,7 +347,9 @@
 
 
 		// Choose player panels
-		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);;
+		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
+		$('#panelChoosePlayer #adhara').css('background-image','url(img/choose-adhara-ipad.png)');
+		$('#panelChoosePlayer #aidem').css('background-image','url(img/choose-aidem-ipad.png)');
 		$('#panelChoosePlayer .content').css('margin-top', 190);
 		$('#panelChoosePlayer .content img').css('width', 160);
 
@@ -333,7 +361,7 @@
 
 		// Loading panel
 		panelLoadImages.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight);
-		$('#panelLoadImages .content').css('margin-top', 320);
+		$('#panelLoadImages').css('margin-top', 90);
 
 
 		// Game panels and player options
@@ -347,7 +375,6 @@
 		$('#adarhaLife').css('width', 270).css('margin-left', 10);
 		$('#adarhaPotion').css('margin-right', -10);
 		$('#adarhaHeartsDragon').css('margin-right', -10);
-
 
 
 	} else if (userAgent.indexOf('Android') > -1) {
@@ -389,13 +416,16 @@
 		panelStartGame.css('background-size', canvasWidth, canvasHeight);
 		$('#panelStartGame .content').css('margin-top', 130);
 		$('#panelStartGame #startGameMobile').css('margin-top', -60);
-		$('#emailLogin').css('width', 200);
+		$('.emailLogin').css('width', 200);
 
 		// Choose player panel
 		panelChoosePlayer.css('width', canvasWidth).css('height', canvasHeight);
 		panelChoosePlayer.css('background-size', canvasWidth, canvasHeight);
 		$('#panelChoosePlayer .content').css('margin-top', 160).css('width', 340);
 		$('#panelChoosePlayer .content div').css('background-size', 300).css('width', 150).css('margin-right', 10).css('margin-left', 10).css('background-position-x', -150);
+
+		$('#panelChoosePlayer #adhara').css('background-image','url(img/choose-adhara-ipad.png)');
+		$('#panelChoosePlayer #aidem').css('background-image','url(img/choose-aidem-ipad.png)');
 
 
 		// Read instructions panel
@@ -449,11 +479,11 @@
 
 
     	// Full screen and choose player
-		$('#startGameMobile').on('click', function () {
-			// Show choose player panel
-			fullScreen(element);
-			choosePlayer();
-		});
+		// $('#startGameMobile').on('click', function () {
+		// 	// Show choose player panel
+		// 	fullScreen(element);
+		// 	choosePlayer();
+		// });
 
 
 		// Start panel
@@ -462,7 +492,7 @@
 		$('#panelStartGame .content').css('margin-top', 100);
 		$('#panelStartGame #startGameMobile').css('margin-top', -60);
 		$('#buttonLoginFacebook img').css('width', 160);
-		$('#emailLogin').css('width', 100);
+		$('.emailLogin').css('width', 100);
 		$('#panelStartGame form').css('margin-top', 20);
 
 
@@ -548,16 +578,17 @@
 
     /* Panels
 	---------------------------------------------------------------*/
-	buttonStartGame.click( function () {
-		choosePlayer();
-	});
+	// buttonStartGame.click( function () {
+	// 	choosePlayer();
+	// });
 
 
 	// Choose player function
-	function choosePlayer () {
-		panelStartGame.addClass('display-none');
-		panelChoosePlayer.toggleClass('display-none');
-	}
+	// function choosePlayer () {
+	// 	alert('ingreso en choose player function');
+	// 	panelStartGame.addClass('display-none');
+	// 	panelChoosePlayer.toggleClass('display-none');
+	// }
 
 
 	// Set the player selected
@@ -583,6 +614,14 @@
 		panelLoadImages.toggleClass('display-none');
 
 		loadingImages();
+
+		if (userAgent.indexOf('Android') > -1 || userAgent.indexOf('iPad') > -1 || userAgent.indexOf('iPhone') > -1) {
+
+			var backgroundSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/loop.ogg")
+
+			backgroundSound.play();
+		}
+
 	});
 
 

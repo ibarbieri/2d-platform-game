@@ -112,19 +112,21 @@ body {
 }
 
 #playerOptions #aidenLife {
-	background: url('../img/energy-aiden.png') no-repeat;
+	background: url('../img/energy-aiden.png') no-repeat 0 0;
 	width: 270px;
 	height: 108px;
 	margin: 8px 0 0 15px;
 	text-indent: -9999px;
+	background-position: 0 0;
 }
 
 #playerOptions #adarhaLife {
-	background: url('../img/energy-adhara.png') no-repeat;
+	background: url('../img/energy-adhara.png') no-repeat 0 0;
 	width: 270px;
 	height: 108px;
 	margin: 8px 0 0 15px;
 	text-indent: -9999px;
+	background-position: 0 0;
 }
 
 #playerOptions #adarhaPotion {
@@ -194,8 +196,8 @@ body {
 }
 
 #ranking .content table {
-	width: 650px;
-	margin: 50px auto 0 auto;
+	width: 660px;
+	margin: 16px auto 0 auto;
 	background-color: #fff;
 	border: 3px solid #FFF;
 	border-radius: 6px;
@@ -208,13 +210,56 @@ body {
 	color: #333;
 }
 
+#ranking .content table thead tr {
+	display: block;
+	position: relative;
+}
+
+#ranking .content table thead tr th {
+	width: 270px;
+	padding-top: 22px;
+	padding-left: 10px;
+}
+
+#ranking .content table tbody {
+	display: block;
+	height: 262px;
+	overflow: auto;
+	width: 100%;
+}
+
 #ranking .content table tbody tr {
 	height: 50px;
+}
+
+#ranking .content table tbody tr td {
+	width: 270px;
+}
+
+#ranking .content table thead tr th.position-player,
+#ranking .content table tbody tr td.position-player {
+	width: 120px;
 }
 
 #ranking .content table a {
 	color: #333;
 	text-decoration: none;
+}
+
+#ranking .content table .player-image {
+	margin: 10px 10px 10px 20px;
+}
+
+#ranking .content table .player-name {
+	position: relative;
+	top: -34px;
+	font-size: 18px;
+	display: block;
+	left: 84px;
+}
+
+#ranking .content table .td-align {
+	text-align: left;
 }
 
 
@@ -260,7 +305,7 @@ body {
 #panelStartGame input {
 	width: 268px;
 	height: 26px;
-	font-family: 'Mason', serif;
+/*	font-family: 'Mason', serif;*/
 	font-size: 16px;
 	background-color: #42210B;
 	color: #FFF;
@@ -272,6 +317,18 @@ body {
 	color: #FFF;
 	display: block;
 	margin: 50px 0 0 0;
+}
+
+#panelStartGame button {
+    background: transparent;
+    font-size: 0;
+    border: none;
+    cursor: pointer;
+}
+
+#panelStartGame button:focus {
+	border: none;
+	outline: none;
 }
 
 
@@ -309,7 +366,7 @@ body {
 }
 
 #panelChoosePlayer #adhara:hover {
-	background-position-x: -200px;
+	background-position: -200px 0;
 }
 
 #panelChoosePlayer #aidem {
@@ -321,7 +378,7 @@ body {
 }
 
 #panelChoosePlayer #aidem:hover {
-	background-position-x: -200px;
+	background-position: -200px 0;
 }
 
 
@@ -575,6 +632,9 @@ body {
 	margin-left: 28px;
 	z-index: 99999;
 	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #panelGame .brand-lesath {
@@ -584,6 +644,9 @@ body {
 	top: -30px;
 	right: 0;
 	left: 0;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #panelGame .right-actions {
@@ -591,6 +654,9 @@ body {
 	top: 22px;
 	right: 30px;
 	display: block;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #panelGame img {
@@ -610,6 +676,8 @@ body {
 	display: none;
 	width: 100%;
 	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #controls .jump-attack-controls {
@@ -618,6 +686,8 @@ body {
 	bottom: 0;
 	right: 80px;
 	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 #controls input {

@@ -174,18 +174,18 @@
 	/* sounds: .wav or .ogg
 	---------------------------------------------------------------*/
 	var backgroundSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/loop.ogg"),
+		backgroundSoundIos = new Audio("sounds/loop-ios.mp3"),
 		finalSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/loop_boss.ogg'),
 		winSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/_/win.ogg"),
 		looseSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/_/lose.ogg"),
 		getHeartSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_health.ogg"),
 		getPotionSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/dwarf_badge_2.ogg'),
-		playerSufferAttackSound = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_hurt.ogg"),
-		playerAttackSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_stone.ogg'),//new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_slash.ogg"),
+		playerSufferAttackSoundAiden = new Audio("http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_hurt.ogg"),
+		playerSufferAttackSoundAdhara = new Audio("sounds/golpeAdhara2.ogg"),
+		playerAttackSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_stone.ogg'),
 		playerJumpSound = new Audio('http://spidersofmirkwood.thehobbit.com/media/sounds/bilbo_jump.ogg'),
 		warlockShootSound = new Audio('sounds/warlok-shoot.ogg');
 
-		//To the final enemie
-		//http://spidersofmirkwood.thehobbit.com/media/sounds/loop_boss.ogg
 
 
    	/* Panel device adaptations
@@ -195,7 +195,8 @@
     	// Game over panel
     	panelGameOver.css('width', canvasWidth).css('height', canvasHeight);
 		panelGameOver.css('background-size', canvasWidth, canvasHeight);
-		$('#panelGameOver .content').css('margin-top', 120);
+		$('#panelGameOver .content').css('margin-top', 130);
+		$('#panelGameOver p').css('margin-top', 15).css('margin-bottom', 15);
 
 	    // Win panel
     	panelWin.css('width', canvasWidth).css('height', canvasHeight);
@@ -207,11 +208,16 @@
 
     	// Game over panel
     	panelGameOver.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
-		$('#panelGameOver .content').css('margin-top', 120);
+		$('#panelGameOver .content').css('margin-top', 160);
+		$('#panelGameOver p').css('margin-top', 14).css('margin-bottom', 10);
+		$('#panelGameOver .score').css('margin-bottom', 30);
+
 
 	    // Win panel
     	panelWin.css('width', canvasWidth).css('height', canvasHeight).css('background-size', canvasWidth, canvasHeight).css('margin-top', 90);
-		$('#panelWin .content').css('margin-top', 130);
+		$('#panelWin .content').css('margin-top', 160);
+		$('#panelWin p').css('margin-top', 14).css('margin-bottom', 10);
+		$('#panelWin .score').css('margin-bottom', 10);
 
 
     } else if (userAgent.indexOf('iPhone') > -1) {
@@ -262,7 +268,11 @@
 
 		// Add background sound
 		if (backgroundSoundEnable) {
-			backgroundSound.play();
+			if (userAgent.indexOf('iPad') > -1) {
+				backgroundSoundIos.play();
+			} else {
+				backgroundSound.play();
+			}
 		}
 
 		if (playerLoose) {
@@ -890,7 +900,7 @@
 
 	// Push enemies into the array
 	function pushEnemies () {
-		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 163, 98, 9, 4, 0.8, 100, 75));
+		enemiesArray.push(new Enemies(400, 'wolf', 0, wolfImage, canvasWidth + (-(background.x)), canvasHeight - 110, 162, 98, 9, 4, 0.8, 100, 75));
 	}
 
 	/**
@@ -1268,6 +1278,7 @@
 							enemieOrObstacle.life -= player.aggressive;
 
 							if (enemieOrObstacle.name == 'warlock' && enemieOrObstacle.life <= 0) {
+								playerUpdateScore(2555);
 								showWinPanel();
 							};
 
@@ -1276,7 +1287,11 @@
 							$('#player').toggleClass('player-opacity');
 
 							// Enemie attack sound
-							playerSufferAttackSound.play();
+							if (playerSelected == 'aidem') {
+								playerSufferAttackSoundAiden.play();
+							} else {
+								playerSufferAttackSoundAdhara.play();
+							}
 
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive;
@@ -1297,7 +1312,12 @@
 							$('#player').toggleClass('player-opacity');
 
 							// Enemie attack sound
-							playerSufferAttackSound.play();
+							if (playerSelected == 'aidem') {
+								playerSufferAttackSoundAiden.play();
+							} else {
+								playerSufferAttackSoundAdhara.play();
+							}
+
 
 							//remove player life
 							player.life -= enemieOrObstacle.aggressive; // the agresive of the warlok //enemieOrObstacle.aggressive;
@@ -1324,7 +1344,7 @@
 
  						removePotion();
 
- 						playerUpdateScore(15);
+ 						playerUpdateScore(50);
 
  					} else if (enemieOrObstacle.name == 'heartDragon') {
 
@@ -1334,7 +1354,7 @@
 
  						plusHeartsDragon(1);
 
- 						playerUpdateScore(75);
+ 						playerUpdateScore(125);
 
  						removeHeartDragon();
  					}
@@ -1371,28 +1391,34 @@
 
 		var enemiesArrayPosition = enemiesArray.indexOf(enemies);
 
-		if (player.life <= 4000 && player.life > 3501) {
-			playerSelectedLife.css('background-position-x', -widthOfSpriteEnergy);
+		var yPosition = 0;
 
+		if (player.life <= 4000 && player.life > 3501) {
+
+			playerSelectedLife.css({'background-position':-widthOfSpriteEnergy+'px '+yPosition+'px'});
 
 		} else if (player.life <= 3500 && player.life > 3001) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 2));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*2)+'px '+yPosition+'px'});
 
 
 		} else if (player.life <= 3000 && player.life > 2501) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 3));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*3)+'px '+yPosition+'px'});
 
 
 		} else if (player.life <= 2500 && player.life > 2001) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 4));
 
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*4)+'px '+yPosition+'px'});
 
 		} else if (player.life <= 2000 && player.life > 1501) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 5));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*5)+'px '+yPosition+'px'});
 
 
 		} else if (player.life <= 1500 && player.life > 1001) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 6));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*6)+'px '+yPosition+'px'});
 
 			if (!potionWasAdded) {
 				addPotion();
@@ -1400,11 +1426,13 @@
 			}
 
 		} else if (player.life <= 1000 && player.life > 501) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 7));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*7)+'px '+yPosition+'px'});
 
 
 		} else if (player.life <= 500) {
-			playerSelectedLife.css('background-position-x', -(widthOfSpriteEnergy * 8));
+
+			playerSelectedLife.css({'background-position':-(widthOfSpriteEnergy*8)+'px '+yPosition+'px'});
 
 			if (!potionWasAdded) {
 				addPotion();
@@ -1417,7 +1445,7 @@
 		if (player.life < 0) {
 
 			// Post score
-			$('#buttonShareScore').on('click', function () {
+			$('.buttonShareScore').on('click', function () {
 				postScore(player.score);
 			});
 
@@ -1447,14 +1475,16 @@
 				playerLoose = false;
 				playerWin = false;
 				wolfPush = true;
+				warlokIsDraw = false;
 				player.score = 0;
 				player.potions = 0;
 				player.heartsDragon = 0;
 				plusHeartsDragon(0);
 				stopEnemiesAndObstacles = false;
 
-				playerSelectedLife.css('background-position-x', 0);
-				$('#adarhaPotion').css('background-position-x', 0);
+				playerSelectedLife.css({'background-position':0+'px '+0+'px'});
+				$('#adarhaPotion').css({'background-position':0+'px '+0+'px'});
+
 				potionWasAdded = false;
 
 				panelGameOver.addClass('display-none');
@@ -1479,15 +1509,15 @@
 
 		switch (player.potions) {
 			case 1:
-				$('#adarhaPotion').css('background-position-x', -widthOfSpritePotion);
+				$('#adarhaPotion').css({'background-position':-widthOfSpritePotion+'px '+0+'px'});
 			break;
 
 			case 2:
-				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 2));
+				$('#adarhaPotion').css({'background-position':-(widthOfSpritePotion*2)+'px '+0+'px'});
 			break;
 
 			case 3:
-				$('#adarhaPotion').css('background-position-x', -(widthOfSpritePotion * 3));
+				$('#adarhaPotion').css({'background-position':-(widthOfSpritePotion*3)+'px '+0+'px'});
 			break;
 		}
 
@@ -1545,10 +1575,11 @@
 		plusHeartsDragon(0);
 		stopEnemiesAndObstacles = false;
 
-		playerSelectedLife.css('background-position-x', 0);
-		$('#adarhaPotion').css('background-position-x', 0);
-		potionWasAdded = false;
 
+		playerSelectedLife.css({'background-position':0+'px '+0+'px'});
+		$('#adarhaPotion').css({'background-position':0+'px '+0+'px'});
+
+		potionWasAdded = false;
 		panelPlayAgain.toggleClass('display-none');
 	});
 
@@ -1579,6 +1610,12 @@
 	/* Show win panel
 	---------------------------------------------------------------*/
 	function showWinPanel () {
+		// Post score
+		$('.buttonShareScore').on('click', function () {
+			postScore(player.score);
+		});
+
+
 		// Show the Win panel
 		panelWin.removeClass('display-none');
 		getScoreWin.html(player.score);
@@ -1601,8 +1638,8 @@
 			playerWin = false;
 			wolfPush = true;
 
-			playerSelectedLife.css('background-position-x', 0);
-			$('#adarhaPotion').css('background-position-x', 0);
+			playerSelectedLife.css({'background-position':0+'px '+0+'px'});
+			$('#adarhaPotion').css({'background-position':0+'px '+0+'px'});
 
 			potionWasAdded = false;
 
@@ -1683,17 +1720,15 @@
 
 	        function (response) {
 	          if (response && !response.error) {
-	            /* handle the result */
-	            console.log(response);
 
 				FB.ui({
 		            method:             'stream.publish',
-		            message:            'yo hice '+score+' en este juego!',
+		            message:            'Yo hice '+score+' en este juego!',
 		            attachment: {
 		                name:           'Lesath Game',
 		                caption:        'Supera la marca de tus amigos',
 		                description:    'Yo hice '+score+' puntos!!!',
-		                media: 			[{'type':'image', 'src': 'http://www.lesathtrilogy.com/game/img/attack-key.png', 'href':'http://www.lesathtrilogy.com/game/index.html'}],
+		                media: 			[{'type':'image', 'src': 'http://www.lesathtrilogy.com/game/img/share-score-btn-facebook.jpg', 'href':'http://www.lesathtrilogy.com/game/index.html'}],
 		                href:           'http://www.lesathtrilogy.com/game/index.html'
 		            },
 		            action_links: [
@@ -1709,13 +1744,10 @@
 		            }
 		        });
 
-
 	          }
 	        }
 
 	    ); // end FB.api
-
-
 	}
 
 
